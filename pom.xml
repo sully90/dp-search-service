@@ -188,6 +188,10 @@
           <include>log4j.properties</include>
         </includes>
       </resource>
+
+      <resource>
+        <directory>src/main/resources/opennlp.models/</directory>
+      </resource>
     </resources>
   </build>
 </project>

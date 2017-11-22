@@ -5,6 +5,7 @@ import com.github.onsdigital.elasticutils.client.ElasticSearchRESTClient;
 import com.github.onsdigital.elasticutils.util.ElasticSearchHelper;
 import com.github.onsdigital.search.elasticsearch.indicies.ElasticSearchIndex;
 import com.github.onsdigital.search.exceptions.NoSuchIndexException;
+import com.github.onsdigital.search.nlp.opennlp.OpenNlpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ public class SearchEngineService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchEngineService.class);
 
     private static final String HOST_NAME = "localhost";
+    private static final OpenNlpService OPENNLP_SERVICE = OpenNlpService.getInstance();
 
     private static ElasticSearchClient getSearchClient(ElasticSearchIndex index) {
         return getSearchClient(index, ElasticSearchHelper.ClientType.REST);
@@ -64,7 +66,7 @@ public class SearchEngineService {
         ElasticSearchClient searchClient = getSearchClient(elasticSearchIndex);
 
 //        System.out.println(index);
-        System.out.println(elasticSearchIndex + " : " + query);
+        System.out.println(elasticSearchIndex + " : " + OPENNLP_SERVICE.getNamedEntities(query));
         return ok();
     }
 

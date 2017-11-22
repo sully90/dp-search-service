@@ -37,7 +37,13 @@ public class OpenNlpService {
 
     protected double probabilityLowerLimit = 0.75d;
 
-    public OpenNlpService() {
+    private static OpenNlpService INSTANCE = new OpenNlpService();
+
+    public static OpenNlpService getInstance() {
+        return INSTANCE;
+    }
+
+    private OpenNlpService() {
         String[] enabledModels = SearchEngineProperties.getPropertyArray(NER_ENABLED_MODELS_KEY);
 
         for (String model : enabledModels) {
