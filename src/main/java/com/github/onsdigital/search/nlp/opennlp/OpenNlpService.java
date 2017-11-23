@@ -147,9 +147,9 @@ public class OpenNlpService {
         try(InputStream is = new FileInputStream(filename)) {
             return new TokenizerModel(is);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("Error loading TokenizerModel {}: File not found.", filename, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error loading TokenizerModel {}.", filename, e);
         }
         return null;
     }
