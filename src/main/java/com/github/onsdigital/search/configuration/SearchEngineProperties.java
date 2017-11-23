@@ -62,4 +62,17 @@ public class SearchEngineProperties {
         System.out.println(getProperty("opennlp.ner.modes"));
     }
 
+    public static class OPENNLP {
+        private static final String NER_ENABLED_MODELS_KEY = "opennlp.ner.models";
+        private static final String NER_CONFIGURATION_KEY = "opennlp.ner.model.file";
+
+        public static String getNerEnabledModelsKey() {
+            return NER_ENABLED_MODELS_KEY;
+        }
+
+        public static String getNerConfigurationKey() {
+            return NER_CONFIGURATION_KEY;
+        }
+    }
+
 }

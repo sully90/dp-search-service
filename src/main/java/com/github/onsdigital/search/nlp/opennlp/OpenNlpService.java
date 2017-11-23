@@ -28,9 +28,6 @@ public class OpenNlpService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenNlpService.class);
 
-    private static final String NER_ENABLED_MODELS_KEY = "opennlp.ner.models";
-    private static final String NER_CONFIGURATION_KEY = "opennlp.ner.model.file";
-
     // TokenNameFinder is not thread safe, so use a threadLocal hack
     private ThreadLocal<TokenNameFinderModel> threadLocal = new ThreadLocal<>();
     private Map<String, TokenNameFinderModel> nameFinderModels = new ConcurrentHashMap<>();
@@ -44,13 +41,23 @@ public class OpenNlpService {
     }
 
     private OpenNlpService() {
-        String[] enabledModels = SearchEngineProperties.getPropertyArray(NER_ENABLED_MODELS_KEY);
+        String[] enabledModels = SearchEngineProperties.getPropertyArray(
+                SearchEngineProperties.OPENNLP.getNerEnabledModelsKey()
+        );
 
+        StringBuilder sb;
         for (String model : enabledModels) {
-            String configKey = NER_CONFIGURATION_KEY + "." + model;
+            sb = new StringBuilder(SearchEngineProperties.OPENNLP.getNerConfigurationKey())
+                    .append(".")
+                    .append(model);
+
+            String configKey = sb.toString();
             String modelname = SearchEngineProperties.getProperty(configKey);
             if (null != modelname) {
-                this.nameFinderModels.put(model, getTokenNameFinderModel(modelname));
+                TokenNameFinderModel tokenNameFinderModel = getTokenNameFinderModel(modelname);
+                if (null != tokenNameFinderModel) {
+                    this.nameFinderModels.put(model, tokenNameFinderModel);
+                }
             } else {
                 LOGGER.error("Unable to locate opennlp ner model: {}", model);
             }
@@ -124,11 +131,12 @@ public class OpenNlpService {
         String filename = SearchEngineProperties.filenameInClasspath(modelname);
 
         try(InputStream is = new FileInputStream(filename)) {
+            LOGGER.info("Loading TokenNameFinderModel: {}", modelname);
             return new TokenNameFinderModel(is);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("Error loading TokenNameFinderModel {}: File not found.", modelname, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error loading TokenNameFinderModel {}.", modelname, e);
         }
         return null;
     }
@@ -147,7 +155,7 @@ public class OpenNlpService {
     }
 
     public static void main(String[] args) {
-        System.out.println(new OpenNlpService().getNameFinderModels());
+        System.out.println(OpenNlpService.getInstance().getNameFinderModels());
     }
 
 }
