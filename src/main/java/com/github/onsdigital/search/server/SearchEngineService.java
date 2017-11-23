@@ -42,7 +42,7 @@ public class SearchEngineService {
         // Default to the Http client
         switch (clientType) {
             default:
-                return new ElasticSearchRESTClient<>(HOST_NAME, index, Object.class);
+                return new ElasticSearchRESTClient(HOST_NAME, index.getIndexName(), Object.class);
         }
     }
 

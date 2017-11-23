@@ -1,13 +1,12 @@
 package com.github.onsdigital.search.elasticsearch.indicies;
 
-import com.github.onsdigital.elasticutils.indicies.ElasticIndexNames;
 import com.github.onsdigital.search.exceptions.NoSuchIndexException;
 
 /**
  * @author sullid (David Sullivan) on 22/11/2017
  * @project dp-search-service
  */
-public enum ElasticSearchIndex implements ElasticIndexNames {
+public enum ElasticSearchIndex {
     TEST("test");
 
     private String indexName;

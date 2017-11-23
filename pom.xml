@@ -85,7 +85,7 @@
     <dependency>
       <groupId>com.github.ONSdigital</groupId>
       <artifactId>dp-elasticutils</artifactId>
-      <version>0.0.1-RESTONLY</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
 
     <!-- ELASTICSEARCH END -->
@@ -138,6 +138,16 @@
     </dependency>
 
     <!-- LOGGING END -->
+
+    <!-- MONGO START -->
+
+    <dependency>
+      <groupId>com.github.onsdigital</groupId>
+      <artifactId>dp-mongoutils4j</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <!-- MONGO END -->
 
     <dependency>
       <groupId>junit</groupId>
