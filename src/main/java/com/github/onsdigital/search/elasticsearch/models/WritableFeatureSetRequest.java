@@ -1,5 +1,6 @@
 package com.github.onsdigital.search.elasticsearch.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.onsdigital.elasticutils.ml.features.Feature;
 import com.github.onsdigital.elasticutils.ml.features.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.features.Template;
@@ -13,10 +14,7 @@ import com.github.onsdigital.mongo.util.ObjectWriter;
 import com.github.onsdigital.search.mongo.CollectionNames;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sullid (David Sullivan) on 23/11/2017
@@ -70,10 +68,11 @@ public class WritableFeatureSetRequest extends FeatureSetRequest implements Writ
 
         FeatureSet featureSet = new FeatureSet("java_test_feature_set", featureList);
 
-//        WritableFeatureSetRequest request = new WritableFeatureSetRequest(featureSet);
-//        request.writer().save();
-        ObjectId id = new ObjectId("5a16d1843c6ebd69ae6b9bab");
-        WritableFeatureSetRequest request = WritableFeatureSetRequest.finder().findOne(id);
-        System.out.println(request.getFeatureSet().getName());
+        WritableFeatureSetRequest request = new WritableFeatureSetRequest(featureSet);
+        try {
+            System.out.println(request.toJson());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.github.onsdigital.search.server;
 
 import com.github.onsdigital.elasticutils.client.ElasticSearchClient;
 import com.github.onsdigital.elasticutils.client.ElasticSearchRESTClient;
+import com.github.onsdigital.elasticutils.client.ElasticSearchTransportClient;
 import com.github.onsdigital.elasticutils.util.ElasticSearchHelper;
 import com.github.onsdigital.search.elasticsearch.indicies.ElasticSearchIndex;
 import com.github.onsdigital.search.exceptions.NoSuchIndexException;
@@ -15,6 +16,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.net.UnknownHostException;
 
 import static com.github.onsdigital.search.response.HttpResponse.internalServerError;
 import static com.github.onsdigital.search.response.HttpResponse.ok;
@@ -41,6 +44,13 @@ public class SearchEngineService {
 
         // Default to the Http client
         switch (clientType) {
+            case TCP:
+                try {
+                    return new ElasticSearchTransportClient(HOST_NAME, index.getIndexName(), Object.class);
+                } catch (UnknownHostException e) {
+                    LOGGER.error("Unable to load TCP client", e);
+                    throw new RuntimeException(e);
+                }
             default:
                 return new ElasticSearchRESTClient(HOST_NAME, index.getIndexName(), Object.class);
         }

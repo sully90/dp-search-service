@@ -7,7 +7,8 @@ import com.github.onsdigital.mongo.util.MongoCollectionNames;
  * @project dp-search-service
  */
 public enum CollectionNames implements MongoCollectionNames {
-    LTR_FEATURE_SET_REQUESTS("ltr_feature_set_requests");
+    LTR_FEATURE_SET_REQUESTS("ltr_feature_set_requests"),
+    MOVIES("movies");
 
     private String name;
 
