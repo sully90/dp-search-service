@@ -1,9 +1,10 @@
 package com.github.onsdigital.search.server;
 
-import com.github.onsdigital.elasticutils.client.ElasticSearchClient;
 import com.github.onsdigital.elasticutils.client.bulk.configuration.BulkProcessorConfiguration;
+import com.github.onsdigital.elasticutils.client.generic.ElasticSearchClient;
+import com.github.onsdigital.elasticutils.client.http.SimpleRestClient;
 import com.github.onsdigital.elasticutils.util.ElasticSearchHelper;
-import com.github.onsdigital.search.elasticsearch.OpenNlpElasticSearchRESTClient;
+import com.github.onsdigital.search.elasticsearch.OpenNlpSearchClient;
 import com.github.onsdigital.search.mongo.Movie;
 
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class Update {
 
     private static ElasticSearchClient getClient(String hostName, String indexName) {
+        SimpleRestClient client = ElasticSearchHelper.getRestClient(hostName, 9200);
         BulkProcessorConfiguration configuration = ElasticSearchHelper.getDefaultBulkProcessorConfiguration(200);
-        return new OpenNlpElasticSearchRESTClient(hostName, 9200, indexName, configuration, Object.class);
+        return new OpenNlpSearchClient(client, indexName, configuration, Object.class);
     }
 
     public static void main(String[] args) {
@@ -28,8 +30,7 @@ public class Update {
             List<Movie> movies = new ArrayList<>();
             it.forEach(movies::add);
 
-//            client.bulkIndexWithRefreshInterval(movies);
-            client.index(movies);
+            client.bulk(movies);
             client.flush();
             client.awaitClose(30, TimeUnit.SECONDS);
         } catch (Exception e) {
