@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Update {
 
+    private static final String INDEX = "movies";
+
     private static BulkProcessorConfiguration getConfiguration() {
         BulkProcessorConfiguration bulkProcessorConfiguration = new BulkProcessorConfiguration(BulkProcessingOptions.builder()
                 .setBulkActions(100)
@@ -34,20 +36,20 @@ public class Update {
         return bulkProcessorConfiguration;
     }
 
-    private static ElasticSearchClient getClient(String hostName, String indexName) {
+    private static ElasticSearchClient getClient(String hostName) {
         SimpleRestClient client = ElasticSearchHelper.getRestClient(hostName, 9200);
         BulkProcessorConfiguration configuration = getConfiguration();
-        return new OpenNlpSearchClient(client, indexName, configuration, Object.class);
+        return new OpenNlpSearchClient(client, configuration);
     }
 
     public static void main(String[] args) {
-        try (ElasticSearchClient searchClient = getClient("localhost", "movies")) {
+        try (ElasticSearchClient searchClient = getClient("localhost")) {
 
             Iterable<Movie> it = Movie.finder().find();
             List<Movie> movies = new ArrayList<>();
             it.forEach(movies::add);
 
-            searchClient.bulk(movies);
+            searchClient.bulk(INDEX, movies);
             long startTime = System.currentTimeMillis();
             searchClient.awaitClose(30, TimeUnit.SECONDS);
             long endTime = System.currentTimeMillis();

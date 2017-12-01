@@ -10,15 +10,19 @@ import org.elasticsearch.common.xcontent.XContentType;
  * @author sullid (David Sullivan) on 28/11/2017
  * @project dp-search-service
  */
-public class OpenNlpSearchClient<T> extends RestSearchClient<T> {
+public class OpenNlpSearchClient extends RestSearchClient {
 
-    public OpenNlpSearchClient(SimpleRestClient client, String index, BulkProcessorConfiguration configuration, Class<T> returnClass) {
-        super(client, index, configuration, returnClass);
+    public OpenNlpSearchClient(SimpleRestClient client, BulkProcessorConfiguration configuration) {
+        super(client, configuration);
+    }
+
+    public IndexRequest createIndexRequest(String index, byte[] messageBytes) {
+        return super.createIndexRequestWithPipeline(index, messageBytes, Pipeline.OPENNLP.getPipelineName(), XContentType.JSON);
     }
 
     @Override
-    public IndexRequest createIndexRequest(byte[] messageBytes, XContentType xContentType) {
-        return super.createIndexRequestWithPipeline(messageBytes, Pipeline.OPENNLP.getPipelineName(), xContentType);
+    public IndexRequest createIndexRequest(String index, byte[] messageBytes, XContentType xContentType) {
+        return super.createIndexRequestWithPipeline(index, messageBytes, Pipeline.OPENNLP.getPipelineName(), xContentType);
     }
 
     public enum Pipeline {
