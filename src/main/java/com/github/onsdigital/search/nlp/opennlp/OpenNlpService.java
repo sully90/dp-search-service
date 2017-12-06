@@ -64,6 +64,10 @@ public class OpenNlpService {
         }
     }
 
+    public Set<String> availableModels() {
+        return this.nameFinderModels.keySet();
+    }
+
     public Set<String> find(String content, String field) {
         try {
             if (!nameFinderModels.containsKey(field)) {
