@@ -39,7 +39,7 @@ public class LearnToRankService {
     }
 
     @PUT
-    @Path("/init")
+    @Path("/featuresets/init")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response initFeatureStore() {
         try {
@@ -56,7 +56,7 @@ public class LearnToRankService {
     }
 
     @GET
-    @Path("/list")
+    @Path("/featuresets/list/")
     @Produces({MediaType.APPLICATION_JSON})
     public Response listFeatureSets() {
         try {
@@ -69,7 +69,7 @@ public class LearnToRankService {
     }
 
     @GET
-    @Path("/list/{name}")
+    @Path("/featuresets/list/{name}")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getFeatureByName(@PathParam("name") String name) {
         try {

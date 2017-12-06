@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/nlp/opennlp/OpenNlpService.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/nlp/opennlp/OpenNlpService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -194,11 +194,11 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="LearnToRankService.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="LearnToRankService.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-2">
-                  <caret line="25" column="29" lean-forward="true" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
+                <state relative-caret-position="-110">
+                  <caret line="41" column="24" lean-forward="false" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -206,7 +206,7 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="OpenNlpService.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="OpenNlpService.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/nlp/opennlp/OpenNlpService.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="575">
@@ -321,8 +321,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/response/HttpResponse.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
         <option value="$PROJECT_DIR$/conf/application.conf" />
-        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/nlp/opennlp/OpenNlpService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
       </list>
     </option>
   </component>
@@ -1103,16 +1103,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2">
-          <caret line="25" column="29" lean-forward="true" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/nlp/opennlp/OpenNlpService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="575">
@@ -1120,6 +1110,16 @@
           <folding>
             <element signature="e#2411#2412#0" expanded="true" />
             <element signature="e#2464#2465#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-110">
+          <caret line="41" column="24" lean-forward="false" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
