@@ -316,6 +316,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.2/jackson-module-jaxb-annotations-2.9.2-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.github.ONSdigital:dp-elasticutils-ltr:0.1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils-ltr/0.1-SNAPSHOT/dp-elasticutils-ltr-0.1-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils-ltr/0.1-SNAPSHOT/dp-elasticutils-ltr-0.1-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils-ltr/0.1-SNAPSHOT/dp-elasticutils-ltr-0.1-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.github.ONSdigital:dp-elasticutils:0.1-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils/0.1-SNAPSHOT/dp-elasticutils-0.1-SNAPSHOT.jar!/" />
@@ -413,6 +424,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.10/commons-codec-1.10-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-io:commons-io:2.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.2/commons-io-2.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.2/commons-io-2.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.2/commons-io-2.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-logging:commons-logging:1.1.3">

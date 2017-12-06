@@ -1,0 +1,1 @@
+{"name":"match_query","params":["keywords"],"template":{"match":{"title":{"query":"{{keywords}}","operator":"OR","prefix_length":0,"max_expansions":50,"fuzzy_transpositions":true,"lenient":false,"zero_terms_query":"NONE","boost":1.0}}},"template_language":"mustache"}

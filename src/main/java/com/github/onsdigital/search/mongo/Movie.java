@@ -6,7 +6,6 @@ import com.github.onsdigital.mongo.WritableObject;
 import com.github.onsdigital.mongo.util.DatabaseType;
 import com.github.onsdigital.mongo.util.ObjectFinder;
 import com.github.onsdigital.mongo.util.ObjectWriter;
-import com.github.onsdigital.search.elasticsearch.models.WritableFeatureSetRequest;
 import org.bson.types.ObjectId;
 
 import java.text.DateFormat;

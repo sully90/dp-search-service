@@ -1,18 +1,18 @@
 package com.github.onsdigital.search.elasticsearch;
 
 import com.github.onsdigital.elasticutils.client.bulk.configuration.BulkProcessorConfiguration;
-import com.github.onsdigital.elasticutils.client.generic.RestSearchClient;
-import com.github.onsdigital.elasticutils.client.http.SimpleRestClient;
+import com.github.onsdigital.elasticutils.client.generic.TransportSearchClient;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
 /**
  * @author sullid (David Sullivan) on 28/11/2017
  * @project dp-search-service
  */
-public class OpenNlpSearchClient extends RestSearchClient {
+public class OpenNlpSearchClient extends TransportSearchClient {
 
-    public OpenNlpSearchClient(SimpleRestClient client, BulkProcessorConfiguration configuration) {
+    public OpenNlpSearchClient(TransportClient client, BulkProcessorConfiguration configuration) {
         super(client, configuration);
     }
 

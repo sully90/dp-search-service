@@ -9,6 +9,7 @@ import com.github.onsdigital.elasticutils.util.ElasticSearchHelper;
 import com.github.onsdigital.search.elasticsearch.indicies.ElasticSearchIndex;
 import com.github.onsdigital.search.exceptions.NoSuchIndexException;
 import com.github.onsdigital.search.nlp.opennlp.OpenNlpService;
+import com.github.onsdigital.search.util.ClientType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.net.UnknownHostException;
 
 import static com.github.onsdigital.search.response.HttpResponse.internalServerError;
@@ -39,11 +39,11 @@ public class SearchEngineService {
     private static final OpenNlpService OPENNLP_SERVICE = OpenNlpService.getInstance();
 
     private static ElasticSearchClient getSearchClient(ElasticSearchIndex index) {
-        return getSearchClient(index, ElasticSearchHelper.ClientType.REST);
+        return getSearchClient(index, ClientType.HTTP);
     }
 
     private static ElasticSearchClient getSearchClient(ElasticSearchIndex index,
-                                                               ElasticSearchHelper.ClientType clientType) {
+                                                               ClientType clientType) {
 
         BulkProcessorConfiguration configuration = ElasticSearchHelper.getDefaultBulkProcessorConfiguration();
         // Default to the Http client
@@ -51,18 +51,14 @@ public class SearchEngineService {
             case TCP:
                 try {
                     TransportClient client = ElasticSearchHelper.getTransportClient(HOST_NAME, 9300);
-                    return new TransportSearchClient(
-                            client, index.getIndexName(), configuration, Object.class
-                    );
+                    return new TransportSearchClient(client, configuration);
                 } catch (UnknownHostException e) {
                     LOGGER.error("Unable to load TCP client", e);
                     throw new RuntimeException(e);
                 }
             default:
                 SimpleRestClient client = ElasticSearchHelper.getRestClient(HOST_NAME, 9200);
-                return new RestSearchClient(
-                        client, index.getIndexName(), configuration, Object.class
-                );
+                return new RestSearchClient(client, configuration);
         }
     }
 
