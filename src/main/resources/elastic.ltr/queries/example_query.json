@@ -6,7 +6,7 @@
           "should" : [ {
             "match" : {
               "title" : {
-                "query" : "London",
+                "query" : "rpi",
                 "operator" : "OR",
                 "prefix_length" : 0,
                 "max_expansions" : 50,
@@ -18,7 +18,7 @@
             }
           }, {
             "multi_match" : {
-              "query" : "London",
+              "query" : "rpi",
               "fields" : [ "entities.dates^1.0", "entities.organizations^1.0", "entities.persons^1.0" ],
               "type" : "best_fields",
               "operator" : "OR",
@@ -38,7 +38,7 @@
           "_name" : "logged_featureset",
           "featureset" : "bulletin_features",
           "params" : {
-            "keywords" : "London"
+            "keywords" : "rpi"
           }
         }
       } ],

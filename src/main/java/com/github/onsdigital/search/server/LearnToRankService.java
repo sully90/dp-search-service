@@ -51,12 +51,12 @@ public class LearnToRankService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response initFeatureStore() {
         try {
-            client.dropFeatureStore();
-            client.initFeatureStore();
-
             List<FeatureSet> featureSets = loadFeatureSets();
 
             for (FeatureSet featureSet : featureSets) {
+                if (client.featureSetExists(featureSet.getName())) {
+                    client.deleteFeatureSetByName(featureSet.getName());
+                }
                 FeatureSetRequest request = new FeatureSetRequest(featureSet);
                 client.createFeatureSet(request);
             }
