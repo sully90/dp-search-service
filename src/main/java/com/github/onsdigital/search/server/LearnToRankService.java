@@ -81,6 +81,7 @@ public class LearnToRankService {
             LearnToRankGetResponse response = client.getFeatureSetByName(name);
             return ok(response);
         } catch (IOException e) {
+            LOGGER.error("Error retrieving featureset with name: " + name, e);
             return internalServerError(e);
         }
     }
@@ -100,6 +101,8 @@ public class LearnToRankService {
             SltrResponse response = client.sltr(index, searchRequest);
             return ok(response);
         } catch (IOException e) {
+            String message = String.format("Error performing sltr on index: %s, featureset: %s, with keywords : %s", index, featureSet, keywords);
+            LOGGER.error(message, e);
             return internalServerError(e);
         }
     }
