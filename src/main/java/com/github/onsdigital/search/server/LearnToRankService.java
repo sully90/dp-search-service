@@ -4,9 +4,14 @@ import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankGetResponse;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankListResponse;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
+import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
+import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
+import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +79,25 @@ public class LearnToRankService {
     public Response getFeatureByName(@PathParam("name") String name) {
         try {
             LearnToRankGetResponse response = client.getFeatureSetByName(name);
+            return ok(response);
+        } catch (IOException e) {
+            return internalServerError(e);
+        }
+    }
+
+    @GET
+    @Path("/sltr/{index}/{featureset}/{keywords}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response sltr(@PathParam("index") String index, @PathParam("featureset") String featureSet,
+                         @PathParam("keywords") String keywords) {
+        
+        QueryBuilder qb = QueryBuilders.matchQuery("title", keywords);
+        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", featureSet);
+        sltrQueryBuilder.setParam("keywords", keywords);
+
+        LogQuerySearchRequest searchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
+        try {
+            SltrResponse response = client.sltr(index, searchRequest);
             return ok(response);
         } catch (IOException e) {
             return internalServerError(e);
