@@ -47,7 +47,7 @@ public class LearnToRankService {
 
             for (FeatureSet featureSet : featureSets) {
                 FeatureSetRequest request = new FeatureSetRequest(featureSet);
-                client.addFeatureSet(request);
+                client.createFeatureSet(request);
             }
             return ok();
         } catch (IOException e) {
