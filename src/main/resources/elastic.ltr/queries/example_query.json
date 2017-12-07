@@ -1,0 +1,57 @@
+{
+  "query" : {
+    "bool" : {
+      "filter" : [ {
+        "bool" : {
+          "should" : [ {
+            "match" : {
+              "title" : {
+                "query" : "London",
+                "operator" : "OR",
+                "prefix_length" : 0,
+                "max_expansions" : 50,
+                "fuzzy_transpositions" : true,
+                "lenient" : false,
+                "zero_terms_query" : "NONE",
+                "boost" : 1.0
+              }
+            }
+          }, {
+            "multi_match" : {
+              "query" : "London",
+              "fields" : [ "entities.dates^1.0", "entities.organizations^1.0", "entities.persons^1.0" ],
+              "type" : "best_fields",
+              "operator" : "OR",
+              "slop" : 0,
+              "prefix_length" : 0,
+              "max_expansions" : 50,
+              "lenient" : false,
+              "zero_terms_query" : "NONE",
+              "boost" : 1.0
+            }
+          } ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0
+        }
+      }, {
+        "sltr" : {
+          "_name" : "logged_featureset",
+          "featureset" : "bulletin_features",
+          "params" : {
+            "keywords" : "London"
+          }
+        }
+      } ],
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+  },
+  "ext" : {
+    "ltr_log" : {
+      "log_specs" : {
+        "name" : "log_entry",
+        "named_query" : "logged_featureset"
+      }
+    }
+  }
+}

@@ -8,6 +8,8 @@ import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
+import com.github.onsdigital.elasticutils.ml.requests.models.LogSpecs;
+import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.onsdigital.search.response.HttpResponse.internalServerError;
 import static com.github.onsdigital.search.response.HttpResponse.ok;
@@ -48,6 +51,9 @@ public class LearnToRankService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response initFeatureStore() {
         try {
+            client.dropFeatureStore();
+            client.initFeatureStore();
+
             List<FeatureSet> featureSets = loadFeatureSets();
 
             for (FeatureSet featureSet : featureSets) {
@@ -86,18 +92,16 @@ public class LearnToRankService {
         }
     }
 
-    @GET
+    @POST
     @Path("/sltr/{index}/{featureset}/{keywords}")
+    @Consumes({ MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_JSON })
     public Response sltr(@PathParam("index") String index, @PathParam("featureset") String featureSet,
-                         @PathParam("keywords") String keywords) {
+                         @PathParam("keywords") String keywords, Map<String, Object> qbMap) {
 
-        QueryBuilder qb = QueryBuilders.matchQuery("title", keywords);
-        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", featureSet);
-        sltrQueryBuilder.setParam("keywords", keywords);
-
-        LogQuerySearchRequest searchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
         try {
+            String searchRequest = JsonUtils.toJson(qbMap);
+
             SltrResponse response = client.sltr(index, searchRequest);
             return ok(response);
         } catch (IOException e) {
@@ -128,6 +132,25 @@ public class LearnToRankService {
         }
 
         return featureSets;
+    }
+
+    public static void main(String[] args) {
+        String keywords = "London";
+        QueryBuilder qb = QueryBuilders.boolQuery()
+                .should(QueryBuilders.matchQuery("title", keywords))
+                .should(QueryBuilders.multiMatchQuery(keywords, "entities.persons",
+                "entities.organizations",
+                "entities.dates"));
+
+        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", "bulletin_features");
+        sltrQueryBuilder.setParam("keywords", keywords);
+
+        LogQuerySearchRequest request = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
+        try {
+            System.out.println(request.toJson());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
