@@ -38,12 +38,11 @@ public class SearchEngineService {
     private static final String HOST_NAME = "localhost";
     private static final OpenNlpService OPENNLP_SERVICE = OpenNlpService.getInstance();
 
-    private static ElasticSearchClient getSearchClient(ElasticSearchIndex index) {
-        return getSearchClient(index, ClientType.HTTP);
+    private static ElasticSearchClient getSearchClient() {
+        return getSearchClient(ClientType.HTTP);
     }
 
-    private static ElasticSearchClient getSearchClient(ElasticSearchIndex index,
-                                                               ClientType clientType) {
+    private static ElasticSearchClient getSearchClient(ClientType clientType) {
 
         BulkProcessorConfiguration configuration = ElasticSearchHelper.getDefaultBulkProcessorConfiguration();
         // Default to the Http client
@@ -79,7 +78,7 @@ public class SearchEngineService {
             return internalServerError(e);
         }
 
-        ElasticSearchClient searchClient = getSearchClient(elasticSearchIndex);
+        ElasticSearchClient searchClient = getSearchClient();
 
 //        System.out.println(index);
         System.out.println(elasticSearchIndex + " : " + OPENNLP_SERVICE.getNamedEntities(query));

@@ -90,7 +90,7 @@ public class LearnToRankService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response sltr(@PathParam("index") String index, @PathParam("featureset") String featureSet,
                          @PathParam("keywords") String keywords) {
-        
+
         QueryBuilder qb = QueryBuilders.matchQuery("title", keywords);
         SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", featureSet);
         sltrQueryBuilder.setParam("keywords", keywords);
