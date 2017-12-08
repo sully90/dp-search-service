@@ -57,6 +57,13 @@
       <version>2.7</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-multipart</artifactId>
+      <version>2.7</version>
+    </dependency>
+
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
@@ -77,6 +84,7 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
+
 
     <!-- JERSEY END -->
 

@@ -8,12 +8,13 @@ import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
-import com.github.onsdigital.elasticutils.ml.requests.models.LogSpecs;
 import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +112,22 @@ public class LearnToRankService {
             LOGGER.error(message, e);
             return internalServerError(e);
         }
+    }
+
+    @GET
+    @Path("/model/")
+    @Produces({ MediaType.TEXT_HTML })
+    public Viewable uploadPage() {
+        return new Viewable("/upload", null);
+    }
+
+    @POST
+    @Path("/model/upload")
+    @Consumes({ MediaType.MULTIPART_FORM_DATA })
+    @Produces({ MediaType.TEXT_HTML })
+    public Viewable uploadModel(@FormDataParam("file") InputStream inputStream) {
+        System.out.println(inputStream);
+        return new Viewable("/done", null);
     }
 
     private static List<FeatureSet> loadFeatureSets() throws IOException {
