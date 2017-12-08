@@ -135,20 +135,25 @@ public class LearnToRankService {
     }
 
     public static void main(String[] args) {
-        String keywords = "London";
+        String keywords = "rpi";
         QueryBuilder qb = QueryBuilders.boolQuery()
-                .should(QueryBuilders.matchQuery("title", keywords))
+                .should(QueryBuilders.matchPhraseQuery("description.summary", keywords))
+                .should(QueryBuilders.matchPhraseQuery("description.keywords", keywords))
                 .should(QueryBuilders.multiMatchQuery(keywords, "entities.persons",
-                "entities.organizations",
-                "entities.dates"));
+                        "entities.organizations",
+                        "entities.dates",
+                        "entities.locations"));
 
-        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", "bulletin_features");
+        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", "test_features");
         sltrQueryBuilder.setParam("keywords", keywords);
 
         LogQuerySearchRequest request = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
         try {
-            System.out.println(request.toJson());
+            System.out.println(request.toJson(100));
+            client.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

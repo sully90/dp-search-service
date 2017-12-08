@@ -4,22 +4,17 @@
       "filter" : [ {
         "bool" : {
           "should" : [ {
-            "match" : {
-              "title" : {
-                "query" : "rpi",
-                "operator" : "OR",
-                "prefix_length" : 0,
-                "max_expansions" : 50,
-                "fuzzy_transpositions" : true,
-                "lenient" : false,
-                "zero_terms_query" : "NONE",
+            "match_phrase" : {
+              "description.summary" : {
+                "query" : "London",
+                "slop" : 0,
                 "boost" : 1.0
               }
             }
           }, {
             "multi_match" : {
-              "query" : "rpi",
-              "fields" : [ "entities.dates^1.0", "entities.organizations^1.0", "entities.persons^1.0" ],
+              "query" : "London",
+              "fields" : [ "entities.dates^1.0", "entities.locations^1.0", "entities.organizations^1.0", "entities.persons^1.0" ],
               "type" : "best_fields",
               "operator" : "OR",
               "slop" : 0,
@@ -36,9 +31,9 @@
       }, {
         "sltr" : {
           "_name" : "logged_featureset",
-          "featureset" : "bulletin_features",
+          "featureset" : "test_features",
           "params" : {
-            "keywords" : "rpi"
+            "keywords" : "London"
           }
         }
       } ],

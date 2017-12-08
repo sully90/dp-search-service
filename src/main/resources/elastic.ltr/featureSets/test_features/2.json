@@ -1,11 +1,11 @@
 {
-  "name": "1",
+  "name": "2",
   "params": [
     "keywords"
   ],
   "template": {
     "match": {
-      "title": "{{keywords}}"
+      "entities.locations": "{{keywords}}"
     }
   },
   "template_language": "mustache"

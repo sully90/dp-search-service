@@ -1,10 +1,10 @@
 {
-  "name": "2",
+  "name": "1",
   "params": [
     "keywords"
   ],
   "template": {
-    "match": {
+    "match_phrase": {
       "description.summary": "{{keywords}}"
     }
   },

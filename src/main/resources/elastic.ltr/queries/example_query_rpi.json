@@ -1,0 +1,61 @@
+{
+  "size" : 100,
+  "query" : {
+    "bool" : {
+      "filter" : [ {
+        "bool" : {
+          "should" : [ {
+            "match_phrase" : {
+              "description.summary" : {
+                "query" : "rpi",
+                "slop" : 0,
+                "boost" : 1.0
+              }
+            }
+          }, {
+            "match_phrase" : {
+              "description.keywords" : {
+                "query" : "rpi",
+                "slop" : 0,
+                "boost" : 1.0
+              }
+            }
+          }, {
+            "multi_match" : {
+              "query" : "rpi",
+              "fields" : [ "entities.dates^1.0", "entities.locations^1.0", "entities.organizations^1.0", "entities.persons^1.0" ],
+              "type" : "best_fields",
+              "operator" : "OR",
+              "slop" : 0,
+              "prefix_length" : 0,
+              "max_expansions" : 50,
+              "lenient" : false,
+              "zero_terms_query" : "NONE",
+              "boost" : 1.0
+            }
+          } ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0
+        }
+      }, {
+        "sltr" : {
+          "_name" : "logged_featureset",
+          "featureset" : "test_features",
+          "params" : {
+            "keywords" : "rpi"
+          }
+        }
+      } ],
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+  },
+  "ext" : {
+    "ltr_log" : {
+      "log_specs" : {
+        "name" : "log_entry",
+        "named_query" : "logged_featureset"
+      }
+    }
+  }
+}
