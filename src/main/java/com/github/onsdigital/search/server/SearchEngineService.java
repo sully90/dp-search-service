@@ -45,14 +45,14 @@ public class SearchEngineService {
     private static ElasticSearchClient getSearchClient(ClientType clientType) {
 
         BulkProcessorConfiguration configuration = ElasticSearchHelper.getDefaultBulkProcessorConfiguration();
-        // Default to the Http client
+        // Default to the Http com.github.onsdigital.search.client
         switch (clientType) {
             case TCP:
                 try {
                     TransportClient client = ElasticSearchHelper.getTransportClient(HOST_NAME, 9300);
                     return new TransportSearchClient(client, configuration);
                 } catch (UnknownHostException e) {
-                    LOGGER.error("Unable to load TCP client", e);
+                    LOGGER.error("Unable to load TCP com.github.onsdigital.search.client", e);
                     throw new RuntimeException(e);
                 }
             default:

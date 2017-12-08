@@ -144,12 +144,12 @@ public class LearnToRankService {
                         "entities.dates",
                         "entities.locations"));
 
-        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", "test_features");
+        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder("logged_featureset", "page_features");
         sltrQueryBuilder.setParam("keywords", keywords);
 
         LogQuerySearchRequest request = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
         try {
-            System.out.println(request.toJson(100));
+            System.out.println(request.toJson(20));
             client.close();
         } catch (IOException e) {
             e.printStackTrace();

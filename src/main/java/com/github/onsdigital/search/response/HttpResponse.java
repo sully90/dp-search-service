@@ -3,10 +3,6 @@ package com.github.onsdigital.search.response;
 import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 public class HttpResponse {
 
@@ -15,15 +11,7 @@ public class HttpResponse {
     }
 
     public static Response ok(Object entity) {
-        if (entity instanceof Collection) {
-            return ok(new ArrayList<>((Collection) entity));
-        } else {
-            return ok(Arrays.asList(entity));
-        }
-    }
-
-    public static Response ok(List<Object> entities) {
-        return Response.status(HttpStatus.SC_OK).entity(entities).build();
+        return Response.status(HttpStatus.SC_OK).entity(entity).build();
     }
 
     public static Response created() { return Response.status(HttpStatus.SC_CREATED).build(); }

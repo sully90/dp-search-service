@@ -1,5 +1,5 @@
 {
-  "size" : 100,
+  "size" : 20,
   "query" : {
     "bool" : {
       "filter" : [ {
@@ -40,7 +40,7 @@
       }, {
         "sltr" : {
           "_name" : "logged_featureset",
-          "featureset" : "test_features",
+          "featureset" : "page_features",
           "params" : {
             "keywords" : "rpi"
           }
