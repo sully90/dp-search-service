@@ -3,7 +3,11 @@ package com.github.onsdigital.search.server;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankListResponse;
+import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrHit;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
+import com.github.onsdigital.elasticutils.ml.client.response.sltr.models.Rankable;
+import com.github.onsdigital.elasticutils.ml.ranklib.Exporter;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.search.client.JerseyClient;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.apache.http.HttpStatus;
@@ -14,6 +18,9 @@ import javax.ws.rs.core.Response;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
@@ -47,12 +54,27 @@ public class TestClient {
     }
 
     private Map<String, Object> getQueryJsonFilename() throws IOException {
-        String lrtConfigPath = SearchEngineProperties.getProperty("elastic.ltr.store");
+        String ltrConfigPath = SearchEngineProperties.getProperty("elastic.ltr.store");
         String fileName = "queries/example_query_rpi.json";
 
-        File file = new File(lrtConfigPath + "/" + fileName);
+        File file = new File(ltrConfigPath + "/" + fileName);
         Map<String, Object> qbMap = MAPPER.readValue(file, new TypeReference<Map<String, Object>>(){});
         return qbMap;
+    }
+
+    public List<Judgement> generateTestJudgements(int num) {
+        List<Judgement> judgements = new LinkedList<>();
+        for (int i = 0; i < num; i++) {
+            judgements.add(Judgement.randomJudgement(1, "test comment"));
+        }
+
+        return judgements;
+    }
+
+    private String getOutputAbsolutePath(String modelName) {
+        String ltrConfigPath = SearchEngineProperties.getProperty("elastic.ltr.store");
+        String fileName = "models/" + modelName;
+        return ltrConfigPath + "/" + fileName;
     }
 
     @Test
@@ -76,6 +98,24 @@ public class TestClient {
 
         SltrResponse sltrResponse = response.readEntity(SltrResponse.class);
         assertFalse(sltrResponse.isTimedOut());
+
+        List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
+
+        String modelName = "java_sample_judgements_wfeatures.txt";
+        String absolutePath = getOutputAbsolutePath(modelName);
+
+        List<Judgement> judgements = generateTestJudgements(sltrHits.size());
+        Map<Judgement, Rankable> judgementMap = new LinkedHashMap<>();
+        for (int i = 0; i < judgements.size(); i++) {
+            judgementMap.put(judgements.get(i), sltrHits.get(i));
+        }
+
+        try {
+            Exporter.export(absolutePath, judgementMap);
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+
     }
 
 }

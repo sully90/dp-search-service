@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/client/JerseyClient.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/java/com/github/onsdigital/search/server/TestClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conf/application.conf" afterPath="$PROJECT_DIR$/conf/application.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iml" afterPath="$PROJECT_DIR$/dp-search-service.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.ipr" afterPath="$PROJECT_DIR$/dp-search-service.ipr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iws" afterPath="$PROJECT_DIR$/dp-search-service.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/response/HttpResponse.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/response/HttpResponse.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/SearchEngineService.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/SearchEngineService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/page_features/3.json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/page_features/3.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/queries/example_query_rpi.json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/queries/example_query_rpi.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/queries/result.json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/queries/result.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/java/com/github/onsdigital/search/server/TestClient.java" afterPath="$PROJECT_DIR$/test/java/com/github/onsdigital/search/server/TestClient.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -210,7 +198,7 @@
             <entry file="file://$PROJECT_DIR$/test/java/com/github/onsdigital/search/server/TestClient.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="653">
-                  <caret line="68" column="33" lean-forward="true" selection-start-line="68" selection-start-column="33" selection-end-line="68" selection-end-column="33" />
+                  <caret line="108" column="31" lean-forward="false" selection-start-line="108" selection-start-column="31" selection-end-line="108" selection-end-column="31" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -222,7 +210,7 @@
             <entry file="file://$PROJECT_DIR$/conf/application.conf">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="120">
-                  <caret line="8" column="109" lean-forward="true" selection-start-line="8" selection-start-column="109" selection-end-line="8" selection-end-column="109" />
+                  <caret line="8" column="109" lean-forward="false" selection-start-line="8" selection-start-column="109" selection-end-line="8" selection-end-column="109" />
                   <folding />
                 </state>
               </provider>
@@ -256,7 +244,7 @@
             <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="189">
-                  <caret line="99" column="90" lean-forward="true" selection-start-line="99" selection-start-column="65" selection-end-line="99" selection-end-column="90" />
+                  <caret line="99" column="90" lean-forward="false" selection-start-line="99" selection-start-column="65" selection-end-line="99" selection-end-column="90" />
                   <folding />
                 </state>
               </provider>
@@ -723,9 +711,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="TestClient_testGet - 2017.12.08 at 11h 16m 26s.xml">
-      <configuration name="TestClient.testGet" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="TestClient_testGet - 2017.12.08 at 11h 17m 12s.xml">
       <configuration name="TestClient.testGet" configurationId="JUnit" />
     </history-entry>
@@ -751,6 +736,9 @@
       <configuration name="TestClient.testPost" configurationId="JUnit" />
     </history-entry>
     <history-entry file="TestClient_testPost - 2017.12.08 at 11h 43m 42s.xml">
+      <configuration name="TestClient.testPost" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestClient_testPost - 2017.12.08 at 11h 58m 01s.xml">
       <configuration name="TestClient.testPost" configurationId="JUnit" />
     </history-entry>
   </component>
@@ -1177,7 +1165,7 @@
     <entry file="file://$PROJECT_DIR$/conf/application.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
-          <caret line="8" column="109" lean-forward="true" selection-start-line="8" selection-start-column="109" selection-end-line="8" selection-end-column="109" />
+          <caret line="8" column="109" lean-forward="false" selection-start-line="8" selection-start-column="109" selection-end-line="8" selection-end-column="109" />
           <folding />
         </state>
       </provider>
@@ -1193,7 +1181,7 @@
     <entry file="file://$PROJECT_DIR$/test/java/com/github/onsdigital/search/server/TestClient.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="653">
-          <caret line="68" column="33" lean-forward="true" selection-start-line="68" selection-start-column="33" selection-end-line="68" selection-end-column="33" />
+          <caret line="108" column="31" lean-forward="false" selection-start-line="108" selection-start-column="31" selection-end-line="108" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
