@@ -6,11 +6,13 @@ import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRan
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.RankLibModel;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
 import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -124,10 +126,12 @@ public class LearnToRankService {
     @POST
     @Path("/model/upload")
     @Consumes({ MediaType.MULTIPART_FORM_DATA })
-    @Produces({ MediaType.TEXT_HTML })
-    public Viewable uploadModel(@FormDataParam("file") InputStream inputStream) {
-        System.out.println(inputStream);
-        return new Viewable("/done", null);
+    @Produces({ MediaType.APPLICATION_JSON })
+//    @Produces({ MediaType.TEXT_HTML })
+    public Response uploadModel(@FormDataParam("model_name") String modelName, @FormDataParam("file") InputStream inputStream) throws IOException {
+        String content = IOUtils.toString(inputStream, "utf-8");
+        RankLibModel model = new RankLibModel(modelName, content);
+        return ok(model);
     }
 
     private static List<FeatureSet> loadFeatureSets() throws IOException {
