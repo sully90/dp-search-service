@@ -44,6 +44,7 @@ public class LearnToRankService {
 
     static {
         client = LearnToRankHelper.getLTRClient(HOSTNAME);
+        Runtime.getRuntime().addShutdownHook(new LearnToRankClient.ShutDownClientThread(client));
     }
 
     @PUT
