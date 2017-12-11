@@ -6,6 +6,7 @@ import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRan
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.ModelType;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.RankLibModel;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
@@ -13,6 +14,7 @@ import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.math.raw.Mod;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +63,7 @@ public class LearnToRankService {
 
             for (FeatureSet featureSet : featureSets) {
                 if (client.featureSetExists(featureSet.getName())) {
-                    client.deleteFeatureSetByName(featureSet.getName());
+                    client.deleteFeatureSet(featureSet.getName());
                 }
                 FeatureSetRequest request = new FeatureSetRequest(featureSet);
                 client.createFeatureSet(request);
@@ -89,7 +92,7 @@ public class LearnToRankService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getFeatureByName(@PathParam("name") String name) {
         try {
-            LearnToRankGetResponse response = client.getFeatureSetByName(name);
+            LearnToRankGetResponse response = client.getFeatureSet(name);
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error retrieving featureset with name: " + name, e);
@@ -107,7 +110,7 @@ public class LearnToRankService {
         try {
             String searchRequest = JsonUtils.toJson(qbMap);
 
-            SltrResponse response = client.sltr(index, searchRequest);
+            SltrResponse response = client.search(index, searchRequest);
             return ok(response);
         } catch (IOException e) {
             String message = String.format("Error performing sltr on index: %s, featureset: %s, with keywords : %s", index, featureSet, keywords);
@@ -126,12 +129,16 @@ public class LearnToRankService {
     @POST
     @Path("/model/upload")
     @Consumes({ MediaType.MULTIPART_FORM_DATA })
-    @Produces({ MediaType.APPLICATION_JSON })
-//    @Produces({ MediaType.TEXT_HTML })
-    public Response uploadModel(@FormDataParam("model_name") String modelName, @FormDataParam("file") InputStream inputStream) throws IOException {
+//    @Produces({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.TEXT_HTML })
+    public Viewable uploadModel(@FormDataParam("model_name") String modelName,
+                                @FormDataParam("model_type") String modelType,
+                                @FormDataParam("file") InputStream inputStream) throws IOException {
         String content = IOUtils.toString(inputStream, "utf-8");
-        RankLibModel model = new RankLibModel(modelName, content);
-        return ok(model);
+
+        ModelType type = ModelType.fromString(String.format("model/%s", modelType));
+        RankLibModel model = new RankLibModel(modelName, type, content);
+        return new Viewable("/done", null);
     }
 
     private static List<FeatureSet> loadFeatureSets() throws IOException {

@@ -7,11 +7,14 @@
        <p>
         Model name: <input type="text" name="model_name">
        </p>
+       <p>
+       Model type: <input type="text" name="model_type">
+       </p>
 	   <p>
 		Select a file : <input type="file" name="file" size="45" />
 	   </p>
 
-	   <input type="submit" value="Upload It" />
+	   <input type="submit" value="Upload" />
 	</form>
 
 </body>
