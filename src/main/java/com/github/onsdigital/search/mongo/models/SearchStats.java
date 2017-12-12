@@ -1,5 +1,6 @@
 package com.github.onsdigital.search.mongo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.onsdigital.mongo.WritableObject;
 import com.github.onsdigital.mongo.util.ObjectFinder;
@@ -69,6 +70,11 @@ public class SearchStats implements WritableObject {
         return timeStamp;
     }
 
+    @JsonIgnore
+    public int getAbsoluteIndex() {
+        return (this.pageIndex - 1) * this.pageSize + this.linkIndex;
+    }
+
     @Override
     public ObjectWriter writer() {
         return new ObjectWriter(CollectionNames.SEARCH_STATS, this);
@@ -99,7 +105,7 @@ public class SearchStats implements WritableObject {
 
     @Override
     public String toString() {
-        return String.format("linkIndex:%d", this.getLinkIndex());
+        return String.format("term:%s : index:%d", this.getTerm(), this.getAbsoluteIndex());
     }
 
     public static Map<String, Map<SearchStats, Integer>> countClicks() {
@@ -132,6 +138,13 @@ public class SearchStats implements WritableObject {
 
     public static void main(String[] args) {
         Map<String, Map<SearchStats, Integer>> counts = SearchStats.countClicks();
-        System.out.println(counts);
+
+        String term = "claimant rate wales";
+        Map<SearchStats, Integer> claimantCounts = counts.get(term);
+//        System.out.println(claimantCounts);
+
+        for (SearchStats key : claimantCounts.keySet()) {
+            System.out.println(key + " ; " + key.getPageIndex() + " ; " + key.getLinkIndex() + " : " + claimantCounts.get(key));
+        }
     }
 }
