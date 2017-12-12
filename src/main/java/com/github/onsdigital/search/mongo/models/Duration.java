@@ -1,4 +1,4 @@
-package com.github.onsdigital.search.mongo;
+package com.github.onsdigital.search.mongo.models;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

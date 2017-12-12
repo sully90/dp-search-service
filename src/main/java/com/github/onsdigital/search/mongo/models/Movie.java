@@ -1,4 +1,4 @@
-package com.github.onsdigital.search.mongo;
+package com.github.onsdigital.search.mongo.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,6 +6,7 @@ import com.github.onsdigital.mongo.WritableObject;
 import com.github.onsdigital.mongo.util.DatabaseType;
 import com.github.onsdigital.mongo.util.ObjectFinder;
 import com.github.onsdigital.mongo.util.ObjectWriter;
+import com.github.onsdigital.search.mongo.CollectionNames;
 import org.bson.types.ObjectId;
 
 import java.text.DateFormat;
