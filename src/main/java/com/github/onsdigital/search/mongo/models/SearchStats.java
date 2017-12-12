@@ -103,12 +103,15 @@ public class SearchStats implements WritableObject {
     }
 
     public static Map<String, Map<SearchStats, Integer>> countClicks() {
+        Iterable<SearchStats> it = SearchStats.finder().find();
+        return countClicks(it);
+    }
+
+    public static Map<String, Map<SearchStats, Integer>> countClicks(Iterable<SearchStats> it) {
         // Init the map
         Map<String, Map<SearchStats, Integer>> countMap = new HashMap<>();
 
         // Collect all available records from mongo and count how many times a link is clicked for each search term
-        Iterable<SearchStats> it = SearchStats.finder().find();
-
         for (SearchStats searchStats : it) {
             String term = searchStats.getTerm();
             if (!countMap.containsKey(term)) {
