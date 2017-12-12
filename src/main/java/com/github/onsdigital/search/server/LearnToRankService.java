@@ -79,7 +79,7 @@ public class LearnToRankService {
     @Produces({MediaType.APPLICATION_JSON})
     public Response listFeatureSets() {
         try {
-            LearnToRankListResponse response = client.listFeatureSets();
+            LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets();
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error listing feature sets", e);
@@ -92,7 +92,7 @@ public class LearnToRankService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getFeatureByName(@PathParam("name") String name) {
         try {
-            LearnToRankGetResponse response = client.getFeatureSet(name);
+            LearnToRankGetResponse<FeatureSetRequest> response = client.getFeatureSet(name);
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error retrieving featureset with name: " + name, e);
