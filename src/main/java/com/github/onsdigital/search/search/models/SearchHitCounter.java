@@ -58,9 +58,11 @@ public class SearchHitCounter {
         // Max count scores a 3 (perfect), normalise down to 1 (irrelevant)
         for (String url : this.urlCountMap.keySet()) {
             int count = this.urlCountMap.get(url);
-            float judgement = normalise(count, maxCount, MAX_SCORE);
+            float judgementValue = normalise(count, maxCount, MAX_SCORE);
             // Create a new judgement and append to the list
-            judgementList.add(new Judgement(judgement, queryId));
+            Judgement judgement = new Judgement(judgementValue, queryId);
+            judgement.setComment(url);
+            judgementList.add(judgement);
         }
 
         return judgementList;

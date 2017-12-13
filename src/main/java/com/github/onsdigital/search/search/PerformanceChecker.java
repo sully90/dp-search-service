@@ -1,6 +1,7 @@
 package com.github.onsdigital.search.search;
 
 import com.github.onsdigital.elasticutils.client.generic.ElasticSearchClient;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.SearchStat;
 import com.github.onsdigital.search.util.SearchClientUtils;
@@ -37,6 +38,21 @@ public class PerformanceChecker {
         return hitCounts;
     }
 
+    // TODO improve qid logic
+    public Map<String, List<Judgement>> getTermJudgements() {
+        Map<String, SearchHitCounter> hitCounts = this.getUniqueHitCounts();
+        Map<String, List<Judgement>> judgementMap = new HashMap<>();
+
+        int qid = 1;
+        for (String term : hitCounts.keySet()) {
+            List<Judgement> judgements = hitCounts.get(term).getJudgementList(qid);
+            judgementMap.put(term, judgements);
+            qid++;
+        }
+
+        return judgementMap;
+    }
+
     public float[] cumulativeGain(float[] judgements) {
         float[] cumulativeGain = new float[judgements.length];
 
@@ -63,6 +79,13 @@ public class PerformanceChecker {
         }
 
         PerformanceChecker performanceChecker = new PerformanceChecker(searchStats);
-        System.out.println(performanceChecker.getUniqueHitCounts());
+
+        Map<String, List<Judgement>> judgementMap = performanceChecker.getTermJudgements();
+        for (String term : judgementMap.keySet()) {
+            System.out.println(String.format("%s:", term));
+            for (Judgement judgement : judgementMap.get(term)) {
+                System.out.println(judgement.getJudgement() + " : " + judgement.getFormattedComment());
+            }
+        }
     }
 }
