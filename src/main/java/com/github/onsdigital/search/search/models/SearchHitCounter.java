@@ -44,7 +44,7 @@ public class SearchHitCounter {
         return total;
     }
 
-    public List<Judgement> getJudgementList(int queryId) {
+    public List<Judgement> getJudgementList(String queryTerm, int queryId) {
         List<Judgement> judgementList = new ArrayList<>();
 
         // First get the max number of counts
@@ -61,7 +61,7 @@ public class SearchHitCounter {
             float judgementValue = normalise(count, maxCount, MAX_SCORE);
             // Create a new judgement and append to the list
             Judgement judgement = new Judgement(judgementValue, queryId);
-            judgement.setComment(url);
+            judgement.setComment(String.format("%s:%s", queryTerm, url));
             judgementList.add(judgement);
         }
 

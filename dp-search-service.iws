@@ -173,8 +173,8 @@
       <file leaf-file-name="PerformanceChecker.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="86" column="101" lean-forward="false" selection-start-line="86" selection-start-column="101" selection-end-line="86" selection-end-column="101" />
+            <state relative-caret-position="242">
+              <caret line="82" column="30" lean-forward="false" selection-start-line="82" selection-start-column="30" selection-end-line="82" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#767#768#0" expanded="true" />
@@ -187,8 +187,8 @@
       <file leaf-file-name="SearchHitCounter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="64" column="41" lean-forward="false" selection-start-line="64" selection-start-column="41" selection-end-line="64" selection-end-column="41" />
+            <state relative-caret-position="295">
+              <caret line="63" column="70" lean-forward="false" selection-start-line="63" selection-start-column="70" selection-end-line="63" selection-end-column="70" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#456#457#0" expanded="true" />
@@ -197,8 +197,8 @@
                 <element signature="e#792#793#0" expanded="true" />
                 <element signature="e#836#837#0" expanded="true" />
                 <element signature="e#919#920#0" expanded="true" />
-                <element signature="e#2241#2242#0" expanded="true" />
-                <element signature="e#2291#2292#0" expanded="true" />
+                <element signature="e#2294#2295#0" expanded="true" />
+                <element signature="e#2344#2345#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1276,8 +1276,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="64" column="41" lean-forward="false" selection-start-line="64" selection-start-column="41" selection-end-line="64" selection-end-column="41" />
+        <state relative-caret-position="295">
+          <caret line="63" column="70" lean-forward="false" selection-start-line="63" selection-start-column="70" selection-end-line="63" selection-end-column="70" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#456#457#0" expanded="true" />
@@ -1286,16 +1286,16 @@
             <element signature="e#792#793#0" expanded="true" />
             <element signature="e#836#837#0" expanded="true" />
             <element signature="e#919#920#0" expanded="true" />
-            <element signature="e#2241#2242#0" expanded="true" />
-            <element signature="e#2291#2292#0" expanded="true" />
+            <element signature="e#2294#2295#0" expanded="true" />
+            <element signature="e#2344#2345#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="86" column="101" lean-forward="false" selection-start-line="86" selection-start-column="101" selection-end-line="86" selection-end-column="101" />
+        <state relative-caret-position="242">
+          <caret line="82" column="30" lean-forward="false" selection-start-line="82" selection-start-column="30" selection-end-line="82" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#767#768#0" expanded="true" />

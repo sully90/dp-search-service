@@ -45,7 +45,7 @@ public class PerformanceChecker {
 
         int qid = 1;
         for (String term : hitCounts.keySet()) {
-            List<Judgement> judgements = hitCounts.get(term).getJudgementList(qid);
+            List<Judgement> judgements = hitCounts.get(term).getJudgementList(term, qid);
             judgementMap.put(term, judgements);
             qid++;
         }
