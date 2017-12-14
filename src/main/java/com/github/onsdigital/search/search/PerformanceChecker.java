@@ -18,6 +18,10 @@ public class PerformanceChecker {
 
     private List<SearchStat> searchStats;
 
+    public PerformanceChecker() {
+        this.searchStats = PerformanceChecker.loadSearchStats();
+    }
+
     public PerformanceChecker(List<SearchStat> searchStats) {
         this.searchStats = searchStats;
     }
@@ -77,12 +81,18 @@ public class PerformanceChecker {
         return ndcgMap;
     }
 
-    public static void main(String[] args) {
+    public static List<SearchStat> loadSearchStats() {
+        // For now, load from mongoDB. This can be changed in the future depending on the direction we take.
         Iterable<SearchStat> it = SearchStat.finder().find();
         List<SearchStat> searchStats = new ArrayList<>();
         it.forEach(searchStats::add);
 
-        PerformanceChecker performanceChecker = new PerformanceChecker(searchStats);
+        return searchStats;
+    }
+
+    public static void main(String[] args) {
+
+        PerformanceChecker performanceChecker = new PerformanceChecker();
 
         Map<String, Float[]> ndcgMap = performanceChecker.computeNdcg();
         for (String term : ndcgMap.keySet()) {

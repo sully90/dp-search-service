@@ -171,10 +171,12 @@
       <file leaf-file-name="PerformanceChecker.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="960">
-              <caret line="88" column="35" lean-forward="false" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
+            <state relative-caret-position="900">
+              <caret line="94" column="71" lean-forward="false" selection-start-line="94" selection-start-column="71" selection-end-line="94" selection-end-column="71" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#622#623#0" expanded="true" />
+                <element signature="e#693#694#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1207,10 +1209,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="960">
-          <caret line="88" column="35" lean-forward="false" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
+        <state relative-caret-position="900">
+          <caret line="94" column="71" lean-forward="false" selection-start-line="94" selection-start-column="71" selection-end-line="94" selection-end-column="71" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#622#623#0" expanded="true" />
+            <element signature="e#693#694#0" expanded="true" />
           </folding>
         </state>
       </provider>
