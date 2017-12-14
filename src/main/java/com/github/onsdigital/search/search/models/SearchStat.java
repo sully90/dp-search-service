@@ -144,4 +144,8 @@ public class SearchStat implements FindableObject, Searchable {
         }
     }
 
+    public static void main(String[] args) {
+        SearchStat.syncElasticSearchAndMongo();
+    }
+
 }

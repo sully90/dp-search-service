@@ -15,13 +15,16 @@ public class SearchHitCounter {
     private static final int MAX_SCORE = 3;
 
     private Map<String, Integer> urlCountMap;
+    private List<Integer> ranks;
 
     public SearchHitCounter() {
-        this.urlCountMap = new HashMap<>();
+        this.urlCountMap = new LinkedHashMap<>();
+        this.ranks = new LinkedList<>();
     }
 
-    public Integer add(String url) {
+    public Integer add(String url, int rank) {
         if (!urlCountMap.containsKey(url)) {
+            this.ranks.add(rank);
             return urlCountMap.put(url, 1);
         } else {
             return this.increment(url);
@@ -56,11 +59,16 @@ public class SearchHitCounter {
         }
 
         // Max count scores a 3 (perfect), normalise down to 1 (irrelevant)
-        for (String url : this.urlCountMap.keySet()) {
+        Set<String> urlKeySet = this.urlCountMap.keySet();
+        List<String> urlList = new LinkedList<>(urlKeySet);
+        for (int i = 0; i < urlKeySet.size(); i++) {
+            String url = urlList.get(i);
+            int rank = this.ranks.get(i);
+
             int count = this.urlCountMap.get(url);
             float judgementValue = normalise(count, maxCount, MAX_SCORE);
             // Create a new judgement and append to the list
-            Judgement judgement = new Judgement(judgementValue, queryId);
+            Judgement judgement = new Judgement(judgementValue, queryId, rank);
             judgement.setComment(String.format("%s:%s", queryTerm, url));
             judgementList.add(judgement);
         }

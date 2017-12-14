@@ -1,14 +1,11 @@
 package com.github.onsdigital.search.search;
 
-import com.github.onsdigital.elasticutils.client.generic.ElasticSearchClient;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.SearchStat;
-import com.github.onsdigital.search.util.SearchClientUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -33,7 +30,7 @@ public class PerformanceChecker {
             if (!hitCounts.containsKey(term)) {
                 hitCounts.put(term, new SearchHitCounter());
             }
-            hitCounts.get(term).add(searchStat.getUrl());
+            hitCounts.get(term).add(searchStat.getUrl(), searchStat.getRank());
         }
         return hitCounts;
     }
@@ -53,15 +50,31 @@ public class PerformanceChecker {
         return judgementMap;
     }
 
-    public float[] cumulativeGain(float[] judgements) {
-        float[] cumulativeGain = new float[judgements.length];
+    /**
+     * Computes the NDCG metric for each query term. The closer the NDCG is to unity (1), the better
+     * the performance of the search engine (as a score of 1 means we hit the ideal value)
+     * @return
+     */
+    public Map<String, Float[]> computeNdcg() {
+        Map<String, List<Judgement>> judgementMap = this.getTermJudgements();
 
-        float total = 0.0f;
-        for (int i = 0; i < judgements.length; i++) {
-            total += judgements[i];
-            cumulativeGain[i] = total;
+        Map<String, Float[]> ndcgMap = new HashMap<>();
+
+        for (String term : judgementMap.keySet()) {
+            List<Judgement> judgementList = judgementMap.get(term);
+            int qid = judgementList.get(0).getQueryId();
+
+            Judgements judgements = new Judgements(qid, judgementList);
+            float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
+
+            Float[] ndcgConverted = new Float[ndcg.length];
+            for (int i = 0; i < ndcg.length; i++) {
+                ndcgConverted[i] = ndcg[i];
+            }
+            ndcgMap.put(term, ndcgConverted);
         }
-        return cumulativeGain;
+
+        return ndcgMap;
     }
 
     public static void main(String[] args) {
@@ -71,21 +84,16 @@ public class PerformanceChecker {
 //        List<SearchStat> searchStats = new ArrayList<>();
 //        it.forEach(searchStats::add);
 
-        List<SearchStat> searchStats = null;
-        try (ElasticSearchClient<SearchStat> searchClient = SearchClientUtils.getSearchClient()) {
-             searchStats = SearchStat.search(searchClient).search();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Iterable<SearchStat> it = SearchStat.finder().find();
+        List<SearchStat> searchStats = new ArrayList<>();
+        it.forEach(searchStats::add);
 
         PerformanceChecker performanceChecker = new PerformanceChecker(searchStats);
 
-        Map<String, List<Judgement>> judgementMap = performanceChecker.getTermJudgements();
-        for (String term : judgementMap.keySet()) {
-            System.out.println(String.format("%s:", term));
-            for (Judgement judgement : judgementMap.get(term)) {
-                System.out.println(judgement.getJudgement() + " : " + judgement.getFormattedComment());
-            }
+        Map<String, Float[]> ndcgMap = performanceChecker.computeNdcg();
+        for (String term : ndcgMap.keySet()) {
+            System.out.println(String.format("Term: %s", term));
+            System.out.println(Arrays.toString(ndcgMap.get(term)));
         }
     }
 }
