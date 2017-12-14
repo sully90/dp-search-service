@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -171,8 +172,8 @@
       <file leaf-file-name="PerformanceChecker.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="900">
-              <caret line="94" column="71" lean-forward="false" selection-start-line="94" selection-start-column="71" selection-end-line="94" selection-end-column="71" />
+            <state relative-caret-position="1001">
+              <caret line="104" column="9" lean-forward="true" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#622#623#0" expanded="true" />
@@ -185,8 +186,8 @@
       <file leaf-file-name="SearchHitCounter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="26" column="31" lean-forward="false" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+            <state relative-caret-position="1016">
+              <caret line="92" column="34" lean-forward="false" selection-start-line="92" selection-start-column="34" selection-end-line="92" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -286,8 +287,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/util/SearchClientUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/SearchEngineService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchStat.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" />
       </list>
     </option>
   </component>
@@ -343,7 +344,7 @@
     <option name="x" value="-1080" />
     <option name="y" value="-1031" />
     <option name="width" value="1080" />
-    <option name="height" value="1897" />
+    <option name="height" value="1893" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -796,7 +797,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1080" y="-1031" width="1080" height="1897" extended-state="6" />
+    <frame x="-1080" y="-1031" width="1080" height="1893" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -808,7 +809,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35780823" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35859418" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1199,8 +1200,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="31" lean-forward="false" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+        <state relative-caret-position="1016">
+          <caret line="92" column="34" lean-forward="false" selection-start-line="92" selection-start-column="34" selection-end-line="92" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1209,8 +1210,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="900">
-          <caret line="94" column="71" lean-forward="false" selection-start-line="94" selection-start-column="71" selection-end-line="94" selection-end-column="71" />
+        <state relative-caret-position="1001">
+          <caret line="104" column="9" lean-forward="true" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#622#623#0" expanded="true" />

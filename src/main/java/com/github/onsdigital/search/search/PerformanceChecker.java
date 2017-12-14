@@ -42,6 +42,7 @@ public class PerformanceChecker {
     // TODO improve qid logic
     public Map<String, List<Judgement>> getTermJudgements() {
         Map<String, SearchHitCounter> hitCounts = this.getUniqueHitCounts();
+
         Map<String, List<Judgement>> judgementMap = new HashMap<>();
 
         int qid = 1;
@@ -94,10 +95,13 @@ public class PerformanceChecker {
 
         PerformanceChecker performanceChecker = new PerformanceChecker();
 
+        Map<String, SearchHitCounter> uniqueHitCounts = performanceChecker.getUniqueHitCounts();
+
         Map<String, Float[]> ndcgMap = performanceChecker.computeNdcg();
         for (String term : ndcgMap.keySet()) {
             System.out.println(String.format("Term: %s", term));
             System.out.println(Arrays.toString(ndcgMap.get(term)));
+            System.out.println(uniqueHitCounts.get(term));
         }
     }
 }

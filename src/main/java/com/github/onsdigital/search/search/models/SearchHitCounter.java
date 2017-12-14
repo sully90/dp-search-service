@@ -82,6 +82,14 @@ public class SearchHitCounter {
 
     @Override
     public String toString() {
-        return this.urlCountMap.toString();
+        List<String> strings = new LinkedList<>();
+
+        Set<String> urlKeySet = this.urlCountMap.keySet();
+        List<String> urlList = new LinkedList<>(urlKeySet);
+        for (int i = 0; i < this.urlCountMap.size(); i++) {
+            strings.add(String.format("%d:%s", this.ranks.get(i), urlList.get(i)));
+        }
+
+        return strings.toString();
     }
 }
