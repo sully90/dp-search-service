@@ -80,10 +80,6 @@ public class PerformanceChecker {
     public static void main(String[] args) {
         float[] judgements = {3.0f, 2.0f, 1.0f, 0.0f};
 
-//        Iterable<SearchStat> it = SearchStat.finder().find();
-//        List<SearchStat> searchStats = new ArrayList<>();
-//        it.forEach(searchStats::add);
-
         Iterable<SearchStat> it = SearchStat.finder().find();
         List<SearchStat> searchStats = new ArrayList<>();
         it.forEach(searchStats::add);
