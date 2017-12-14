@@ -2,6 +2,7 @@ package com.github.onsdigital.search.search.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
+import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 public class SearchHitCounter {
 
     @JsonIgnore
-    private static final int MAX_SCORE = 3;
+    private static final float MAX_SCORE = Judgements.MAX_SCORE;
 
     private Map<String, Integer> urlCountMap;
     private List<Integer> ranks;
@@ -76,20 +77,25 @@ public class SearchHitCounter {
         return judgementList;
     }
 
-    private static float normalise(int count, int maxCount, int maxScore) {
-        return (Float.valueOf(count) / Float.valueOf(maxCount)) * Float.valueOf(maxScore);
+    private static float normalise(int count, int maxCount, float maxScore) {
+        return (Float.valueOf(count) / Float.valueOf(maxCount)) * maxScore;
     }
 
     @Override
     public String toString() {
-        List<String> strings = new LinkedList<>();
-
-        Set<String> urlKeySet = this.urlCountMap.keySet();
-        List<String> urlList = new LinkedList<>(urlKeySet);
-        for (int i = 0; i < this.urlCountMap.size(); i++) {
-            strings.add(String.format("%d:%s", this.ranks.get(i), urlList.get(i)));
-        }
-
-        return strings.toString();
+        return this.ranks.toString();
     }
+
+//    @Override
+//    public String toString() {
+//        List<String> strings = new LinkedList<>();
+//
+//        Set<String> urlKeySet = this.urlCountMap.keySet();
+//        List<String> urlList = new LinkedList<>(urlKeySet);
+//        for (int i = 0; i < this.urlCountMap.size(); i++) {
+//            strings.add(String.format("%d:%s", this.ranks.get(i), urlList.get(i)));
+//        }
+//
+//        return strings.toString();
+//    }
 }
