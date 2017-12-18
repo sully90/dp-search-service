@@ -127,7 +127,7 @@ public class LearnToRankService {
                          @PathParam("featureset") String featureSet,
                          Map<String, Object> qbMap) {
 
-        if (!qbMap.containsKey("keywords") || !(qbMap.get("keywords") instanceof Map)) {
+        if (!qbMap.containsKey("params") || !(qbMap.get("params") instanceof Map)) {
             return internalServerError("Must supply keywords Map in query map");
         }
 
@@ -159,20 +159,13 @@ public class LearnToRankService {
         if (!store.isEmpty()) {
             sltrQueryBuilder.setStore(store);
         }
-        Map<String, String> keywordsMap = (Map<String, String>) qbMap.get("keywords");
+        Map<String, String> keywordsMap = (Map<String, String>) qbMap.get("params");
 
         for (String key : keywordsMap.keySet()) {
             sltrQueryBuilder.setParam(key, keywordsMap.get(key));
         }
 
         LogQuerySearchRequest logQuerySearchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
-
-        try {
-            String json = logQuerySearchRequest.toJson();
-            System.out.println(json);
-        } catch (IOException e) {
-            return internalServerError(e);
-        }
 
         try {
             SltrResponse response = client.search(index, logQuerySearchRequest);

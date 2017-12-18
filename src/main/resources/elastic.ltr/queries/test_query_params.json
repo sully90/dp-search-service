@@ -1,5 +1,5 @@
 {
-  "keywords": {
+  "params": {
     "keywords": "rpi"
   },
   "store" : "ons_featurestore",
