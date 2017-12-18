@@ -6,6 +6,8 @@ import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 
 import java.util.*;
 
+import static com.github.onsdigital.search.util.MapUtils.entriesSortedByValues;
+
 /**
  * @author sullid (David Sullivan) on 13/12/2017
  * @project dp-search-service
@@ -92,13 +94,6 @@ public class SearchHitCounter {
 
     public SortedSet<Map.Entry<String, SearchHitCount>> sort() {
         return entriesSortedByValues(this.urlCountMap);
-    }
-
-    private static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(Map<K, V> map) {
-        SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<>(
-                Comparator.comparing(Map.Entry::getValue));
-        sortedEntries.addAll(map.entrySet());
-        return sortedEntries;
     }
 
     @Override

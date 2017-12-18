@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/util/MapUtils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -183,12 +184,24 @@
       <file leaf-file-name="SearchHitCounter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1238">
-              <caret line="97" column="63" lean-forward="false" selection-start-line="97" selection-start-column="63" selection-end-line="97" selection-end-column="63" />
+            <state relative-caret-position="1098">
+              <caret line="95" column="24" lean-forward="true" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3067#3068#0" expanded="true" />
-                <element signature="e#3129#3130#0" expanded="true" />
+                <element signature="e#3148#3149#0" expanded="true" />
+                <element signature="e#3210#3211#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MapUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/util/MapUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="13" column="10" lean-forward="false" selection-start-line="13" selection-start-column="10" selection-end-line="13" selection-end-column="10" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -305,6 +318,7 @@
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCount.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/util/MapUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java" />
       </list>
     </option>
@@ -905,14 +919,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1605">
-          <caret line="107" column="51" lean-forward="false" selection-start-line="107" selection-start-column="51" selection-end-line="107" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/elasticsearch/models/WritableFeatureSetRequest.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/SearchEngineService.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1226,14 +1232,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/util/MapUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1238">
-          <caret line="97" column="63" lean-forward="false" selection-start-line="97" selection-start-column="63" selection-end-line="97" selection-end-column="63" />
+        <state relative-caret-position="195">
+          <caret line="13" column="10" lean-forward="false" selection-start-line="13" selection-start-column="10" selection-end-line="13" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3067#3068#0" expanded="true" />
-            <element signature="e#3129#3130#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/models/SearchHitCounter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1098">
+          <caret line="95" column="24" lean-forward="true" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3148#3149#0" expanded="true" />
+            <element signature="e#3210#3211#0" expanded="true" />
           </folding>
         </state>
       </provider>
