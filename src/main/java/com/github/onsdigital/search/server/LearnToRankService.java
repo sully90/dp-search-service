@@ -55,18 +55,18 @@ public class LearnToRankService {
     }
 
     @PUT
-    @Path("/featuresets/init")
+    @Path("/featuresets/init/{featurestore}")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response initFeatureStore() {
+    public Response initFeatureStore(@PathParam("featurestore") String featureStore) {
         try {
             List<FeatureSet> featureSets = loadFeatureSets();
 
             for (FeatureSet featureSet : featureSets) {
-                if (client.featureSetExists(featureSet.getName())) {
-                    client.deleteFeatureSet(featureSet.getName());
+                if (client.featureSetExists(featureStore, featureSet.getName())) {
+                    client.deleteFeatureSet(featureStore, featureSet.getName());
                 }
                 FeatureSetRequest request = new FeatureSetRequest(featureSet);
-                client.createFeatureSet(request);
+                client.createFeatureSet(featureStore, request);
             }
             return ok();
         } catch (IOException e) {
@@ -75,11 +75,11 @@ public class LearnToRankService {
     }
 
     @GET
-    @Path("/featuresets/list/")
+    @Path("/featuresets/list/{featurestore}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response listFeatureSets() {
+    public Response listFeatureSets(@PathParam("featurestore") String featureStore) {
         try {
-            LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets();
+            LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets(featureStore);
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error listing feature sets", e);
@@ -88,11 +88,11 @@ public class LearnToRankService {
     }
 
     @GET
-    @Path("/featuresets/list/{name}")
+    @Path("/featuresets/list/{featurestore}/{name}")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getFeatureByName(@PathParam("name") String name) {
+    public Response getFeatureByName(@PathParam("featurestore") String featureStore, @PathParam("name") String name) {
         try {
-            LearnToRankGetResponse<FeatureSetRequest> response = client.getFeatureSet(name);
+            LearnToRankGetResponse<FeatureSetRequest> response = client.getFeatureSet(featureStore, name);
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error retrieving featureset with name: " + name, e);
@@ -100,24 +100,25 @@ public class LearnToRankService {
         }
     }
 
-    @POST
-    @Path("/sltr/{index}/{featureset}/{keywords}")
-    @Consumes({ MediaType.APPLICATION_JSON })
-    @Produces({ MediaType.APPLICATION_JSON })
-    public Response sltr(@PathParam("index") String index, @PathParam("featureset") String featureSet,
-                         @PathParam("keywords") String keywords, Map<String, Object> qbMap) {
-
-        try {
-            String searchRequest = JsonUtils.toJson(qbMap);
-
-            SltrResponse response = client.search(index, searchRequest);
-            return ok(response);
-        } catch (IOException e) {
-            String message = String.format("Error performing sltr on index: %s, featureset: %s, with keywords : %s", index, featureSet, keywords);
-            LOGGER.error(message, e);
-            return internalServerError(e);
-        }
-    }
+//    @POST
+//    @Path("/sltr/{index}/{featureset}/{keywords}")
+//    @Consumes({ MediaType.APPLICATION_JSON })
+//    @Produces({ MediaType.APPLICATION_JSON })
+//    public Response sltr(@PathParam("index") String index,
+//                         @PathParam("featureset") String featureSet,
+//                         @PathParam("keywords") String keywords, Map<String, Object> qbMap) {
+//
+//        try {
+//            String searchRequest = JsonUtils.toJson(qbMap);
+//
+//            SltrResponse response = client.search(index, searchRequest);
+//            return ok(response);
+//        } catch (IOException e) {
+//            String message = String.format("Error performing sltr on index: %s, featureset: %s, with keywords : %s", index, featureSet, keywords);
+//            LOGGER.error(message, e);
+//            return internalServerError(e);
+//        }
+//    }
 
     @GET
     @Path("/model/")

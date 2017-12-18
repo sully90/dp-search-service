@@ -26,66 +26,41 @@ public class PerformanceChecker {
         this.searchStats = searchStats;
     }
 
+    // TODO improve qid logic
     public Map<String, SearchHitCounter> getUniqueHitCounts() {
-        Map<String, SearchHitCounter> hitCounts = new HashMap<>();
+        Map<String, SearchHitCounter> hitCounts = new LinkedHashMap<>();
 
+        int qid = 1;
         for (SearchStat searchStat : this.searchStats) {
             String term = searchStat.getTerm();
             if (!hitCounts.containsKey(term)) {
-                hitCounts.put(term, new SearchHitCounter());
+                hitCounts.put(term, new SearchHitCounter(qid));
+                qid++;
             }
             hitCounts.get(term).add(searchStat.getUrl(), searchStat.getRank());
         }
         return hitCounts;
     }
 
-    // TODO improve qid logic
-    public Map<String, List<Judgement>> getTermJudgements() {
+    public Map<String, Judgements> getTermJudgements() {
         Map<String, SearchHitCounter> hitCounts = this.getUniqueHitCounts();
 
-        Map<String, List<Judgement>> judgementMap = new HashMap<>();
+        Map<String, Judgements> judgementMap = new LinkedHashMap<>();
 
         int qid = 1;
         for (String term : hitCounts.keySet()) {
-            List<Judgement> judgements = hitCounts.get(term).getJudgementList(term, qid);
-            judgementMap.put(term, judgements);
+            List<Judgement> judgements = hitCounts.get(term).getJudgementList(term);
+            judgementMap.put(term, new Judgements(qid, judgements));
             qid++;
         }
 
         return judgementMap;
     }
 
-    /**
-     * Computes the NDCG metric for each query term. The closer the NDCG is to unity (1), the better
-     * the performance of the search engine (as a score of 1 means we hit the ideal value)
-     * @return
-     */
-    public Map<String, Float[]> computeNdcg() {
-        Map<String, List<Judgement>> judgementMap = this.getTermJudgements();
-
-        Map<String, Float[]> ndcgMap = new HashMap<>();
-
-        for (String term : judgementMap.keySet()) {
-            List<Judgement> judgementList = judgementMap.get(term);
-            int qid = judgementList.get(0).getQueryId();
-
-            Judgements judgements = new Judgements(qid, judgementList);
-            float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
-
-            Float[] ndcgConverted = new Float[ndcg.length];
-            for (int i = 0; i < ndcg.length; i++) {
-                ndcgConverted[i] = ndcg[i];
-            }
-            ndcgMap.put(term, ndcgConverted);
-        }
-
-        return ndcgMap;
-    }
-
     public static List<SearchStat> loadSearchStats() {
         // For now, load from mongoDB. This can be changed in the future depending on the direction we take.
         Iterable<SearchStat> it = SearchStat.finder().find();
-        List<SearchStat> searchStats = new ArrayList<>();
+        List<SearchStat> searchStats = new LinkedList<>();
         it.forEach(searchStats::add);
 
         return searchStats;
@@ -95,13 +70,12 @@ public class PerformanceChecker {
 
         PerformanceChecker performanceChecker = new PerformanceChecker();
 
-        Map<String, SearchHitCounter> uniqueHitCounts = performanceChecker.getUniqueHitCounts();
-
-        Map<String, Float[]> ndcgMap = performanceChecker.computeNdcg();
-        for (String term : ndcgMap.keySet()) {
-            System.out.println(String.format("Term: %s", term));
-            System.out.println(Arrays.toString(ndcgMap.get(term)));
-            System.out.println(uniqueHitCounts.get(term));
+        Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
+        for (String term : uniqueHits.keySet()) {
+            Judgements judgements = uniqueHits.get(term).getJudgements(term);
+            System.out.println("Term: " + term);
+            System.out.println(uniqueHits.get(term));
+            System.out.println(Arrays.toString(judgements.normalisedDiscountedCumulativeGain()));
         }
     }
 }
