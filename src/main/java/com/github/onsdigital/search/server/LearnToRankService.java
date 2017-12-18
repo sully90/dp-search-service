@@ -55,18 +55,24 @@ public class LearnToRankService {
     }
 
     @PUT
-    @Path("/featuresets/init/{featurestore}")
+    @Path("/featuresets/init/")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response initFeatureStore(@PathParam("featurestore") String featureStore) {
+    public Response initFeatureStore() {
         try {
-            List<FeatureSet> featureSets = loadFeatureSets();
+            Map<String, List<FeatureSet>> featureSets = loadFeatureSets();
 
-            for (FeatureSet featureSet : featureSets) {
-                if (client.featureSetExists(featureStore, featureSet.getName())) {
-                    client.deleteFeatureSet(featureStore, featureSet.getName());
+            for (String featureStore : featureSets.keySet()) {
+                for (FeatureSet featureSet : featureSets.get(featureStore)) {
+                    if (!client.featureStoreExists(featureStore)) {
+                        client.initFeatureStore(featureStore);
+                    }
+
+                    if (client.featureSetExists(featureStore, featureSet.getName())) {
+                        client.deleteFeatureSet(featureStore, featureSet.getName());
+                    }
+                    FeatureSetRequest request = new FeatureSetRequest(featureSet);
+                    client.createFeatureSet(featureStore, request);
                 }
-                FeatureSetRequest request = new FeatureSetRequest(featureSet);
-                client.createFeatureSet(featureStore, request);
             }
             return ok();
         } catch (IOException e) {
@@ -142,7 +148,7 @@ public class LearnToRankService {
         return new Viewable("/done", null);
     }
 
-    private static List<FeatureSet> loadFeatureSets() throws IOException {
+    private static Map<String, List<FeatureSet>> loadFeatureSets() throws IOException {
         // Get the location of the featureSet store
         String path = SearchEngineProperties.getProperty("elastic.ltr.featureSets.store");
 
@@ -153,16 +159,29 @@ public class LearnToRankService {
             throw new IOException("Unable to locate featureStore directory.");
         }
 
-        List<FeatureSet> featureSets = new LinkedList<>();
+        Map<String, List<FeatureSet>> featureStoreToSetMap = new HashMap<>();
 
-        // Each sub directory is a featureStore, containing a list of features as json files
-        File[] featureSetDirectories = storeDirectory.listFiles(File::isDirectory);
-        for (File featureSetDirectory : featureSetDirectories) {
-            FeatureSet featureSet = FeatureSet.readFromDirectory(featureSetDirectory);
-            featureSets.add(featureSet);
+        // First directory name is the featureStore name
+
+        // Each sub directory is a featureStore
+        File[] featureStoreDirectorites = storeDirectory.listFiles(File::isDirectory);
+        for (File featureStoreDirectory : featureStoreDirectorites) {
+            String featureStore = featureStoreDirectory.getName();
+            // Each sub-directory from here is a featureSet
+            List<FeatureSet> featureSets = new LinkedList<>();
+            File[] featureSetDirectories = featureStoreDirectory.listFiles(File::isDirectory);
+            for (File featureSetDirectory : featureSetDirectories) {
+                // Each sub-directory is a featureSet
+                FeatureSet featureSet = FeatureSet.readFromDirectory(featureSetDirectory);
+                featureSets.add(featureSet);
+            }
+            featureStoreToSetMap.put(featureStore, featureSets);
         }
+//        for (File featureSetDirectory : featureSetDirectories) {
 
-        return featureSets;
+//        }
+
+        return featureStoreToSetMap;
     }
 
     public static void main(String[] args) {
