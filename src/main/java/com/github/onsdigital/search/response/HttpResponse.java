@@ -24,6 +24,10 @@ public class HttpResponse {
         return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
     }
 
+    public static Response internalServerError(String message) {
+        return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(message).build();
+    }
+
     public static Response internalServerError(Exception e) {
         return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }

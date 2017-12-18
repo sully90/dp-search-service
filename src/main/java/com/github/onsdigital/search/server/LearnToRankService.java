@@ -2,7 +2,10 @@ package com.github.onsdigital.search.server;
 
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankGetResponse;
+import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankHit;
+import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankHits;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankListResponse;
+import com.github.onsdigital.elasticutils.ml.client.response.features.models.Feature;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
@@ -14,9 +17,9 @@ import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.math.raw.Mod;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.WrapperQueryBuilder;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
@@ -84,8 +87,18 @@ public class LearnToRankService {
     @Path("/featuresets/list/{featurestore}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response listFeatureSets(@PathParam("featurestore") String featureStore) {
+        Map<String, String> params = new HashMap<String, String>() {{
+           put("keywords", "rpi");
+        }};
         try {
             LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets(featureStore);
+            LearnToRankHits<FeatureSetRequest> learnToRankHits = response.getHits();
+            for (LearnToRankHit<FeatureSetRequest> hit : learnToRankHits.getHits()) {
+                FeatureSetRequest request = hit.getSource();
+                for (Feature feature : request.getFeatureSet().getFeatureList()) {
+                    System.out.println(feature.toQuery(params));
+                }
+            }
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error listing feature sets", e);
@@ -106,25 +119,70 @@ public class LearnToRankService {
         }
     }
 
-//    @POST
-//    @Path("/sltr/{index}/{featureset}/{keywords}")
-//    @Consumes({ MediaType.APPLICATION_JSON })
-//    @Produces({ MediaType.APPLICATION_JSON })
-//    public Response sltr(@PathParam("index") String index,
-//                         @PathParam("featureset") String featureSet,
-//                         @PathParam("keywords") String keywords, Map<String, Object> qbMap) {
-//
-//        try {
-//            String searchRequest = JsonUtils.toJson(qbMap);
-//
-//            SltrResponse response = client.search(index, searchRequest);
-//            return ok(response);
-//        } catch (IOException e) {
-//            String message = String.format("Error performing sltr on index: %s, featureset: %s, with keywords : %s", index, featureSet, keywords);
-//            LOGGER.error(message, e);
-//            return internalServerError(e);
-//        }
-//    }
+    @POST
+    @Path("/sltr/{index}/{featureset}/")
+    @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response sltr(@PathParam("index") String index,
+                         @PathParam("featureset") String featureSet,
+                         Map<String, Object> qbMap) {
+
+        if (!qbMap.containsKey("keywords") || !(qbMap.get("keywords") instanceof Map)) {
+            return internalServerError("Must supply keywords Map in query map");
+        }
+
+        // Construct the base query object
+
+        if (!qbMap.containsKey("query")) {
+            return internalServerError("Must supply query string");
+        }
+
+        WrapperQueryBuilder qb;
+        try {
+            String queryString = JsonUtils.toJson(qbMap.get("query"));
+            qb = QueryBuilders.wrapperQuery(queryString);
+        } catch (IOException e) {
+            return internalServerError(e);
+        }
+
+        // Construct the LoggingQuery
+        String store = "";
+        if (qbMap.containsKey("store") && qbMap.get("store") instanceof String) {
+            store = (String) qbMap.get("store");
+        }
+
+        String logName = "logged_featureset";
+        if (qbMap.containsKey("logName") && qbMap.get("logName") instanceof String) {
+            logName = (String) qbMap.get("logName");
+        }
+        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder(logName, featureSet);
+        if (!store.isEmpty()) {
+            sltrQueryBuilder.setStore(store);
+        }
+        Map<String, String> keywordsMap = (Map<String, String>) qbMap.get("keywords");
+
+        for (String key : keywordsMap.keySet()) {
+            sltrQueryBuilder.setParam(key, keywordsMap.get(key));
+        }
+
+        LogQuerySearchRequest logQuerySearchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
+
+        try {
+            String json = logQuerySearchRequest.toJson();
+            System.out.println(json);
+        } catch (IOException e) {
+            return internalServerError(e);
+        }
+
+        try {
+            SltrResponse response = client.search(index, logQuerySearchRequest);
+            return ok(response);
+        } catch (IOException e) {
+            String message = String.format("Error performing sltr on index: %s, featureset: %s", index, featureSet);
+            LOGGER.error(message, e);
+            return internalServerError(e);
+        }
+    }
 
     @GET
     @Path("/model/")

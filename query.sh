@@ -1,6 +1,5 @@
 #!/bin/bash
 
-KEYWORDS=$1
-QUERY_FILE=$2
+QUERY_FILE=$1
 
-curl -H "Content-Type: application/json" -X POST -d @${QUERY_FILE} http://localhost:8080/SearchEngine/api/ltr/sltr/bulletin/bulletin_features/${KEYWORDS}
+curl -H "Content-Type: application/json" -X POST -d @${QUERY_FILE} http://localhost:8080/SearchEngine/api/ltr/sltr/bulletin/page_features/
