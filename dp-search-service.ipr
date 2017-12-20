@@ -316,6 +316,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.2/jackson-module-jaxb-annotations-2.9.2-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.github.onsdigital:dp-elastic-importer:1.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.github.ONSdigital:dp-elasticutils-ltr:0.1-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils-ltr/0.1-SNAPSHOT/dp-elasticutils-ltr-0.1-SNAPSHOT.jar!/" />
@@ -666,6 +677,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/net/sf/supercsv/super-csv/2.4.0/super-csv-2.4.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.commons:commons-lang3:3.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.apache.httpcomponents:httpasyncclient:4.1.2">

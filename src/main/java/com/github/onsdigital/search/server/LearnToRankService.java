@@ -2,10 +2,7 @@ package com.github.onsdigital.search.server;
 
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankGetResponse;
-import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankHit;
-import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankHits;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankListResponse;
-import com.github.onsdigital.elasticutils.ml.client.response.features.models.Feature;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
@@ -92,13 +89,6 @@ public class LearnToRankService {
         }};
         try {
             LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets(featureStore);
-            LearnToRankHits<FeatureSetRequest> learnToRankHits = response.getHits();
-            for (LearnToRankHit<FeatureSetRequest> hit : learnToRankHits.getHits()) {
-                FeatureSetRequest request = hit.getSource();
-                for (Feature feature : request.getFeatureSet().getFeatureList()) {
-                    System.out.println(feature.toQuery(params));
-                }
-            }
             return ok(response);
         } catch (IOException e) {
             LOGGER.error("Error listing feature sets", e);

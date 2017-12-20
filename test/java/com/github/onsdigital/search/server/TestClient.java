@@ -65,7 +65,7 @@ public class TestClient {
     public List<Judgement> generateTestJudgements(int num) {
         List<Judgement> judgements = new LinkedList<>();
         for (int i = 0; i < num; i++) {
-            judgements.add(Judgement.randomJudgement(1, "test comment"));
+            judgements.add(Judgement.randomJudgement(1, i+1));
         }
 
         return judgements;

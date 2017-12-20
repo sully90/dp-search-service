@@ -25,6 +25,10 @@ public class SearchHitCounter {
         this.urlCountMap = new HashMap<>();
     }
 
+    public void put(String url, SearchHitCount searchHitCount) {
+        this.urlCountMap.put(url, searchHitCount);
+    }
+
     public void add(String url, int rank) {
         if (!urlCountMap.containsKey(url)) {
             SearchHitCount hitCount = new SearchHitCount(rank, 1);
@@ -77,6 +81,9 @@ public class SearchHitCounter {
             // Create a new judgement and append to the list
             Judgement judgement = new Judgement(judgementValue, queryId, rank);
             judgement.setComment(String.format("%s:%s", queryTerm, url));
+            // Store the url for later
+            judgement.addAttr("url", url);
+
             judgementList.add(judgement);
         }
 

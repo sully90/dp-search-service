@@ -2,8 +2,11 @@ package com.github.onsdigital.search.nlp.opennlp;
 
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.util.StringUtils;
+import com.google.common.collect.Sets;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
@@ -68,7 +71,7 @@ public class OpenNlpService {
         return this.nameFinderModels.keySet();
     }
 
-    public Set<String> find(String content, String field) {
+    public Set<String> findWithNgrams(String content, String field) {
         try {
             if (!nameFinderModels.containsKey(field)) {
                 throw new RuntimeException(String.format("Could not find field [%s], possible values %s", field, nameFinderModels.keySet()));
@@ -99,6 +102,46 @@ public class OpenNlpService {
 //                    System.out.println(field + " : " + name + " : " + span.getProb());
                     if (span.getProb() >= this.probabilityLowerLimit && content.contains(name)) nameSet.add(name);
                 }
+            }
+
+            return nameSet;
+        } finally {
+            threadLocal.remove();
+        }
+    }
+
+    public Set<String> find(String content, String field) {
+        try {
+            if (!nameFinderModels.containsKey(field)) {
+                throw new RuntimeException(String.format("Could not find field [%s], possible values %s", field, nameFinderModels.keySet()));
+            }
+
+            TokenNameFinderModel model = nameFinderModels.get(field);
+            if (threadLocal.get() == null || !threadLocal.get().equals(model)) {
+                threadLocal.set(model);
+            }
+            Set<String> nameSet = new HashSet<>();
+
+            SentenceDetectorME sentenceDetector = new SentenceDetectorME(loadSentenceModel());
+            TokenizerME tokenizer = new TokenizerME(loadTokenizerModel());
+
+            String[] sentences = sentenceDetector.sentDetect(content);
+
+            for (String sentence : sentences) {
+                String[] tokens = tokenizer.tokenize(sentence);
+
+                // Perform the named entity extraction
+                Span[] spans = new NameFinderME(model).find(tokens);
+                String[] names = Span.spansToStrings(spans, tokens);
+
+                nameSet.addAll(Sets.newHashSet(names));
+
+//                // Add to the named entity set if we pass the ONconfidence test
+//                for (int i = 0; i < names.length; i++) {
+//                    String name = names[i];
+//                    Span span = spans[i];
+//                    if (span.getProb() >= this.probabilityLowerLimit && content.contains(name)) nameSet.add(name);
+//                }
             }
 
             return nameSet;
@@ -156,6 +199,28 @@ public class OpenNlpService {
             LOGGER.error("Error loading TokenizerModel {}.", filename, e);
         }
         return null;
+    }
+
+    private static SentenceModel loadSentenceModel() {
+        String filename = SearchEngineProperties.filenameInClasspath("en-sent.bin");
+
+        try(InputStream is = new FileInputStream(filename)) {
+            return new SentenceModel(is);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Error loading TokenizerModel {}: File not found.", filename, e);
+        } catch (IOException e) {
+            LOGGER.error("Error loading TokenizerModel {}.", filename, e);
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        String content = "\u200BAmazon.com, Inc. is located in Seattle, WA and was founded July 5th, 1994 by Jeff Bezos, allowing customers to buy everything from books to blenders. Seattle is north of Portland and south of Vancouver, BC. Other notable Seattle-based companies are Starbucks and Boeing.";
+
+        OpenNlpService openNlpService = OpenNlpService.getInstance();
+        Map<String, Set<String>> entities = openNlpService.getNamedEntities(content);
+
+        System.out.println(entities);
     }
 
 }
