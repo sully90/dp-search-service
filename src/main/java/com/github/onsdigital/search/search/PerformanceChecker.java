@@ -241,16 +241,20 @@ public class PerformanceChecker {
 
     private static LogQuerySearchRequest getLogQuerySearchRequest(String store, String featureSet,
                                                                   String id, String keywords) {
+        // Placeholder log_name
         String logName = "logged_featureset";
 
+        // Build the sltr query with keyword template injection
         SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder(logName, featureSet);
         sltrQueryBuilder.setStore(store);
         sltrQueryBuilder.setParam("keywords", keywords);
 
+        // Build the elasticsearch query, which performs a term filter on the _id field
         QueryBuilder qb = QueryBuilders.boolQuery()
                 .must(QueryBuilders.termQuery("_id", id))
                 .should(sltrQueryBuilder);
 
+        // Build the LogQuerySearchRequest and return
         LogQuerySearchRequest logQuerySearchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
         return logQuerySearchRequest;
     }
@@ -261,53 +265,55 @@ public class PerformanceChecker {
         String store = "ons_featurestore";
         String featureSet = "ons_features";
 
+        // Init Learn to rank client
         try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient("localhost")) {
 
+            // Count the unique URL hits
             Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
+
+            // For each search term, compute judegemts and log features
             for (String term : uniqueHits.keySet()) {
                 Judgements judgements = uniqueHits.get(term).getJudgements(term);
+
+                // Compute normalised discounted cumulative gain as a measure of current performance
                 float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
 
                 List<Judgement> judgementList = judgements.getJudgementList();
+                // Sort the judgements by the original rank they were displayed to the user as
                 Collections.sort(judgementList);
 
                 System.out.println("Term: " + term);
                 for (int i = 0; i < ndcg.length; i++) {
+                    // Print rank and judgement to the console
                     System.out.println(judgementList.get(i).getRank() + " : " + ndcg[i]);
                     Object obj = judgementList.get(i).getAttr("url");
                     if (obj instanceof String) {
+                        // Pages are stored in ES with _id as their uri
+                        // So we perform a sltr query with an _id filter to get the feature scores
                         String url = String.valueOf(obj);
 
+                        // Construct the LogQuerySearchRequest
                         LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(store,
                                 featureSet, url, term);
+
+                        // Perform the sltr search request
                         SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
+
+                        // Get the sltr hits from the response
                         List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
                         if (sltrHits.size() > 0) {
+                            // The page was found, so we have logged feature scores as Fields
                             Fields fields = sltrHits.get(0).getFields();
+
+                            // Print scores to the console
                             System.out.println(fields.getValues().toString());
                         }
                     }
                 }
             }
+        // Auto-close LearnToRankClient
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//        Iterator<WritableJudgements> it = WritableJudgements.finder().find().iterator();
-//        while (it.hasNext()) {
-//            WritableJudgements writableJudgements = it.next();
-//
-//            String term = writableJudgements.getTerm();
-//            Judgements judgements = writableJudgements.getJudgements();
-//            float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
-//
-//            List<Judgement> judgementList = judgements.getJudgementList();
-//            Collections.sort(judgementList);
-//
-//            System.out.println("Term: " + term);
-//            for (int i = 0; i < ndcg.length; i++) {
-//                System.out.println(judgementList.get(i).getRank() + " : " + ndcg[i]);
-//            }
-//        }
     }
 }
