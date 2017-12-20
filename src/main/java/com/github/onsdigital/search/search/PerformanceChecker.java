@@ -18,8 +18,6 @@ import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.search.models.SearchHitCount;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.SearchStat;
-import com.github.onsdigital.search.util.ClientType;
-import com.github.onsdigital.search.util.SearchClientUtils;
 import com.github.onsdigitial.elastic.importer.models.page.adhoc.AdHoc;
 import com.github.onsdigitial.elastic.importer.models.page.base.Page;
 import com.github.onsdigitial.elastic.importer.models.page.base.PageType;
@@ -50,18 +48,12 @@ import com.github.onsdigitial.elastic.importer.models.page.statistics.document.f
 import com.github.onsdigitial.elastic.importer.models.page.taxonomy.ProductPage;
 import com.github.onsdigitial.elastic.importer.models.page.taxonomy.TaxonomyLandingPage;
 import com.github.onsdigitial.elastic.importer.models.page.visualisation.Visualisation;
-import org.apache.commons.io.IOUtils;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -269,32 +261,30 @@ public class PerformanceChecker {
         String store = "ons_featurestore";
         String featureSet = "ons_features";
 
-        try (ElasticSearchClient<Page> searchClient = SearchClientUtils.getSearchClient(ClientType.TCP)) {
-            try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient("localhost")) {
+        try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient("localhost")) {
 
-                Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
-                for (String term : uniqueHits.keySet()) {
-                    Judgements judgements = uniqueHits.get(term).getJudgements(term);
-                    float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
+            Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
+            for (String term : uniqueHits.keySet()) {
+                Judgements judgements = uniqueHits.get(term).getJudgements(term);
+                float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
 
-                    List<Judgement> judgementList = judgements.getJudgementList();
-                    Collections.sort(judgementList);
+                List<Judgement> judgementList = judgements.getJudgementList();
+                Collections.sort(judgementList);
 
-                    System.out.println("Term: " + term);
-                    for (int i = 0; i < ndcg.length; i++) {
-                        System.out.println(judgementList.get(i).getRank() + " : " + ndcg[i]);
-                        Object obj = judgementList.get(i).getAttr("url");
-                        if (obj instanceof String) {
-                            String url = String.valueOf(obj);
+                System.out.println("Term: " + term);
+                for (int i = 0; i < ndcg.length; i++) {
+                    System.out.println(judgementList.get(i).getRank() + " : " + ndcg[i]);
+                    Object obj = judgementList.get(i).getAttr("url");
+                    if (obj instanceof String) {
+                        String url = String.valueOf(obj);
 
-                            LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(store,
-                                    featureSet, url, term);
-                            SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
-                            List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
-                            if (sltrHits.size() > 0) {
-                                Fields fields = sltrHits.get(0).getFields();
-                                System.out.println(fields.getValues().toString());
-                            }
+                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(store,
+                                featureSet, url, term);
+                        SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
+                        List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
+                        if (sltrHits.size() > 0) {
+                            Fields fields = sltrHits.get(0).getFields();
+                            System.out.println(fields.getValues().toString());
                         }
                     }
                 }

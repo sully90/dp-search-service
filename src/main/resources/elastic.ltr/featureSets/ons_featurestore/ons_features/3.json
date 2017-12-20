@@ -14,7 +14,7 @@
         "max_expansions" : 50,
         "lenient" : false,
         "zero_terms_query" : "NONE",
-        "boost" : 1.0
+        "boost" : 0.5
       }
   },
   "template_language": "mustache"
