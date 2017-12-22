@@ -76,6 +76,7 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: com.tdunning:t-digest:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.hdrhistogram:HdrHistogram:2.1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.9.1" level="project" />
     <orderEntry type="library" name="Maven: org.elasticsearch:jna:4.4.0-1" level="project" />
     <orderEntry type="library" name="Maven: org.elasticsearch.plugin:transport-netty4-client:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.13.Final" level="project" />
@@ -112,8 +113,9 @@
     <orderEntry type="library" name="Maven: org.elasticsearch.plugin:aggs-matrix-stats-client:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.2" level="project" />
     <orderEntry type="library" name="Maven: com.github.ONSdigital:dp-elasticutils-ltr:0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.github.onsdigital:dp-elastic-importer:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ONSdigital:dp-elastic-importer:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ONSdigital:dp-fanout-cascade:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.7.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.7.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.7.3" level="project" />
@@ -121,9 +123,9 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.opennlp:opennlp-tools:1.8.2" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.9.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.7.5" level="project" />
+    <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" name="Maven: com.github.onsdigital:dp-mongoutils4j:0.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver:3.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.5.0" level="project" />

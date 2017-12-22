@@ -103,12 +103,22 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.onsdigital</groupId>
+      <groupId>com.github.ONSdigital</groupId>
       <artifactId>dp-elastic-importer</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <!-- ELASTICSEARCH END -->
+
+    <!-- FANOUT CASCADE START -->
+
+    <dependency>
+      <groupId>com.github.ONSdigital</groupId>
+      <artifactId>dp-fanout-cascade</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- FANOUT CASCADE END -->
 
     <!-- JACKSON START -->
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
@@ -154,14 +164,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
+      <version>1.7.5</version>
     </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.9.1</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
     </dependency>
 
 
