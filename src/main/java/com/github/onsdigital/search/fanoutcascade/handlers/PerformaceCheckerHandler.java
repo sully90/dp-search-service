@@ -27,13 +27,13 @@ public class PerformaceCheckerHandler implements Handler {
     public Object handleTask(HandlerTask handlerTask) {
 
         // TODO - remove
-        int count = 0;
+        int tmpCount = 0;
 
         while (!FanoutCascade.getInstance().isShutdown()) {
             PerformanceChecker performanceChecker = new PerformanceChecker();
 
             double sumNdcg = 0.0f;
-            int tmpCount = 0;
+            int count = 0;
 
             // Count the unique URL hits
             Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
