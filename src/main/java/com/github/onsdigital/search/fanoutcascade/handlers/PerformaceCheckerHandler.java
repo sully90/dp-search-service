@@ -54,7 +54,7 @@ public class PerformaceCheckerHandler implements Handler {
             }
 
             double meanNdcg = sumNdcg / (double) count;
-            LOGGER.info("Mean NGDC: " + meanNdcg);
+            LOGGER.info("Mean NDCG: " + meanNdcg);
 
             // TODO - remove
             tmpCount++;
