@@ -1,8 +1,11 @@
 package com.github.onsdigital.search;
 
+import com.github.onsdigital.fanoutcascade.handlertasks.FanoutCascadeMonitoringTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascadeRegistry;
+import com.github.onsdigital.search.fanoutcascade.handlers.ModelTrainingHandler;
 import com.github.onsdigital.search.fanoutcascade.handlers.PerformaceCheckerHandler;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.PerformanceCheckerTask;
 import com.github.onsdigital.search.server.SearchEngineService;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -30,8 +33,10 @@ public class App extends ResourceConfig {
         // Setup FanoutCascade
         FanoutCascadeRegistry.getInstance().registerMonitoringThread();
         FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformaceCheckerHandler.class, 1);
+        FanoutCascadeRegistry.getInstance().register(ModelTrainingTask.class, ModelTrainingHandler.class, 1);
 
-        // Submit the task
+        // Submit the tasks
+        FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
         FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
     }
 }

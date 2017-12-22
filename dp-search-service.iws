@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/PerformanceCheckerTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iml" afterPath="$PROJECT_DIR$/dp-search-service.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.ipr" afterPath="$PROJECT_DIR$/dp-search-service.ipr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelTrainingHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ModelTrainingTask.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iws" afterPath="$PROJECT_DIR$/dp-search-service.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -182,8 +180,8 @@
           <file leaf-file-name="PerformanceChecker.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="192">
-                  <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="259" selection-end-column="5" />
+                <state relative-caret-position="522">
+                  <caret line="263" column="33" lean-forward="false" selection-start-line="263" selection-start-column="33" selection-end-line="263" selection-end-column="33" />
                   <folding />
                 </state>
               </provider>
@@ -213,44 +211,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="LearnToRankService.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="840">
-                  <caret line="90" column="103" lean-forward="false" selection-start-line="90" selection-start-column="103" selection-end-line="90" selection-end-column="103" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/pom.xml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="420">
-                  <caret line="115" column="36" lean-forward="false" selection-start-line="115" selection-start-column="36" selection-end-line="115" selection-end-column="36" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="PerformanceCheckerTask.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/PerformanceCheckerTask.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="150">
-                  <caret line="10" column="44" lean-forward="false" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
-                  <folding>
-                    <element signature="e#317#318#0" expanded="true" />
-                    <element signature="e#368#369#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="PerformaceCheckerHandler.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1436">
-                  <caret line="104" column="5" lean-forward="false" selection-start-line="104" selection-start-column="5" selection-end-line="104" selection-end-column="5" />
+                <state relative-caret-position="731">
+                  <caret line="63" column="29" lean-forward="false" selection-start-line="63" selection-start-column="29" selection-end-line="63" selection-end-column="29" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -258,12 +223,14 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="App.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java">
+          <file leaf-file-name="ModelTrainingHandler.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelTrainingHandler.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="270">
-                  <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
-                  <folding />
+                <state relative-caret-position="759">
+                  <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -355,8 +322,10 @@
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/PerformanceCheckerTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ModelTrainingTask.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelTrainingHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java" />
       </list>
     </option>
   </component>
@@ -477,6 +446,26 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="search" type="462c0819:PsiDirectoryNode" />
               <item name="fanoutcascade" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dp-search-service" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dp-search-service" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="search" type="462c0819:PsiDirectoryNode" />
+              <item name="fanoutcascade" type="462c0819:PsiDirectoryNode" />
+              <item name="handlers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dp-search-service" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dp-search-service" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="search" type="462c0819:PsiDirectoryNode" />
+              <item name="fanoutcascade" type="462c0819:PsiDirectoryNode" />
+              <item name="handlertasks" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dp-search-service" type="b2602c69:ProjectViewProjectNode" />
@@ -816,7 +805,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.123958334" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19322917" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -901,16 +890,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/elasticsearch/models/WritableFeatureSetRequest.java" />
-    <entry file="file://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.9.2/jackson-core-2.9.2.pom">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="42" lean-forward="false" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils/0.1-SNAPSHOT/dp-elasticutils-0.1-SNAPSHOT.jar!/com/github/onsdigital/elasticutils/client/ElasticSearchRESTClient.class" />
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-elasticutils/0.1-SNAPSHOT/dp-elasticutils-0.1-SNAPSHOT.jar!/com/github/onsdigital/elasticutils/client/ElasticSearchClient.class" />
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/elasticsearch/models/WritableFeatureSetRequest.java" />
     <entry file="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch/6.0.0/elasticsearch-6.0.0.jar!/org/elasticsearch/threadpool/ThreadPool.class">
       <provider selected="true" editor-type-id="text-editor">
@@ -1089,6 +1068,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="896">
           <caret line="83" column="38" lean-forward="false" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1152,8 +1132,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="90" column="103" lean-forward="false" selection-start-line="90" selection-start-column="103" selection-end-line="90" selection-end-column="103" />
+        <state relative-caret-position="495">
+          <caret line="67" column="21" lean-forward="false" selection-start-line="67" selection-start-column="21" selection-end-line="67" selection-end-column="21" />
           <folding />
         </state>
       </provider>
@@ -1191,26 +1171,64 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-fanout-cascade/1.0-SNAPSHOT/dp-fanout-cascade-1.0-SNAPSHOT.jar!/com/github/onsdigital/fanoutcascade/pool/FanoutCascadeRegistry.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="33" column="16" lean-forward="false" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/search/PerformanceChecker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="259" selection-end-column="5" />
+        <state relative-caret-position="522">
+          <caret line="263" column="33" lean-forward="false" selection-start-line="263" selection-start-column="33" selection-end-line="263" selection-end-column="33" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/ONSdigital/dp-fanout-cascade/1.0-SNAPSHOT/dp-fanout-cascade-1.0-SNAPSHOT.jar!/com/github/onsdigital/fanoutcascade/handlertasks/HandlerTask.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="16" column="22" lean-forward="false" selection-start-line="16" selection-start-column="22" selection-end-line="16" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ModelTrainingTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="64" lean-forward="true" selection-start-line="0" selection-start-column="64" selection-end-line="0" selection-end-column="64" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#638#639#0" expanded="true" />
+            <element signature="e#671#672#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+        <state relative-caret-position="360">
+          <caret line="35" column="107" lean-forward="false" selection-start-line="35" selection-start-column="107" selection-end-line="35" selection-end-column="107" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelTrainingHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1436">
-          <caret line="104" column="5" lean-forward="false" selection-start-line="104" selection-start-column="5" selection-end-line="104" selection-end-column="5" />
+        <state relative-caret-position="731">
+          <caret line="63" column="29" lean-forward="false" selection-start-line="63" selection-start-column="29" selection-end-line="63" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
