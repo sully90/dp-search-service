@@ -47,18 +47,12 @@ public class LearnToRankService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LearnToRankService.class);
 
     private static final String HOSTNAME = "localhost";
-    private static final LearnToRankClient client;
-
-    static {
-        client = LearnToRankHelper.getLTRClient(HOSTNAME);
-        Runtime.getRuntime().addShutdownHook(new LearnToRankClient.ShutDownClientThread(client));
-    }
 
     @PUT
     @Path("/featuresets/init/")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response initFeatureStore() {
-        try {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             Map<String, List<FeatureSet>> featureSets = loadFeatureSets();
 
             for (String featureStore : featureSets.keySet()) {
@@ -75,7 +69,7 @@ public class LearnToRankService {
                 }
             }
             return ok();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return internalServerError(e);
         }
     }
@@ -87,10 +81,10 @@ public class LearnToRankService {
         Map<String, String> params = new HashMap<String, String>() {{
            put("keywords", "rpi");
         }};
-        try {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets(featureStore);
             return ok(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error listing feature sets", e);
             return internalServerError(e);
         }
@@ -100,10 +94,10 @@ public class LearnToRankService {
     @Path("/featuresets/list/{featurestore}/{name}")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getFeatureByName(@PathParam("featurestore") String featureStore, @PathParam("name") String name) {
-        try {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             LearnToRankGetResponse<FeatureSetRequest> response = client.getFeatureSet(featureStore, name);
             return ok(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error retrieving featureset with name: " + name, e);
             return internalServerError(e);
         }
@@ -157,10 +151,10 @@ public class LearnToRankService {
 
         LogQuerySearchRequest logQuerySearchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
 
-        try {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             SltrResponse response = client.search(index, logQuerySearchRequest);
             return ok(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             String message = String.format("Error performing sltr on index: %s, featureset: %s", index, featureSet);
             LOGGER.error(message, e);
             return internalServerError(e);
@@ -239,11 +233,9 @@ public class LearnToRankService {
         sltrQueryBuilder.setParam("keywords", keywords);
 
         LogQuerySearchRequest request = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
-        try {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             System.out.println(request.toJson(20));
             client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

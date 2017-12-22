@@ -77,7 +77,7 @@ public class ModelTrainingHandler implements Handler {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error closing LearnToRankClient", e);
+            LOGGER.error("Error in LearnToRankClient", e);
         }
         return null;
     }
