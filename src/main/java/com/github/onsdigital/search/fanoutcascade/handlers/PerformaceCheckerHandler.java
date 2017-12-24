@@ -30,42 +30,47 @@ public class PerformaceCheckerHandler implements Handler {
         int tmpCount = 0;
 
         while (!FanoutCascade.getInstance().isShutdown()) {
-            PerformanceChecker performanceChecker = new PerformanceChecker();
+            try {
+                PerformanceChecker performanceChecker = new PerformanceChecker();
 
-            double sumNdcg = 0.0f;
-            int count = 0;
+                double sumNdcg = 0.0f;
+                int count = 0;
 
-            // Count the unique URL hits
-            Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
+                // Count the unique URL hits
+                Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
 
-            // For each search term, compute judgeemts and log features
-            for (String term : uniqueHits.keySet()) {
-                Judgements judgements = uniqueHits.get(term).getJudgements(term);
+                // For each search term, compute judgeemts and log features
+                for (String term : uniqueHits.keySet()) {
+                    Judgements judgements = uniqueHits.get(term).getJudgements(term);
 
-                // Compute normalised discounted cumulative gain as a measure of current performance
-                float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
+                    // Compute normalised discounted cumulative gain as a measure of current performance
+                    float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
 
-                double sum = 0.0d;
-                for (float val : ndcg) {
-                    sum += (double) val;
+                    double sum = 0.0d;
+                    for (float val : ndcg) {
+                        sum += (double) val;
+                    }
+                    sumNdcg += sum;
+                    count += ndcg.length;
                 }
-                sumNdcg += sum;
-                count += ndcg.length;
-            }
 
-            double meanNdcg = sumNdcg / (double) count;
-            LOGGER.info("Mean NDCG: " + meanNdcg);
+                double meanNdcg = sumNdcg / (double) count;
+                LOGGER.info("Mean NDCG: " + meanNdcg);
 
-            // TODO - remove
-            tmpCount++;
+                // TODO - remove
+                tmpCount++;
 
-            // TODO - remove || clause
-            if (meanNdcg < NDCG_THRESHOLD || tmpCount > 3) {
-                tmpCount = 0;
-                LOGGER.info("Submitting ModelTrainingTask");
-                // Submit a ModelTrainingTask
-                ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits);
-                FanoutCascade.getInstance().getLayerForTask(ModelTrainingTask.class).submit(modelTrainingTask);
+                // TODO - remove || clause
+                if (meanNdcg < NDCG_THRESHOLD || tmpCount > 3) {
+                    tmpCount = 0;
+                    LOGGER.info("Submitting ModelTrainingTask");
+                    // Submit a ModelTrainingTask
+                    ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits);
+                    FanoutCascade.getInstance().getLayerForTask(ModelTrainingTask.class).submit(modelTrainingTask);
+                }
+            } catch (Exception e) {
+                // Thread must stay alive, so catch any exception raised
+                e.printStackTrace();
             }
 
             try {

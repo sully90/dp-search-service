@@ -1,5 +1,7 @@
 package com.github.onsdigital.search;
 
+import com.github.onsdigital.fanoutcascade.exceptions.ExceptionHandler;
+import com.github.onsdigital.fanoutcascade.exceptions.PurgingExceptionHandler;
 import com.github.onsdigital.fanoutcascade.handlertasks.FanoutCascadeMonitoringTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascadeRegistry;
@@ -29,6 +31,10 @@ public class App extends ResourceConfig {
 
         // Tracing support.
         property(ServerProperties.TRACING, TracingConfig.ON_DEMAND.name());
+
+        // Setup a exception handler
+        ExceptionHandler exceptionHandler = new PurgingExceptionHandler();
+        FanoutCascadeRegistry.getInstance().setExceptionHandler(exceptionHandler);
 
         // Setup FanoutCascade
         FanoutCascadeRegistry.getInstance().registerMonitoringThread();

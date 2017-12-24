@@ -30,15 +30,17 @@ public class ModelTrainingHandler implements Handler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelTrainingHandler.class);
 
+    private static final String HOSTNAME = "localhost";
+
     private String store = "ons_featurestore";
     private String featureSet = "ons_features";
 
     @Override
-    public Object handleTask(HandlerTask handlerTask) {
+    public Object handleTask(HandlerTask handlerTask) throws Exception {
         ModelTrainingTask task = (ModelTrainingTask) handlerTask;
         Map<String, SearchHitCounter> uniqueHits = task.getUniqueHits();
         // Init Learn to rank client and generate a training set
-        try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient("localhost")) {
+        try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient(HOSTNAME)) {
 
             // For each search term, compute judgeemts and log features
             for (String term : uniqueHits.keySet()) {
@@ -78,6 +80,8 @@ public class ModelTrainingHandler implements Handler {
             }
         } catch (Exception e) {
             LOGGER.error("Error in LearnToRankClient", e);
+            // rethrow to be dealt with by exception handler
+            throw e;
         }
         return null;
     }
