@@ -13,12 +13,14 @@ import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -90,12 +92,22 @@ public class TrainingSetHandler implements Handler {
         // Export the training set
         Date now = new Date();
         long time = now.getTime();
-        String filePath = String.format("src/main/resources/elastic.ltr/models/ons_model_%d.txt", time);
 
-        Exporter.export(filePath, queryFeatureMap);
+        File directory = new File(String.format("src/main/resources/elastic.ltr/models/%s/", time));
+        if (!directory.isDirectory()) {
+            directory.mkdir();
+        }
+        String fileName = String.format("%s/ons_train.txt", directory.getAbsolutePath());
 
-        // TODO - Return a handler which runs RankLib and uploads the models
-        return null;
+        Exporter.export(fileName, queryFeatureMap);
+
+        List<RankLibTask> tasks = new ArrayList<>();
+        // Return a RankLibTask
+        for (int i = 0; i <= 9; i++) {
+            RankLibTask rankLibTask = new RankLibTask(fileName, i);
+            tasks.add(rankLibTask);
+        }
+        return tasks;
     }
 
     private static LogQuerySearchRequest getLogQuerySearchRequest(String store, String featureSet,

@@ -242,6 +242,7 @@
         <targetPath>${project.build.directory}</targetPath>
         <includes>
           <include>log4j.properties</include>
+          <include>lib</include>
         </includes>
       </resource>
 

@@ -61,7 +61,7 @@ public class PerformaceCheckerHandler implements Handler {
                 tmpCount++;
 
                 // TODO - remove || clause
-                if (meanNdcg < NDCG_THRESHOLD || tmpCount > 3) {
+                if (meanNdcg < NDCG_THRESHOLD || tmpCount >= 3) {
                     tmpCount = 0;
                     LOGGER.info("Submitting ModelTrainingTask");
                     // Submit a ModelTrainingTask

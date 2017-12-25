@@ -5,10 +5,12 @@ import com.github.onsdigital.fanoutcascade.exceptions.PurgingExceptionHandler;
 import com.github.onsdigital.fanoutcascade.handlertasks.FanoutCascadeMonitoringTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascadeRegistry;
+import com.github.onsdigital.search.fanoutcascade.handlers.RankLibHandler;
 import com.github.onsdigital.search.fanoutcascade.handlers.TrainingSetHandler;
 import com.github.onsdigital.search.fanoutcascade.handlers.PerformaceCheckerHandler;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.PerformanceCheckerTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.server.SearchEngineService;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -40,6 +42,7 @@ public class App extends ResourceConfig {
         FanoutCascadeRegistry.getInstance().registerMonitoringThread();
         FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformaceCheckerHandler.class, 1);
         FanoutCascadeRegistry.getInstance().register(ModelTrainingTask.class, TrainingSetHandler.class, 1);
+        FanoutCascadeRegistry.getInstance().register(RankLibTask.class, RankLibHandler.class, 10);
 
         // Submit the tasks
         FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
