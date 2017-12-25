@@ -3,8 +3,9 @@ package com.github.onsdigital.search.fanoutcascade.handlers;
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrHit;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
-import com.github.onsdigital.elasticutils.ml.client.response.sltr.models.Fields;
+import com.github.onsdigital.elasticutils.ml.client.response.sltr.models.Rankable;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
+import com.github.onsdigital.elasticutils.ml.ranklib.Exporter;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
@@ -18,17 +19,15 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sullid (David Sullivan) on 22/12/2017
  * @project dp-search-service
  */
-public class ModelTrainingHandler implements Handler {
+public class TrainingSetHandler implements Handler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModelTrainingHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingSetHandler.class);
 
     private static final String HOSTNAME = "localhost";
 
@@ -37,14 +36,19 @@ public class ModelTrainingHandler implements Handler {
 
     @Override
     public Object handleTask(HandlerTask handlerTask) throws Exception {
+
         ModelTrainingTask task = (ModelTrainingTask) handlerTask;
         Map<String, SearchHitCounter> uniqueHits = task.getUniqueHits();
+
+        // Init Judgement - Rankable map
+        Map<Judgement, Rankable> queryFeatureMap = new LinkedHashMap<>();
+
         // Init Learn to rank client and generate a training set
         try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient(HOSTNAME)) {
 
             // For each search term, compute judgeemts and log features
             for (String term : uniqueHits.keySet()) {
-                System.out.println("Term: " + term);
+//                System.out.println("Term: " + term);
 
                 Judgements judgements = uniqueHits.get(term).getJudgements(term);
                 List<Judgement> judgementList = judgements.getJudgementList();
@@ -53,7 +57,8 @@ public class ModelTrainingHandler implements Handler {
 
                 // Loop over judgements and get feature scores
                 for (int i = 0; i < judgementList.size(); i++) {
-                    Object obj = judgementList.get(i).getAttr("url");
+                    Judgement judgement = judgementList.get(i);
+                    Object obj = judgement.getAttr("url");
                     if (obj instanceof String) {
                         // Pages are stored in ES with _id as their uri
                         // So we perform a sltr query with an _id filter to get the feature scores
@@ -70,10 +75,8 @@ public class ModelTrainingHandler implements Handler {
                         List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
                         if (sltrHits.size() > 0) {
                             // The page was found, so we have logged feature scores as Fields
-                            Fields fields = sltrHits.get(0).getFields();
-
-                            // Print scores to the console
-                            System.out.println(fields.getValues().toString());
+                            Rankable rankable = sltrHits.get(0);
+                            queryFeatureMap.put(judgement, rankable);
                         }
                     }
                 }
@@ -83,6 +86,15 @@ public class ModelTrainingHandler implements Handler {
             // rethrow to be dealt with by exception handler
             throw e;
         }
+
+        // Export the training set
+        Date now = new Date();
+        long time = now.getTime();
+        String filePath = String.format("src/main/resources/elastic.ltr/models/ons_model_%d.txt", time);
+
+        Exporter.export(filePath, queryFeatureMap);
+
+        // TODO - Return a handler which runs RankLib and uploads the models
         return null;
     }
 
