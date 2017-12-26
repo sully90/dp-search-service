@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ModelUploadTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iws" afterPath="$PROJECT_DIR$/dp-search-service.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/RankLibTask.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/RankLibTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/server/LearnToRankService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -230,11 +223,9 @@
       <file leaf-file-name="ModelUploadHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="120">
+              <caret line="8" column="75" lean-forward="true" selection-start-line="8" selection-start-column="75" selection-end-line="8" selection-end-column="75" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -1291,11 +1282,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="120">
+          <caret line="8" column="75" lean-forward="true" selection-start-line="8" selection-start-column="75" selection-end-line="8" selection-end-column="75" />
+          <folding />
         </state>
       </provider>
     </entry>

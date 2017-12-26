@@ -1,7 +1,6 @@
 package com.github.onsdigital.search.fanoutcascade.handlers;
 
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
-import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankGetResponse;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.ModelType;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.RankLibModel;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
