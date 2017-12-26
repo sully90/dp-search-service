@@ -93,7 +93,7 @@ public class TrainingSetHandler implements Handler {
         Date now = new Date();
         long time = now.getTime();
 
-        File directory = new File(String.format("src/main/resources/elastic.ltr/models/%s/", time));
+        File directory = new File(String.format("src/main/resources/elastic.ltr/models/ons_%s/", time));
         if (!directory.isDirectory()) {
             directory.mkdir();
         }
@@ -104,7 +104,7 @@ public class TrainingSetHandler implements Handler {
         List<RankLibTask> tasks = new ArrayList<>();
         // Return a RankLibTask
         for (int i = 0; i <= 9; i++) {
-            RankLibTask rankLibTask = new RankLibTask(fileName, i);
+            RankLibTask rankLibTask = new RankLibTask(store, featureSet, fileName, i);
             tasks.add(rankLibTask);
         }
         return tasks;

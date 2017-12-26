@@ -46,7 +46,7 @@ public class LearnToRankService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LearnToRankService.class);
 
-    private static final String HOSTNAME = "localhost";
+    public static final String HOSTNAME = "localhost";
 
     @PUT
     @Path("/featuresets/init/")

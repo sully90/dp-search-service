@@ -2,6 +2,7 @@ package com.github.onsdigital.search.fanoutcascade.handlers;
 
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelUploadTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,10 @@ public class RankLibHandler implements Handler {
         int exitCode = p.exitValue();
         LOGGER.info("RankLib exitied with code " + exitCode);
 
-        return null;
+        // Return a model upload task
+        String name = "ons_model_" + model;
+        ModelUploadTask uploadTask = new ModelUploadTask(task, name, outputFileName);
+        return uploadTask;
     }
 
     private static String getModelFileName(String trainingSetFileName, int model) {
