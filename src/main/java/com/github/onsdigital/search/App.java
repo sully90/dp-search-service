@@ -14,6 +14,8 @@ import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.TracingConfig;
 import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class App extends ResourceConfig {
 
@@ -50,5 +52,9 @@ public class App extends ResourceConfig {
             FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
             FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(TimeUnit.valueOf("days"));
     }
 }

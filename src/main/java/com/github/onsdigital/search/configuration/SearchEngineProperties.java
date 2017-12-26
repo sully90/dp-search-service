@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author sullid (David Sullivan) on 22/11/2017
@@ -72,6 +73,30 @@ public class SearchEngineProperties {
 
         public static String getNerConfigurationKey() {
             return NER_CONFIGURATION_KEY;
+        }
+    }
+
+    public static class FANOUTCASCADE {
+        private static final String PERFORMANCE_CHECKER_TIMEUNIT_KEY = "fanoutcascade.performancechecker.sleep.timeunit";
+        private static final String PERFORMANCE_CHECKER_VALUE_KEY = "fanoutcascade.performancechecker.sleep.value";
+
+        private static final String SUBMIT_TIMEUNIT_KEY = "fanoutcascade.submit.timeunit";
+        private static final String SUBMIT_VALUE_KEY = "fanoutcascade.submit.value";
+
+        public static TimeUnit getPerformanceCheckerSleepTimeUnit() {
+            return TimeUnit.valueOf(getProperty(PERFORMANCE_CHECKER_TIMEUNIT_KEY));
+        }
+
+        public static long getPerformanceCheckerSleepValue() {
+            return Long.valueOf(getProperty(PERFORMANCE_CHECKER_VALUE_KEY));
+        }
+
+        public static TimeUnit getSubmitTimeUnit() {
+            return TimeUnit.valueOf(getProperty(SUBMIT_TIMEUNIT_KEY));
+        }
+
+        public static long getSubmitValue() {
+            return Long.valueOf(getProperty(SUBMIT_VALUE_KEY));
         }
     }
 

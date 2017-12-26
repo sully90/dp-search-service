@@ -18,6 +18,10 @@ public class SearchHitCount implements Comparable<SearchHitCount> {
         this.count = count;
     }
 
+    private SearchHitCount() {
+        // For Jackson
+    }
+
     public void increment() {
         this.count++;
     }

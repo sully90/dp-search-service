@@ -4,12 +4,16 @@ import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
+import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
+import com.github.onsdigital.search.mongo.models.Duration;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -63,10 +67,37 @@ public class PerformaceCheckerHandler implements Handler {
                 // TODO - remove || clause
                 if (meanNdcg < NDCG_THRESHOLD || tmpCount >= 3) {
                     tmpCount = 0;
-                    LOGGER.info("Submitting ModelTrainingTask");
-                    // Submit a ModelTrainingTask
-                    ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits);
-                    FanoutCascade.getInstance().getLayerForTask(ModelTrainingTask.class).submit(modelTrainingTask);
+
+                    // Check if we've submitted in the last allowed time frame
+                    Date now = new Date();
+
+                    TimeUnit timeUnit = SearchEngineProperties.FANOUTCASCADE.getSubmitTimeUnit();
+                    long value = SearchEngineProperties.FANOUTCASCADE.getSubmitValue();
+
+                    boolean canSubmit = true;
+                    Iterable<ModelTrainingTask> modelTrainingTasks = ModelTrainingTask.finder().find();
+                    Iterator<ModelTrainingTask> it = modelTrainingTasks.iterator();
+                    while (it.hasNext()) {
+                        ModelTrainingTask modelTrainingTask = it.next();
+                        Duration duration = new Duration(now, modelTrainingTask.getDate());
+                        long longDuration = duration.getDuration(timeUnit);
+                        if (longDuration < value) {
+                            canSubmit = false;
+                        }
+                    }
+
+                    if (canSubmit) {
+                        LOGGER.info("Submitting ModelTrainingTask");
+                        // Submit a ModelTrainingTask
+                        ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits, now);
+                        // Save a copy of the task
+                        modelTrainingTask.writer().save();
+
+                        // Submit
+                        FanoutCascade.getInstance().getLayerForTask(ModelTrainingTask.class).submit(modelTrainingTask);
+                    } else {
+                        LOGGER.info("Already submitted this window, skipping");
+                    }
                 }
             } catch (Exception e) {
                 // Thread must stay alive, so catch any exception raised
@@ -74,7 +105,9 @@ public class PerformaceCheckerHandler implements Handler {
             }
 
             try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
+                long sleepTime = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepValue();
+                Thread.sleep(sleepTimeUnit.toMillis(sleepTime));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

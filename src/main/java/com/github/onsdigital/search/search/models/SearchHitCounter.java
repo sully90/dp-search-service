@@ -25,6 +25,10 @@ public class SearchHitCounter {
         this.urlCountMap = new HashMap<>();
     }
 
+    private SearchHitCounter() {
+        // For Jackson
+    }
+
     public void put(String url, SearchHitCount searchHitCount) {
         this.urlCountMap.put(url, searchHitCount);
     }

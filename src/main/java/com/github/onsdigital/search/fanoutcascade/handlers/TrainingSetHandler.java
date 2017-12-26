@@ -88,9 +88,7 @@ public class TrainingSetHandler implements Handler {
             // rethrow to be dealt with by exception handler
             throw e;
         }
-
-        // Export the training set
-        Date now = new Date();
+        Date now = task.getDate();
 
         // Create a FeatureStoreInitTask
         ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, now);
