@@ -46,6 +46,10 @@ public class SearchEngineProperties {
         return properties.getProperty(key);
     }
 
+    public static boolean getBoolProperty(String key) {
+        return getProperty(key).equals("true");
+    }
+
     public static String[] getPropertyArray(String key) {
         return getPropertyArray(key, ",");
     }
@@ -56,10 +60,6 @@ public class SearchEngineProperties {
 
     public static String filenameInClasspath(String filename) {
         return Thread.currentThread().getContextClassLoader().getResource(filename).getFile();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getProperty("opennlp.ner.modes"));
     }
 
     public static class OPENNLP {
