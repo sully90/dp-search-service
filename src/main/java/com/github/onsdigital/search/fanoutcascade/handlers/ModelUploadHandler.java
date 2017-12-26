@@ -36,16 +36,16 @@ public class ModelUploadHandler implements Handler {
             // First, check if model exists
             if (client.modelExists(featureStore, name)) {
                 // Found, delete the model
-                LOGGER.info(String.format("Deleting model with name %s from feature store %s", name, featureStore));
+                if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Deleting model with name %s from feature store %s", name, featureStore));
                 client.deleteModel(featureStore, name);
             }
 
             RankLibModel rankLibModel = RankLibModel.fromFile(name, ModelType.RANKLIB, modelFileName);
-            LOGGER.info(String.format("Uploading model with name %s and feature set %s to feature store %s",
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Uploading model with name %s and feature set %s to feature store %s",
                     name, featureSet, featureStore));
             client.createModel(featureStore, featureSet, rankLibModel);
 
-            LOGGER.info(String.format("Clearing cache on feature store %s", featureStore));
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Clearing cache on feature store %s", featureStore));
             // Clear model cache
             client.clearCache(featureStore);
         } catch (Exception e) {

@@ -28,17 +28,17 @@ public class RankLibHandler implements Handler {
         String trainingSetFileName = TrainingSetHandler.getFileName(task.getDate());
         int model = task.getModel();
 
-        LOGGER.info(String.format("Got task %s for training set %s.", task, trainingSetFileName));
+        if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Got task %s for training set %s.", task, trainingSetFileName));
 
         String outputFileName = getModelFileName(trainingSetFileName, model);
 
-        LOGGER.info(String.format("Running RankLib for model %d. Output filename is %s.", model, outputFileName));
+        if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Running RankLib for model %d. Output filename is %s.", model, outputFileName));
 
         final Process p = run(model, trainingSetFileName, outputFileName);
         p.waitFor();
 
         int exitCode = p.exitValue();
-        LOGGER.info("RankLib exitied with code " + exitCode);
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("RankLib exitied with code " + exitCode);
 
         // Return a model upload task
         String name = "ons_model_" + model;

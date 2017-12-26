@@ -57,7 +57,7 @@ public class ONSFeatureStoreInitHandler implements Handler {
                 }
                 FeatureSetRequest request = new FeatureSetRequest(featureSet);
 
-                LOGGER.info(String.format("Creating feature set %s in store %s", request.getName(), featureStoreName));
+                if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Creating feature set %s in store %s", request.getName(), featureStoreName));
                 client.createFeatureSet(featureStoreName, request);
             }
         }

@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ONSFeatureStoreInitTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iws" afterPath="$PROJECT_DIR$/dp-search-service.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/RankLibTask.java" afterPath="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/RankLibTask.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -181,8 +176,8 @@
       <file leaf-file-name="PerformaceCheckerHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="235">
-              <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+            <state relative-caret-position="420">
+              <caret line="65" column="31" lean-forward="false" selection-start-line="65" selection-start-column="31" selection-end-line="65" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -190,50 +185,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ONSFeatureStoreInitTask.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlertasks/ONSFeatureStoreInitTask.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="27" column="39" lean-forward="false" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#694#695#0" expanded="true" />
-                <element signature="e#729#730#0" expanded="true" />
-                <element signature="e#807#808#0" expanded="true" />
-                <element signature="e#836#837#0" expanded="true" />
-                <element signature="e#863#864#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="App.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="369">
-              <caret line="40" column="99" lean-forward="false" selection-start-line="40" selection-start-column="99" selection-end-line="40" selection-end-column="99" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TrainingSetHandler.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TrainingSetHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
+            <state relative-caret-position="1060">
               <caret line="96" column="89" lean-forward="false" selection-start-line="96" selection-start-column="89" selection-end-line="96" selection-end-column="89" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ONSFeatureStoreInitHandler.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-488">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -244,8 +200,8 @@
       <file leaf-file-name="RankLibHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="63" column="48" lean-forward="false" selection-start-line="63" selection-start-column="48" selection-end-line="63" selection-end-column="48" />
+            <state relative-caret-position="217">
+              <caret line="40" column="49" lean-forward="false" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -253,11 +209,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ModelUploadHandler.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ModelUploadHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="36" column="54" lean-forward="false" selection-start-line="36" selection-start-column="54" selection-end-line="36" selection-end-column="54" />
+            <state relative-caret-position="323">
+              <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ONSFeatureStoreInitHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="327">
+              <caret line="59" column="57" lean-forward="false" selection-start-line="59" selection-start-column="57" selection-end-line="59" selection-end-column="57" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -362,8 +330,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java" />
       </list>
     </option>
   </component>
@@ -880,7 +848,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.8639201" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3545568" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1287,26 +1255,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="96" column="89" lean-forward="false" selection-start-line="96" selection-start-column="89" selection-end-line="96" selection-end-column="89" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/App.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="369">
@@ -1315,20 +1263,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-488">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/RankLibHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="63" column="48" lean-forward="false" selection-start-line="63" selection-start-column="48" selection-end-line="63" selection-end-column="48" />
+        <state relative-caret-position="217">
+          <caret line="40" column="49" lean-forward="false" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1337,8 +1275,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ModelUploadHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="36" column="54" lean-forward="false" selection-start-line="36" selection-start-column="54" selection-end-line="36" selection-end-column="54" />
+        <state relative-caret-position="323">
+          <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/ONSFeatureStoreInitHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="59" column="57" lean-forward="false" selection-start-line="59" selection-start-column="57" selection-end-line="59" selection-end-column="57" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/PerformaceCheckerHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="65" column="31" lean-forward="false" selection-start-line="65" selection-start-column="31" selection-end-line="65" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/github/onsdigital/search/fanoutcascade/handlers/TrainingSetHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1060">
+          <caret line="96" column="89" lean-forward="false" selection-start-line="96" selection-start-column="89" selection-end-line="96" selection-end-column="89" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
