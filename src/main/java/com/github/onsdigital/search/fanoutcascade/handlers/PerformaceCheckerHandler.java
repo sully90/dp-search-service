@@ -6,14 +6,14 @@ import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
-import com.github.onsdigital.search.mongo.models.Duration;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 public class PerformaceCheckerHandler implements Handler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerformaceCheckerHandler.class);
+
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private static final float NDCG_THRESHOLD = 0.5f;
 
@@ -65,28 +67,26 @@ public class PerformaceCheckerHandler implements Handler {
                 tmpCount++;
 
                 // TODO - remove || clause
-                if (meanNdcg < NDCG_THRESHOLD || tmpCount >= 3) {
+                if (meanNdcg < NDCG_THRESHOLD || tmpCount >= 1) {
                     tmpCount = 0;
 
                     // Check if we've submitted in the last allowed time frame
                     Date now = new Date();
+                    long nowMillis = now.getTime();
 
                     TimeUnit timeUnit = SearchEngineProperties.FANOUTCASCADE.getSubmitTimeUnit();
                     long value = SearchEngineProperties.FANOUTCASCADE.getSubmitValue();
 
-                    boolean canSubmit = true;
-                    Iterable<ModelTrainingTask> modelTrainingTasks = ModelTrainingTask.finder().find();
-                    Iterator<ModelTrainingTask> it = modelTrainingTasks.iterator();
-                    while (it.hasNext()) {
-                        ModelTrainingTask modelTrainingTask = it.next();
-                        Duration duration = new Duration(now, modelTrainingTask.getDate());
-                        long longDuration = duration.getDuration(timeUnit);
-                        if (longDuration < value) {
-                            canSubmit = false;
-                        }
-                    }
+                    long withinWindow = nowMillis - timeUnit.toMillis(value);
+                    Date then = new Date(withinWindow);
 
-                    if (canSubmit) {
+                    String query = String.format("{date: {$gte : {$date : \"%s\"}, $lte : {$date : \"%s\"}}}", df.format(then), df.format(now));
+                    LOGGER.info("Query: " + query);
+
+                    long taskCount = ModelTrainingTask.finder().count(query);
+                    LOGGER.info(String.format("Found %d tasks which match query", taskCount));
+
+                    if (taskCount == 0) {
                         LOGGER.info("Submitting ModelTrainingTask");
                         // Submit a ModelTrainingTask
                         ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits, now);
