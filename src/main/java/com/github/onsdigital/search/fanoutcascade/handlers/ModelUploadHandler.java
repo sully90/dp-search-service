@@ -34,8 +34,7 @@ public class ModelUploadHandler implements Handler {
 
         try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
             // First, check if model exists
-            Response getResponse = client.getModel(featureStore, name);
-            if (getResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            if (client.modelExists(featureStore, name)) {
                 // Found, delete the model
                 LOGGER.info(String.format("Deleting model with name %s from feature store %s", name, featureStore));
                 client.deleteModel(featureStore, name);

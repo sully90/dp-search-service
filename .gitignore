@@ -1,2 +1,3 @@
 target/
 src/main/resources/opennlp.models/*.bin
+src/main/resources/elastic.ltr/models

@@ -25,7 +25,7 @@ public class RankLibHandler implements Handler {
         // Runs RankLib for a given training set
         RankLibTask task = (RankLibTask) handlerTask;
 
-        String trainingSetFileName = task.getTrainingSetFileName();
+        String trainingSetFileName = TrainingSetHandler.getFileName(task.getDate());
         int model = task.getModel();
 
         LOGGER.info(String.format("Got task %s for training set %s.", task, trainingSetFileName));
@@ -60,8 +60,9 @@ public class RankLibHandler implements Handler {
             String line;
 
             try {
-                while ((line = input.readLine()) != null)
-                    LOGGER.info(line);
+                while ((line = input.readLine()) != null) {
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug(line);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

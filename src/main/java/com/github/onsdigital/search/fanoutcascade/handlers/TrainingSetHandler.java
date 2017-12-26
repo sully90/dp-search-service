@@ -13,6 +13,7 @@ import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -91,23 +92,27 @@ public class TrainingSetHandler implements Handler {
 
         // Export the training set
         Date now = new Date();
-        long time = now.getTime();
 
-        File directory = new File(String.format("src/main/resources/elastic.ltr/models/ons_%s/", time));
+        // Create a FeatureStoreInitTask
+        ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, now);
+
+        // Write the training data
+        String fileName = getFileName(now);
+
+        // Run the exporter
+        Exporter.export(fileName, queryFeatureMap);
+
+        // Return the store init task
+        return initTask;
+    }
+
+    public static String getFileName(Date date) {
+        File directory = new File(String.format("src/main/resources/elastic.ltr/models/ons_%s/", date.getTime()));
         if (!directory.isDirectory()) {
             directory.mkdir();
         }
         String fileName = String.format("%s/ons_train.txt", directory.getAbsolutePath());
-
-        Exporter.export(fileName, queryFeatureMap);
-
-        List<RankLibTask> tasks = new ArrayList<>();
-        // Return a RankLibTask
-        for (int i = 0; i <= 9; i++) {
-            RankLibTask rankLibTask = new RankLibTask(store, featureSet, fileName, i);
-            tasks.add(rankLibTask);
-        }
-        return tasks;
+        return fileName;
     }
 
     private static LogQuerySearchRequest getLogQuerySearchRequest(String store, String featureSet,

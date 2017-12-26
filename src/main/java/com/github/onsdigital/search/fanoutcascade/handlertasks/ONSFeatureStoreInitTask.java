@@ -5,37 +5,31 @@ import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import java.util.Date;
 
 /**
- * @author sullid (David Sullivan) on 25/12/2017
+ * @author sullid (David Sullivan) on 26/12/2017
  * @project dp-search-service
  */
-public class RankLibTask extends HandlerTask {
+public class ONSFeatureStoreInitTask extends HandlerTask {
 
     private String featureStore;
-    private String featureSet;
+    private String featureSetName;
     private Date date;
-    private int model;
 
-    public RankLibTask(String featureStore, String featureSet, Date date, int model) {
-        super(RankLibTask.class);
+    public ONSFeatureStoreInitTask(String featureStore, String featureSetName, Date date) {
+        super(ONSFeatureStoreInitTask.class);
         this.featureStore = featureStore;
-        this.featureSet = featureSet;
+        this.featureSetName = featureSetName;
         this.date = date;
-        this.model = model;
     }
 
     public String getFeatureStore() {
         return featureStore;
     }
 
-    public String getFeatureSet() {
-        return featureSet;
+    public String getFeatureSetName() {
+        return featureSetName;
     }
 
     public Date getDate() {
         return date;
-    }
-
-    public int getModel() {
-        return model;
     }
 }
