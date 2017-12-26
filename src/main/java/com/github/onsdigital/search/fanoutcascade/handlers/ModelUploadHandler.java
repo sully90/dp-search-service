@@ -8,8 +8,6 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelUploadTask;
 import com.github.onsdigital.search.server.LearnToRankService;
-import org.apache.http.HttpStatus;
-import org.elasticsearch.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

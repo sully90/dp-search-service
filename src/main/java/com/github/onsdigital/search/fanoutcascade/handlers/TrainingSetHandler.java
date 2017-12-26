@@ -14,7 +14,6 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
-import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
