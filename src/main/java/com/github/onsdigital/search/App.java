@@ -30,7 +30,7 @@ public class App extends ResourceConfig {
         // Tracing support.
         property(ServerProperties.TRACING, TracingConfig.ON_DEMAND.name());
 
-        // Setup a exception handler
+        // Setup an exception handler
         ExceptionHandler exceptionHandler = new PurgingExceptionHandler();
         FanoutCascadeRegistry.getInstance().setExceptionHandler(exceptionHandler);
 
@@ -42,7 +42,7 @@ public class App extends ResourceConfig {
         FanoutCascadeRegistry.getInstance().register(RankLibTask.class, RankLibHandler.class, 10);
         FanoutCascadeRegistry.getInstance().register(ModelUploadTask.class, ModelUploadHandler.class, 10);
 
-        // Submit the tasks
+        // Submit the initial tasks
         FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
         FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
     }
