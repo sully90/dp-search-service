@@ -39,7 +39,7 @@ public class ModelUploadHandler implements Handler {
             }
 
             RankLibModel rankLibModel = RankLibModel.fromFile(name, ModelType.RANKLIB, modelFileName);
-            if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Uploading model with name %s and feature set %s to feature store %s",
+            LOGGER.info(String.format("Uploading model with name %s and feature set %s to feature store %s",
                     name, featureSet, featureStore));
             client.createModel(featureStore, featureSet, rankLibModel);
 

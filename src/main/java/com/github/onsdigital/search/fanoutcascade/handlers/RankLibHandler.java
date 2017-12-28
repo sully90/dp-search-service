@@ -60,7 +60,7 @@ public class RankLibHandler implements Handler {
 
     public Process run(int model, String judgementWithFeaturesFile, String modelOutput) throws IOException, InterruptedException {
         String cmd = getCmd(model, judgementWithFeaturesFile, modelOutput);
-        LOGGER.info("Command: " + cmd);
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Command: " + cmd);
         final Process p = Runtime.getRuntime().exec(cmd);
 
         new Thread(() -> {

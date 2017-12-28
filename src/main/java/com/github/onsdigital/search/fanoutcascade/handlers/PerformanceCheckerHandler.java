@@ -77,13 +77,13 @@ public class PerformanceCheckerHandler implements Handler {
                     Date then = new Date(withinWindow);
 
                     final String query = getDateQuery(then, now);
-                    LOGGER.info("Query: " + query);
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("Query: " + query);
 
                     long taskCount = ModelTrainingTask.finder().count(query);
-                    LOGGER.info(String.format("Found %d tasks which match query", taskCount));
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Found %d task(s) which match query", taskCount));
 
                     if (taskCount == 0) {
-                        LOGGER.info("Submitting ModelTrainingTask");
+                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting ModelTrainingTask");
                         // Submit a ModelTrainingTask
                         ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits, now);
                         // Save a copy of the task
