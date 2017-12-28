@@ -21,7 +21,7 @@ public class RankLibHandler implements Handler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RankLibHandler.class);
 
     @Override
-    public Object handleTask(HandlerTask handlerTask) throws Exception {
+    public Object handleTask(HandlerTask handlerTask) {
         // Runs RankLib for a given training set
         RankLibTask task = (RankLibTask) handlerTask;
 
@@ -34,16 +34,24 @@ public class RankLibHandler implements Handler {
 
         if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Running RankLib for model %d. Output filename is %s.", model, outputFileName));
 
-        final Process p = run(model, trainingSetFileName, outputFileName);
-        p.waitFor();
+        final Process p;
+        try {
+            p = run(model, trainingSetFileName, outputFileName);
+            p.waitFor();
+        } catch (IOException | InterruptedException e) {
+            LOGGER.error("Exception whilst trying to run RankLib, exiting.", e);
+            return null;
+        }
 
         int exitCode = p.exitValue();
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("RankLib exitied with code " + exitCode);
+        if (exitCode != 0) {
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("RankLib exited with code %d, returning null", exitCode));
+            return null;
+        }
 
         // Return a model upload task
-        String name = "ons_model_" + model;
-        ModelUploadTask uploadTask = new ModelUploadTask(task, name, outputFileName);
-        return uploadTask;
+        String name = String.format("ons_model_%d", model);
+        return new ModelUploadTask(task, name, outputFileName);
     }
 
     private static String getModelFileName(String trainingSetFileName, int model) {
@@ -64,7 +72,7 @@ public class RankLibHandler implements Handler {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug(line);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Caught IOException whilst attempting to run RankLib", e);
             }
         }).start();
 
