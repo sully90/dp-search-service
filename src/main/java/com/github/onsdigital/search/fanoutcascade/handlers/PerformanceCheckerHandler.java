@@ -21,19 +21,19 @@ import java.util.concurrent.TimeUnit;
  * @author sullid (David Sullivan) on 22/12/2017
  * @project dp-search-service
  */
-public class PerformaceCheckerHandler implements Handler {
+public class PerformanceCheckerHandler implements Handler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PerformaceCheckerHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceCheckerHandler.class);
 
-    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private static final float NDCG_THRESHOLD = 0.5f;
 
+    // TODO - remove
+    private static final boolean FORCE_SUBMIT = true;
+
     @Override
     public Object handleTask(HandlerTask handlerTask) {
-
-        // TODO - remove
-        int tmpCount = 0;
 
         while (!FanoutCascade.getInstance().isShutdown()) {
             try {
@@ -63,12 +63,8 @@ public class PerformaceCheckerHandler implements Handler {
                 double meanNdcg = sumNdcg / (double) count;
                 LOGGER.info("Mean NDCG: " + meanNdcg);
 
-                // TODO - remove
-                tmpCount++;
-
                 // TODO - remove || clause
-                if (meanNdcg < NDCG_THRESHOLD || tmpCount >= 1) {
-                    tmpCount = 0;
+                if (meanNdcg < NDCG_THRESHOLD || FORCE_SUBMIT) {
 
                     // Check if we've submitted in the last allowed time frame
                     Date now = new Date();
@@ -80,7 +76,7 @@ public class PerformaceCheckerHandler implements Handler {
                     long withinWindow = nowMillis - timeUnit.toMillis(value);
                     Date then = new Date(withinWindow);
 
-                    String query = String.format("{date: {$gte : {$date : \"%s\"}, $lte : {$date : \"%s\"}}}", df.format(then), df.format(now));
+                    final String query = getDateQuery(then, now);
                     LOGGER.info("Query: " + query);
 
                     long taskCount = ModelTrainingTask.finder().count(query);
@@ -99,20 +95,22 @@ public class PerformaceCheckerHandler implements Handler {
                         LOGGER.info("Already submitted this window, skipping");
                     }
                 }
+
+                // Sleep the thread
+                TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
+                long sleepTime = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepValue();
+                Thread.sleep(sleepTimeUnit.toMillis(sleepTime));
+
             } catch (Exception e) {
                 // Thread must stay alive, so catch any exception raised
                 e.printStackTrace();
             }
 
-            try {
-                TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
-                long sleepTime = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepValue();
-                Thread.sleep(sleepTimeUnit.toMillis(sleepTime));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
         }
         return null;
+    }
+
+    static String getDateQuery(Date then, Date now) {
+        return String.format("{date: {$gte : {$date : \"%s\"}, $lte : {$date : \"%s\"}}}", ISO_DATE_FORMAT.format(then), ISO_DATE_FORMAT.format(now));
     }
 }

@@ -42,7 +42,7 @@ public class App extends ResourceConfig {
 
             // Setup FanoutCascade
             FanoutCascadeRegistry.getInstance().registerMonitoringThread();
-            FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformaceCheckerHandler.class, 1);
+            FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformanceCheckerHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(ModelTrainingTask.class, TrainingSetHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(ONSFeatureStoreInitTask.class, ONSFeatureStoreInitHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(RankLibTask.class, RankLibHandler.class, 10);
@@ -52,9 +52,5 @@ public class App extends ResourceConfig {
             FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
             FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(TimeUnit.valueOf("days"));
     }
 }
