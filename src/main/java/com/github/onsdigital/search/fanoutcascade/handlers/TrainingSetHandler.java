@@ -83,24 +83,28 @@ public class TrainingSetHandler implements Handler {
                     }
                 }
             }
+
+            Date now = task.getDate();
+
+            // Create a FeatureStoreInitTask
+            ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, now);
+
+            // Write the training data
+            String fileName = getFileName(now);
+
+            // Run the exporter
+            Exporter.export(fileName, queryFeatureMap);
+
+            // It's now safe to record the task to mongo (all databases connections are live)
+            task.writer().save();
+
+            // Return the store init task
+            return initTask;
         } catch (Exception e) {
             LOGGER.error("Error in LearnToRankClient", e);
             // rethrow to be dealt with by exception handler
             throw e;
         }
-        Date now = task.getDate();
-
-        // Create a FeatureStoreInitTask
-        ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, now);
-
-        // Write the training data
-        String fileName = getFileName(now);
-
-        // Run the exporter
-        Exporter.export(fileName, queryFeatureMap);
-
-        // Return the store init task
-        return initTask;
     }
 
     public static String getFileName(Date date) {

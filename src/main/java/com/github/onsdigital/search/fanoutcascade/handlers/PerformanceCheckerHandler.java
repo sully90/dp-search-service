@@ -86,8 +86,6 @@ public class PerformanceCheckerHandler implements Handler {
                         if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting TrainingSetTask");
                         // Submit a TrainingSetTask
                         TrainingSetTask trainingSetTask = new TrainingSetTask(uniqueHits, now);
-                        // Save a copy of the task
-                        trainingSetTask.writer().save();
 
                         // Submit
                         FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(trainingSetTask);
