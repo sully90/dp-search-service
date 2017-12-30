@@ -12,7 +12,7 @@ import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
-import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -39,7 +39,7 @@ public class TrainingSetHandler implements Handler {
     @Override
     public Object handleTask(HandlerTask handlerTask) throws Exception {
 
-        ModelTrainingTask task = (ModelTrainingTask) handlerTask;
+        TrainingSetTask task = (TrainingSetTask) handlerTask;
         Map<String, SearchHitCounter> uniqueHits = task.getUniqueHits();
 
         // Init Judgement - Rankable map

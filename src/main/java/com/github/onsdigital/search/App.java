@@ -43,13 +43,14 @@ public class App extends ResourceConfig {
             // Setup FanoutCascade
             FanoutCascadeRegistry.getInstance().registerMonitoringThread();
             FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformanceCheckerHandler.class, 1);
-            FanoutCascadeRegistry.getInstance().register(ModelTrainingTask.class, TrainingSetHandler.class, 1);
+            FanoutCascadeRegistry.getInstance().register(TrainingSetTask.class, TrainingSetHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(ONSFeatureStoreInitTask.class, ONSFeatureStoreInitHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(RankLibTask.class, RankLibHandler.class, 10);
             FanoutCascadeRegistry.getInstance().register(ModelUploadTask.class, ModelUploadHandler.class, 10);
 
             // Submit the initial tasks
-            FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(new FanoutCascadeMonitoringTask());
+            FanoutCascadeMonitoringTask fanoutCascadeMonitoringTask = new FanoutCascadeMonitoringTask(TimeUnit.SECONDS, 10);
+            FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(fanoutCascadeMonitoringTask);
             FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
         }
     }

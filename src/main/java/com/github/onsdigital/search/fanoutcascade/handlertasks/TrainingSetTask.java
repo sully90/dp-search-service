@@ -15,20 +15,20 @@ import java.util.Map;
  * @author sullid (David Sullivan) on 22/12/2017
  * @project dp-search-service
  */
-public class ModelTrainingTask extends HandlerTask implements WritableObject {
+public class TrainingSetTask extends HandlerTask implements WritableObject {
 
     private ObjectId _id;
     private Map<String, SearchHitCounter> uniqueHits;
     private Date date;
 
-    public ModelTrainingTask(Map<String, SearchHitCounter> uniqueHits, Date date) {
-        super(ModelTrainingTask.class);
+    public TrainingSetTask(Map<String, SearchHitCounter> uniqueHits, Date date) {
+        super(TrainingSetTask.class);
         this.uniqueHits = uniqueHits;
         this.date = date;
     }
 
-    private ModelTrainingTask() {
-        super(ModelTrainingTask.class);
+    private TrainingSetTask() {
+        super(TrainingSetTask.class);
     }
 
     public Map<String, SearchHitCounter> getUniqueHits() {
@@ -49,7 +49,7 @@ public class ModelTrainingTask extends HandlerTask implements WritableObject {
         return this._id;
     }
 
-    public static ObjectFinder<ModelTrainingTask> finder() {
-        return new ObjectFinder<>(CollectionNames.MODEL_TRAINING_TASKS, ModelTrainingTask.class);
+    public static ObjectFinder<TrainingSetTask> finder() {
+        return new ObjectFinder<>(CollectionNames.MODEL_TRAINING_TASKS, TrainingSetTask.class);
     }
 }

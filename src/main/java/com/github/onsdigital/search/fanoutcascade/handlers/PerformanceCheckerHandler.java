@@ -5,7 +5,7 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
-import com.github.onsdigital.search.fanoutcascade.handlertasks.ModelTrainingTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import org.slf4j.Logger;
@@ -79,18 +79,18 @@ public class PerformanceCheckerHandler implements Handler {
                     final String query = getDateQuery(then, now);
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("Query: " + query);
 
-                    long taskCount = ModelTrainingTask.finder().count(query);
+                    long taskCount = TrainingSetTask.finder().count(query);
                     if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Found %d task(s) which match query", taskCount));
 
                     if (taskCount == 0) {
-                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting ModelTrainingTask");
-                        // Submit a ModelTrainingTask
-                        ModelTrainingTask modelTrainingTask = new ModelTrainingTask(uniqueHits, now);
+                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting TrainingSetTask");
+                        // Submit a TrainingSetTask
+                        TrainingSetTask trainingSetTask = new TrainingSetTask(uniqueHits, now);
                         // Save a copy of the task
-                        modelTrainingTask.writer().save();
+                        trainingSetTask.writer().save();
 
                         // Submit
-                        FanoutCascade.getInstance().getLayerForTask(ModelTrainingTask.class).submit(modelTrainingTask);
+                        FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(trainingSetTask);
                     } else {
                         LOGGER.info("Already submitted this window, skipping");
                     }
