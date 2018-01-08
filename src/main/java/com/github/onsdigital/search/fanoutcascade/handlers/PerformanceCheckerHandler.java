@@ -56,12 +56,13 @@ public class PerformanceCheckerHandler implements Handler {
                     // Compute normalised discounted cumulative gain as a measure of current performance
                     float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
 
+                    // Compute the mean ndcg for this query term
                     double sum = 0.0d;
                     for (float val : ndcg) {
                         sum += (double) val;
                     }
-                    sumNdcg += sum;
-                    count += ndcg.length;
+                    sumNdcg += sum / (double) ndcg.length;
+                    count ++;
                 }
 
                 double meanNdcg = sumNdcg / (double) count;
