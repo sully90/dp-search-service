@@ -35,6 +35,10 @@ public class PerformanceCheckerHandler implements Handler {
     @Override
     public Object handleTask(HandlerTask handlerTask) {
 
+        // First, read thread sleep params from config file
+        TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
+        long sleepTime = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepValue();
+
         while (!FanoutCascade.getInstance().isShutdown()) {
             try {
                 PerformanceChecker performanceChecker = new PerformanceChecker();
@@ -95,20 +99,18 @@ public class PerformanceCheckerHandler implements Handler {
                 }
 
                 // Sleep the thread
-                TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
-                long sleepTime = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepValue();
                 Thread.sleep(sleepTimeUnit.toMillis(sleepTime));
 
             } catch (Exception e) {
                 // Thread must stay alive, so catch any exception raised
-                e.printStackTrace();
+                LOGGER.error("Caught exception in PerformanceCheckerHandler", e);
             }
 
         }
         return null;
     }
 
-    static String getDateQuery(Date then, Date now) {
+    private static String getDateQuery(Date then, Date now) {
         return String.format("{date: {$gte : {$date : \"%s\"}, $lte : {$date : \"%s\"}}}", ISO_DATE_FORMAT.format(then), ISO_DATE_FORMAT.format(now));
     }
 }
