@@ -61,7 +61,7 @@ public class TrainingSetHandler implements Handler {
                 for (int i = 0; i < judgementList.size(); i++) {
                     Judgement judgement = judgementList.get(i);
                     Object obj = judgement.getAttr("url");
-                    if (obj instanceof String) {
+                    if (null != obj && obj instanceof String) {
                         // Pages are stored in ES with _id as their uri
                         // So we perform a sltr query with an _id filter to get the feature scores
                         String url = String.valueOf(obj);
@@ -79,6 +79,8 @@ public class TrainingSetHandler implements Handler {
                             // The page was found, so we have logged feature scores as Fields
                             Rankable rankable = sltrHits.get(0);
                             queryFeatureMap.put(judgement, rankable);
+                        } else {
+                            LOGGER.warn(String.format("TrainingSetHandler: No hits for term:url pair \t %s:%s", term, url));
                         }
                     }
                 }

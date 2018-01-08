@@ -221,7 +221,7 @@
         <artifactId>tomcat7-maven-plugin</artifactId>
         <version>2.2</version>
         <configuration>
-          <path>/SearchEngine/api</path>
+          <path>/SearchEngine</path>
         </configuration>
       </plugin>
     </plugins>

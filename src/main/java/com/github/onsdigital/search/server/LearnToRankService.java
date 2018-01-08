@@ -28,10 +28,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.github.onsdigital.search.response.HttpResponse.internalServerError;
 import static com.github.onsdigital.search.response.HttpResponse.ok;
@@ -46,7 +43,19 @@ public class LearnToRankService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LearnToRankService.class);
 
-    public static final String HOSTNAME = "localhost";
+    private static final String HOSTNAME_KEY = "elastic.hostname";
+
+    public static final String HOSTNAME;
+
+    static {
+        if (SearchEngineProperties.keyExists(HOSTNAME_KEY) &&
+                SearchEngineProperties.getProperty(HOSTNAME_KEY) instanceof String) {
+            HOSTNAME = SearchEngineProperties.getProperty(HOSTNAME_KEY);
+        } else {
+            // Default to localhost
+            HOSTNAME = "localhost";
+        }
+    }
 
     @PUT
     @Path("/featuresets/init/")
@@ -70,6 +79,31 @@ public class LearnToRankService {
             }
             return ok();
         } catch (Exception e) {
+            return internalServerError(e);
+        }
+    }
+
+    @GET
+    @Path("/featuresets/list")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response listFeatureSets() {
+        // Lists feature sets for all feature stores
+        Map<String, LearnToRankListResponse<FeatureSetRequest>> featureSetMapping = new LinkedHashMap<>();
+
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+            Set<String> featureStores = client.listFeatureStores();
+
+            for (String featureStore : featureStores) {
+                if ("_default_".equals(featureStore)) {
+                    continue;
+                }
+                LearnToRankListResponse<FeatureSetRequest> learnToRankListResponse = client.listFeatureSets(featureStore);
+                featureSetMapping.put(featureStore, learnToRankListResponse);
+            }
+
+            return ok(featureSetMapping);
+        } catch (Exception e) {
+            LOGGER.error("Error listing feature sets", e);
             return internalServerError(e);
         }
     }
@@ -99,64 +133,6 @@ public class LearnToRankService {
             return ok(response);
         } catch (Exception e) {
             LOGGER.error("Error retrieving featureset with name: " + name, e);
-            return internalServerError(e);
-        }
-    }
-
-    @POST
-    @Path("/sltr/{index}/{featureset}/")
-    @Consumes({ MediaType.APPLICATION_JSON })
-    @Produces({ MediaType.APPLICATION_JSON })
-    public Response sltr(@PathParam("index") String index,
-                         @PathParam("featureset") String featureSet,
-                         Map<String, Object> qbMap) {
-
-        if (!qbMap.containsKey("params") || !(qbMap.get("params") instanceof Map)) {
-            return internalServerError("Must supply keywords Map in query map");
-        }
-
-        // Construct the base query object
-
-        if (!qbMap.containsKey("query")) {
-            return internalServerError("Must supply query string");
-        }
-
-        WrapperQueryBuilder qb;
-        try {
-            String queryString = JsonUtils.toJson(qbMap.get("query"));
-            qb = QueryBuilders.wrapperQuery(queryString);
-        } catch (IOException e) {
-            return internalServerError(e);
-        }
-
-        // Construct the LoggingQuery
-        String store = "";
-        if (qbMap.containsKey("store") && qbMap.get("store") instanceof String) {
-            store = (String) qbMap.get("store");
-        }
-
-        String logName = "logged_featureset";
-        if (qbMap.containsKey("logName") && qbMap.get("logName") instanceof String) {
-            logName = (String) qbMap.get("logName");
-        }
-        SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder(logName, featureSet);
-        if (!store.isEmpty()) {
-            sltrQueryBuilder.setStore(store);
-        }
-        Map<String, String> keywordsMap = (Map<String, String>) qbMap.get("params");
-
-        for (String key : keywordsMap.keySet()) {
-            sltrQueryBuilder.setParam(key, keywordsMap.get(key));
-        }
-
-        LogQuerySearchRequest logQuerySearchRequest = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
-
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
-            SltrResponse response = client.search(index, logQuerySearchRequest);
-            return ok(response);
-        } catch (Exception e) {
-            String message = String.format("Error performing sltr on index: %s, featureset: %s", index, featureSet);
-            LOGGER.error(message, e);
             return internalServerError(e);
         }
     }

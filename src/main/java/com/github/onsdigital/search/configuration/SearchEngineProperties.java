@@ -43,6 +43,10 @@ public class SearchEngineProperties {
         return getProperty(group + '.' + key);
     }
 
+    public static boolean keyExists(String key) {
+        return properties.containsKey(key);
+    }
+
     public static String getProperty(String key) {
         return properties.getProperty(key);
     }

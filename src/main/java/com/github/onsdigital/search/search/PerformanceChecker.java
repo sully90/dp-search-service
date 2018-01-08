@@ -285,7 +285,7 @@ public class PerformanceChecker {
                 System.out.println("Term: " + term);
                 for (int i = 0; i < ndcg.length; i++) {
                     // Print rank and judgement to the console
-                    System.out.println(judgementList.get(i).getRank() + " : " + ndcg[i]);
+                    System.out.println(String.format("qid:%s\t", judgementList.get(i).getQueryId()) + judgementList.get(i).getRank() + " : " + ndcg[i]);
                     Object obj = judgementList.get(i).getAttr("url");
                     if (obj instanceof String) {
                         // Pages are stored in ES with _id as their uri
