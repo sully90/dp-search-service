@@ -19,16 +19,28 @@ public class TrainingSetTask extends HandlerTask implements WritableObject {
 
     private ObjectId _id;
     private Map<String, SearchHitCounter> uniqueHits;
+    private String featureStore;
+    private String featureSet;
     private Date date;
 
-    public TrainingSetTask(Map<String, SearchHitCounter> uniqueHits, Date date) {
+    public TrainingSetTask(String featureStore, String featureSet, Map<String, SearchHitCounter> uniqueHits, Date date) {
         super(TrainingSetTask.class);
+        this.featureStore = featureStore;
+        this.featureSet = featureSet;
         this.uniqueHits = uniqueHits;
         this.date = date;
     }
 
     private TrainingSetTask() {
         super(TrainingSetTask.class);
+    }
+
+    public String getFeatureStore() {
+        return featureStore;
+    }
+
+    public String getFeatureSet() {
+        return featureSet;
     }
 
     public Map<String, SearchHitCounter> getUniqueHits() {

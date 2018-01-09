@@ -5,6 +5,7 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
@@ -31,6 +32,9 @@ public class PerformanceCheckerHandler implements Handler {
 
     // TODO - remove
     private static final boolean FORCE_SUBMIT = true;
+
+    private String store = "ons_featurestore";
+    private String featureSet = "ons_features_prod";
 
     @Override
     public Object handleTask(HandlerTask handlerTask) {
@@ -88,12 +92,11 @@ public class PerformanceCheckerHandler implements Handler {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Found %d task(s) which match query", taskCount));
 
                     if (taskCount == 0) {
-                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting TrainingSetTask");
-                        // Submit a TrainingSetTask
-                        TrainingSetTask trainingSetTask = new TrainingSetTask(uniqueHits, now);
+                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting FeatureStore Init Task");
 
-                        // Submit
-                        FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(trainingSetTask);
+                        // Submit a FeatureStoreInitTask
+                        ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, uniqueHits, now);
+                        FanoutCascade.getInstance().getLayerForTask(ONSFeatureStoreInitTask.class).submit(initTask);
                     } else {
                         LOGGER.info("Already submitted in this window, skipping");
                     }

@@ -8,7 +8,7 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
-import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.server.LearnToRankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,6 @@ public class ONSFeatureStoreInitHandler implements Handler {
         String nameOnDisk = task.getFeatureStore();
 
         String featureStoreName = getFeatureStoreNameWithDate(task, new Date());
-        String featureSetName = task.getFeatureSetName();
 
         Map<String, List<FeatureSet>> featureSets = loadFeatureSet(nameOnDisk);
 
@@ -48,6 +47,7 @@ public class ONSFeatureStoreInitHandler implements Handler {
 
             // Init the store
             if (!client.featureStoreExists(featureStoreName)) {
+                LOGGER.info("Creating feature store: " + featureStoreName);
                 client.initFeatureStore(featureStoreName);
             }
 
@@ -62,14 +62,10 @@ public class ONSFeatureStoreInitHandler implements Handler {
             }
         }
 
-        // Return the RankLib tasks
-        List<RankLibTask> tasks = new ArrayList<>();
-        // Return a RankLibTask
-        for (int i = 0; i <= 9; i++) {
-            RankLibTask rankLibTask = new RankLibTask(featureStoreName, featureSetName, task.getDate(), i);
-            tasks.add(rankLibTask);
-        }
-        return tasks;
+        // Return TrainingSetTask
+        TrainingSetTask trainingSetTask = new TrainingSetTask(featureStoreName, task.getFeatureSetName(),
+                task.getUniqueHits(), task.getDate());
+        return trainingSetTask;
     }
 
     private static String getFeatureStoreNameWithDate(ONSFeatureStoreInitTask task, Date date) {
@@ -109,9 +105,6 @@ public class ONSFeatureStoreInitHandler implements Handler {
                 return featureStoreToSetMap;
             }
         }
-//        for (File featureSetDirectory : featureSetDirectories) {
-
-//        }
 
         return null;
     }

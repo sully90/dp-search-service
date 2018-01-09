@@ -1,0 +1,12 @@
+{
+  "name": "1",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "match": {
+      "description.title": "{{keywords}}"
+    }
+  },
+  "template_language": "mustache"
+}

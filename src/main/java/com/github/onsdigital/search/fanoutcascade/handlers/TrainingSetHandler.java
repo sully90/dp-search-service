@@ -12,6 +12,7 @@ import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
+import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
@@ -32,9 +33,6 @@ public class TrainingSetHandler implements Handler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingSetHandler.class);
 
     private static final String HOSTNAME = "localhost";
-
-    private String store = "ons_featurestore";
-    private String featureSet = "ons_features";
 
     @Override
     public Object handleTask(HandlerTask handlerTask) throws Exception {
@@ -67,8 +65,10 @@ public class TrainingSetHandler implements Handler {
                         String url = String.valueOf(obj);
 
                         // Construct the LogQuerySearchRequest
-                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(store,
-                                featureSet, url, term);
+                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(task.getFeatureStore(),
+                                task.getFeatureSet(), url, term);
+
+                        LOGGER.info("Query: " + logQuerySearchRequest.toJson());
 
                         // Perform the sltr search request
                         SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
@@ -88,9 +88,6 @@ public class TrainingSetHandler implements Handler {
 
             Date now = task.getDate();
 
-            // Create a FeatureStoreInitTask
-            ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, now);
-
             // Write the training data
             String fileName = getFileName(now);
 
@@ -100,8 +97,14 @@ public class TrainingSetHandler implements Handler {
             // It's now safe to record the task to mongo (all databases connections are live)
             task.writer().save();
 
-            // Return the store init task
-            return initTask;
+            // Return the RankLib tasks
+            List<RankLibTask> tasks = new ArrayList<>();
+            // Return a RankLibTask
+            for (int i = 0; i <= 9; i++) {
+                RankLibTask rankLibTask = new RankLibTask(task.getFeatureStore(), task.getFeatureSet(), task.getDate(), i);
+                tasks.add(rankLibTask);
+            }
+            return tasks;
         } catch (Exception e) {
             LOGGER.error("Error in LearnToRankClient", e);
             // rethrow to be dealt with by exception handler
