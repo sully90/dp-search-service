@@ -49,7 +49,7 @@ public class PerformanceCheckerHandler implements Handler {
                 // Count the unique URL hits
                 Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
 
-                // For each search term, compute judgeemts and log features
+                // For each search term, compute judgements and log features
                 for (String term : uniqueHits.keySet()) {
                     Judgements judgements = uniqueHits.get(term).getJudgements(term);
 
@@ -95,7 +95,7 @@ public class PerformanceCheckerHandler implements Handler {
                         // Submit
                         FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(trainingSetTask);
                     } else {
-                        LOGGER.info("Already submitted this window, skipping");
+                        LOGGER.info("Already submitted in this window, skipping");
                     }
                 }
 

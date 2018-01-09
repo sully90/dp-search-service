@@ -4,7 +4,7 @@
     "keywords"
   ],
   "template": {
-    "match_phrase": {
+    "match": {
       "description.keywords": "{{keywords}}"
     }
   },

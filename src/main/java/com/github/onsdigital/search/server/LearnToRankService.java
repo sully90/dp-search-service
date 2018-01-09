@@ -48,8 +48,7 @@ public class LearnToRankService {
     public static final String HOSTNAME;
 
     static {
-        if (SearchEngineProperties.keyExists(HOSTNAME_KEY) &&
-                SearchEngineProperties.getProperty(HOSTNAME_KEY) instanceof String) {
+        if (SearchEngineProperties.getProperty(HOSTNAME_KEY) != null) {
             HOSTNAME = SearchEngineProperties.getProperty(HOSTNAME_KEY);
         } else {
             // Default to localhost
