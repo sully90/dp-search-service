@@ -44,7 +44,6 @@ public class App extends ResourceConfig {
             FanoutCascadeRegistry.getInstance().registerMonitoringThread();
             FanoutCascadeRegistry.getInstance().register(PerformanceCheckerTask.class, PerformanceCheckerHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(TrainingSetTask.class, TrainingSetHandler.class, 1);
-            FanoutCascadeRegistry.getInstance().register(ONSFeatureStoreInitTask.class, ONSFeatureStoreInitHandler.class, 1);
             FanoutCascadeRegistry.getInstance().register(RankLibTask.class, RankLibHandler.class, 10);
             FanoutCascadeRegistry.getInstance().register(ModelUploadTask.class, ModelUploadHandler.class, 10);
 

@@ -5,7 +5,6 @@ import com.github.onsdigital.fanoutcascade.handlers.Handler;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.fanoutcascade.pool.FanoutCascade;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
-import com.github.onsdigital.search.fanoutcascade.handlertasks.ONSFeatureStoreInitTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
@@ -94,9 +93,9 @@ public class PerformanceCheckerHandler implements Handler {
                     if (taskCount == 0) {
                         if (LOGGER.isDebugEnabled()) LOGGER.debug("Submitting FeatureStore Init Task");
 
-                        // Submit a FeatureStoreInitTask
-                        ONSFeatureStoreInitTask initTask = new ONSFeatureStoreInitTask(store, featureSet, uniqueHits, now);
-                        FanoutCascade.getInstance().getLayerForTask(ONSFeatureStoreInitTask.class).submit(initTask);
+                        // Submit a TrainingSetTask
+                        TrainingSetTask task = new TrainingSetTask(store, featureSet, uniqueHits, now);
+                        FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(task);
                     } else {
                         LOGGER.info("Already submitted in this window, skipping");
                     }
