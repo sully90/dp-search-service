@@ -50,7 +50,7 @@ public class TrainingSetHandler implements Handler {
         try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient(HOSTNAME)) {
 
             // Init the feature store
-            initFeatureStore(task, learnToRankClient);
+            String featureStoreName = initFeatureStore(task, learnToRankClient);
 
             // For each search term, compute judgeemts and log features
             for (String term : uniqueHits.keySet()) {
@@ -71,10 +71,10 @@ public class TrainingSetHandler implements Handler {
                         String url = String.valueOf(obj);
 
                         // Construct the LogQuerySearchRequest
-                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(task.getFeatureStore(),
+                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(featureStoreName,
                                 task.getFeatureSet(), url, term);
 
-                        LOGGER.info("Query: " + logQuerySearchRequest.toJson());
+                        if (LOGGER.isDebugEnabled()) LOGGER.debug("Query: " + logQuerySearchRequest.toJson());
 
                         // Perform the sltr search request
                         SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
@@ -107,7 +107,7 @@ public class TrainingSetHandler implements Handler {
             List<RankLibTask> tasks = new ArrayList<>();
             // Return a RankLibTask
             for (int i = 0; i <= 9; i++) {
-                RankLibTask rankLibTask = new RankLibTask(task.getFeatureStore(), task.getFeatureSet(), task.getDate(), i);
+                RankLibTask rankLibTask = new RankLibTask(featureStoreName, task.getFeatureSet(), task.getDate(), i);
                 tasks.add(rankLibTask);
             }
             return tasks;
@@ -118,7 +118,7 @@ public class TrainingSetHandler implements Handler {
         }
     }
 
-    private static void initFeatureStore(TrainingSetTask task, LearnToRankClient client) throws IOException {
+    private static String initFeatureStore(TrainingSetTask task, LearnToRankClient client) throws IOException {
 
         // Get name on disk
         String nameOnDisk = task.getFeatureStore();
@@ -151,6 +151,8 @@ public class TrainingSetHandler implements Handler {
             if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Creating feature set %s in store %s", request.getName(), featureStoreName));
             client.createFeatureSet(featureStoreName, request);
         }
+
+        return featureStoreName;
     }
 
     public static String getFileName(Date date) {

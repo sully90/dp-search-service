@@ -329,8 +329,12 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/com/github/onsdigital/dp-elastic-importer/1.0-SNAPSHOT/dp-elastic-importer-1.0-SNAPSHOT-sources.jar!/" />
