@@ -1,0 +1,12 @@
+{
+  "name": "8",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "match" : {
+      "description.nationalStatistic" : true
+    }
+  },
+  "template_language": "mustache"
+}

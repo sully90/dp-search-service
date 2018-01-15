@@ -1,0 +1,21 @@
+{
+  "name": "4",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "match" : {
+      "description.keywords" : {
+        "query" : "{{keywords}}",
+        "operator" : "AND",
+        "prefix_length" : 0,
+        "max_expansions" : 50,
+        "fuzzy_transpositions" : true,
+        "lenient" : false,
+        "zero_terms_query" : "NONE",
+        "boost" : 10.0
+      }
+    }
+  },
+  "template_language": "mustache"
+}

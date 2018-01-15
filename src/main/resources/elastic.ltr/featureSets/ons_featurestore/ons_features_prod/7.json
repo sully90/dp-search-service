@@ -1,0 +1,38 @@
+{
+  "name": "7",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "function_score": {
+      "functions": [
+        {
+          "linear": {
+            "description.lastRevised": {
+              "origin": "now",
+              "scale": "17472h",
+              "decay": 0.5
+            }
+          }
+        }
+      ],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "exists": {
+                "field": "description.lastRevised"
+              }
+            },
+            {
+              "match": {
+                "_all": "{{keywords}}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "template_language": "mustache"
+}

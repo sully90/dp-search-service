@@ -1,0 +1,38 @@
+{
+  "name": "6",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "function_score": {
+      "functions": [
+        {
+          "linear": {
+            "description.releaseDate": {
+              "origin": "now",
+              "scale": "17472h",
+              "decay": 0.5
+            }
+          }
+        }
+      ],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "exists": {
+                "field": "description.releaseDate"
+              }
+            },
+            {
+              "match": {
+                "_all": "{{keywords}}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "template_language": "mustache"
+}

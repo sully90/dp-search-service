@@ -1,0 +1,25 @@
+{
+  "name": "2",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "multi_match": {
+      "query": "{{keywords}}",
+      "fields": [
+        "description.metaDescription^1.0",
+        "description.summary^1.0"
+      ],
+      "type": "best_fields",
+      "operator": "OR",
+      "slop": 0,
+      "prefix_length": 0,
+      "max_expansions": 50,
+      "minimum_should_match": "75%",
+      "lenient": false,
+      "zero_terms_query": "NONE",
+      "boost": 1.0
+    }
+  },
+  "template_language": "mustache"
+}

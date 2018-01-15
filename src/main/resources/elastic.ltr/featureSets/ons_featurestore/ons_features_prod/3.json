@@ -1,0 +1,26 @@
+{
+  "name": "3",
+  "params": [
+    "keywords"
+  ],
+  "template": {
+    "multi_match": {
+      "query": "{{keywords}}",
+      "fields": [
+        "entities.dates^1.0",
+        "entities.locations^1.0",
+        "entities.organizations^1.0",
+        "entities.persons^1.0"
+      ],
+      "type": "best_fields",
+      "operator": "OR",
+      "slop": 0,
+      "prefix_length": 0,
+      "max_expansions": 50,
+      "lenient": false,
+      "zero_terms_query": "NONE",
+      "boost": 1.0
+    }
+  },
+  "template_language": "mustache"
+}

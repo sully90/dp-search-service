@@ -75,9 +75,10 @@ public class TrainingSetHandler implements Handler {
                                 task.getFeatureSet(), url, term);
 
                         if (LOGGER.isDebugEnabled()) LOGGER.debug("Query: " + logQuerySearchRequest.toJson());
+//                        LOGGER.info("Query: " + logQuerySearchRequest.toJson());
 
                         // Perform the sltr search request
-                        SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
+                        SltrResponse sltrResponse = learnToRankClient.search("ons*", logQuerySearchRequest);
 
                         // Get the sltr hits from the response
                         List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
