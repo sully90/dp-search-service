@@ -6,3 +6,6 @@ dp-search-service
 New search microservice for digital publishing.
 
 ### Available APIs
+
+### TODO
+Create dashboard to log/plot NDGC (and derivative) in real-time

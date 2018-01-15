@@ -4,8 +4,31 @@
     "keywords"
   ],
   "template": {
-    "match" : {
-      "description.nationalStatistic" : true
+    "function_score": {
+      "functions": [
+        {
+          "filter": {
+            "match" : { "description.nationalStatistic" : true }
+          },
+          "weight" : 42
+        }
+      ],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "exists": {
+                "field": "description.nationalStatistic"
+              }
+            },
+            {
+              "match": {
+                "_all": "{{keywords}}"
+              }
+            }
+          ]
+        }
+      }
     }
   },
   "template_language": "mustache"

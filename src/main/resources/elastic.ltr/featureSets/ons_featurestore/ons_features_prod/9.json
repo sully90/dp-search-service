@@ -1,11 +1,11 @@
 {
-  "name": "1",
+  "name": "9",
   "params": [
     "keywords"
   ],
   "template": {
     "match": {
-      "description.title.title_no_dates": {
+      "description.title.title_no_stem": {
         "query": "{{keywords}}",
         "operator": "OR",
         "prefix_length": 0,
