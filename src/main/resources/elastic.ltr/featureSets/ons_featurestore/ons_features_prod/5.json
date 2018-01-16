@@ -4,20 +4,34 @@
     "keywords"
   ],
   "template": {
-    "multi_match": {
-      "query": "{{keywords}}",
-      "fields": [
-        "description.cdid^1.0",
-        "description.datasetId^1.0"
+    "function_score": {
+      "functions": [
+        {
+          "linear": {
+            "description.releaseDate": {
+              "origin": "now",
+              "scale": "17472h",
+              "decay": 0.5
+            }
+          }
+        }
       ],
-      "type": "best_fields",
-      "operator": "OR",
-      "slop": 0,
-      "prefix_length": 0,
-      "max_expansions": 50,
-      "lenient": false,
-      "zero_terms_query": "NONE",
-      "boost": 1.0
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "exists": {
+                "field": "description.releaseDate"
+              }
+            },
+            {
+              "match": {
+                "_all": "{{keywords}}"
+              }
+            }
+          ]
+        }
+      }
     }
   },
   "template_language": "mustache"

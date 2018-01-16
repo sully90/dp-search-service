@@ -8,7 +8,7 @@
       "functions": [
         {
           "linear": {
-            "description.releaseDate": {
+            "description.lastRevised": {
               "origin": "now",
               "scale": "17472h",
               "decay": 0.5
@@ -21,7 +21,7 @@
           "must": [
             {
               "exists": {
-                "field": "description.releaseDate"
+                "field": "description.lastRevised"
               }
             },
             {

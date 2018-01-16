@@ -4,30 +4,17 @@
     "keywords"
   ],
   "template": {
-    "function_score": {
-      "functions": [
-        {
-          "filter": {
-            "match" : { "description.nationalStatistic" : true }
-          },
-          "weight" : 42
-        }
-      ],
-      "query": {
-        "bool": {
-          "must": [
-            {
-              "exists": {
-                "field": "description.nationalStatistic"
-              }
-            },
-            {
-              "match": {
-                "_all": "{{keywords}}"
-              }
-            }
-          ]
-        }
+    "match": {
+      "description.title.title_no_stem": {
+        "query": "{{keywords}}",
+        "operator": "OR",
+        "prefix_length": 0,
+        "max_expansions": 50,
+        "minimum_should_match": "1<-2 3<80% 5<60%",
+        "fuzzy_transpositions": true,
+        "lenient": false,
+        "zero_terms_query": "NONE",
+        "boost": 10.0
       }
     }
   },

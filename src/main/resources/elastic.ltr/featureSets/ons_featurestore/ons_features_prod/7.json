@@ -7,13 +7,10 @@
     "function_score": {
       "functions": [
         {
-          "linear": {
-            "description.lastRevised": {
-              "origin": "now",
-              "scale": "17472h",
-              "decay": 0.5
-            }
-          }
+          "filter": {
+            "match" : { "description.nationalStatistic" : true }
+          },
+          "weight" : 42
         }
       ],
       "query": {
@@ -21,7 +18,7 @@
           "must": [
             {
               "exists": {
-                "field": "description.lastRevised"
+                "field": "description.nationalStatistic"
               }
             },
             {
