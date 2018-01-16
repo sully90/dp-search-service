@@ -8,7 +8,7 @@
       "query": "{{keywords}}",
       "fields": [
         "description.edition^1.0",
-        "description.title^10.0"
+        "description.title^1.0"
       ],
       "type": "cross_fields",
       "operator": "OR",

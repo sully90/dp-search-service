@@ -10,7 +10,7 @@
           "filter": {
             "match" : { "description.nationalStatistic" : true }
           },
-          "weight" : 42
+          "weight" : 2
         }
       ],
       "query": {
