@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/4.json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/4.json" />
-    </list>
+    <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
