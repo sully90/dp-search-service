@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc3faafc-e407-4d78-bd87-3c93484d4b0e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dp-search-service.iws" afterPath="$PROJECT_DIR$/dp-search-service.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/python/.ipynb_checkpoints/Training Data Analysis-checkpoint.ipynb" afterPath="$PROJECT_DIR$/src/main/python/.ipynb_checkpoints/Training Data Analysis-checkpoint.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/python/Training Data Analysis.ipynb" afterPath="$PROJECT_DIR$/src/main/python/Training Data Analysis.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/9.json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/9.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/babbage_query_json" afterPath="$PROJECT_DIR$/src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_prod/babbage_query_json" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
