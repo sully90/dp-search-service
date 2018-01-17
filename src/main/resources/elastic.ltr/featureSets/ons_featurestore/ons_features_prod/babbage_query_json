@@ -1,3 +1,25 @@
+// {
+//   "name": "1",
+//   "params": [
+//     "keywords"
+//   ],
+//   "template": {
+//     "function_score": {
+//       "query": {
+//         "match": {
+//           "description.title.title_no_dates": "{{keywords}}"
+//         }
+//       },
+//       "script_score": {
+//         "script": {
+//           "source": "( 1/(1 + Math.exp(-1 * _score)) ) / ( Math.exp(-1 * _score)/Math.pow( (1 + Math.exp(-1 * _score)), 2 ) )"
+//         }
+//       }
+//     }
+//   },
+//   "template_language": "mustache"
+// }
+
 POST ons1515656903908/_search
 {
   "from" : 0,
