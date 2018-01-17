@@ -4,19 +4,16 @@ import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankGetResponse;
 import com.github.onsdigital.elasticutils.ml.client.response.features.LearnToRankListResponse;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
-import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.ModelType;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.RankLibModel;
 import com.github.onsdigital.elasticutils.ml.requests.FeatureSetRequest;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
-import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
@@ -45,14 +42,14 @@ public class LearnToRankService {
 
     private static final String HOSTNAME_KEY = "elastic.hostname";
 
-    public static final String HOSTNAME;
+    public static final String ELASTICSEARCH_HOSTNAME;
 
     static {
         if (SearchEngineProperties.getProperty(HOSTNAME_KEY) != null) {
-            HOSTNAME = SearchEngineProperties.getProperty(HOSTNAME_KEY);
+            ELASTICSEARCH_HOSTNAME = SearchEngineProperties.getProperty(HOSTNAME_KEY);
         } else {
             // Default to localhost
-            HOSTNAME = "localhost";
+            ELASTICSEARCH_HOSTNAME = "localhost";
         }
     }
 
@@ -60,7 +57,7 @@ public class LearnToRankService {
     @Path("/featuresets/init/")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response initFeatureStore() {
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(ELASTICSEARCH_HOSTNAME)) {
             Map<String, List<FeatureSet>> featureSets = loadFeatureSets();
 
             for (String featureStore : featureSets.keySet()) {
@@ -89,7 +86,7 @@ public class LearnToRankService {
         // Lists feature sets for all feature stores
         Map<String, LearnToRankListResponse<FeatureSetRequest>> featureSetMapping = new LinkedHashMap<>();
 
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(ELASTICSEARCH_HOSTNAME)) {
             Set<String> featureStores = client.listFeatureStores();
 
             for (String featureStore : featureStores) {
@@ -114,7 +111,7 @@ public class LearnToRankService {
         Map<String, String> params = new HashMap<String, String>() {{
            put("keywords", "rpi");
         }};
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(ELASTICSEARCH_HOSTNAME)) {
             LearnToRankListResponse<FeatureSetRequest> response = client.listFeatureSets(featureStore);
             return ok(response);
         } catch (Exception e) {
@@ -127,7 +124,7 @@ public class LearnToRankService {
     @Path("/featuresets/list/{featurestore}/{name}")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getFeatureByName(@PathParam("featurestore") String featureStore, @PathParam("name") String name) {
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(ELASTICSEARCH_HOSTNAME)) {
             LearnToRankGetResponse<FeatureSetRequest> response = client.getFeatureSet(featureStore, name);
             return ok(response);
         } catch (Exception e) {
@@ -208,7 +205,7 @@ public class LearnToRankService {
         sltrQueryBuilder.setParam("keywords", keywords);
 
         LogQuerySearchRequest request = LogQuerySearchRequest.getRequestForQuery(qb, sltrQueryBuilder);
-        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(HOSTNAME)) {
+        try (LearnToRankClient client = LearnToRankHelper.getLTRClient(ELASTICSEARCH_HOSTNAME)) {
             System.out.println(request.toJson(20));
             client.close();
         } catch (Exception e) {

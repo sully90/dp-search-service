@@ -18,6 +18,7 @@ import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
+import com.github.onsdigital.search.server.LearnToRankService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class TrainingSetHandler implements Handler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingSetHandler.class);
 
-    private static final String HOSTNAME = "localhost";
+    private static final String HOSTNAME = LearnToRankService.ELASTICSEARCH_HOSTNAME;
 
     @Override
     public Object handleTask(HandlerTask handlerTask) throws Exception {

@@ -19,7 +19,7 @@ public class ModelUploadHandler implements Handler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelUploadHandler.class);
 
-    private static final String HOSTNAME = LearnToRankService.HOSTNAME;
+    private static final String HOSTNAME = LearnToRankService.ELASTICSEARCH_HOSTNAME;
 
     @Override
     public Object handleTask(HandlerTask handlerTask) throws Exception {
