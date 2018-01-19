@@ -43,6 +43,9 @@ public class SearchStat implements FindableObject, Searchable {
     private int pageSize;
     @JsonProperty("timestamp")
     private Date timeStamp;
+    @JsonProperty("sortby")
+    private String sortBy;
+    private String model;
 
     private SearchStat() {
         // For Jackson
@@ -79,6 +82,15 @@ public class SearchStat implements FindableObject, Searchable {
     @JsonProperty("timestamp")
     public Date getTimeStamp() {
         return timeStamp;
+    }
+
+    @JsonProperty("sortby")
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public String getModel() {
+        return model;
     }
 
     @JsonIgnore

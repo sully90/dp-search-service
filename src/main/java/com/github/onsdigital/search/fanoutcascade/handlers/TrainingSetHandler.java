@@ -53,7 +53,7 @@ public class TrainingSetHandler implements Handler {
             // Init the feature store
             String featureStoreName = initFeatureStore(task, learnToRankClient);
 
-            // For each search term, compute judgeemts and log features
+            // For each search term, compute judgements and log features
             for (String term : uniqueHits.keySet()) {
 //                System.out.println("Term: " + term);
 

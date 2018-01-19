@@ -13,7 +13,7 @@
         "fuzzy_transpositions" : true,
         "lenient" : false,
         "zero_terms_query" : "NONE",
-        "boost" : 1.0
+        "boost" : 10.0
       }
     }
   },

@@ -1,6 +1,7 @@
 package com.github.onsdigital.search.search;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,9 @@ import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
+import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
 import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
+import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.search.models.SearchHitCount;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.SearchStat;
@@ -50,6 +53,7 @@ import com.github.onsdigitial.elastic.importer.models.page.taxonomy.TaxonomyLand
 import com.github.onsdigitial.elastic.importer.models.page.visualisation.Visualisation;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.search.stats.SearchStats;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +73,35 @@ public class PerformanceChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceChecker.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private SortBy sortBy;
+    private String model;
+
     private List<SearchStat> searchStats;
 
-    public PerformanceChecker() {
-        this.searchStats = PerformanceChecker.loadSearchStats();
+    public PerformanceChecker() throws JsonProcessingException {
+        this(SortBy.RELEVANCE);
     }
 
-    public PerformanceChecker(List<SearchStat> searchStats) {
-        this.searchStats = searchStats;
+    public PerformanceChecker(SortBy sortBy) throws JsonProcessingException {
+        this(sortBy, null);
+    }
+
+    public PerformanceChecker(SortBy sortBy, String model) throws JsonProcessingException {
+        this.searchStats = PerformanceChecker.loadSearchStats(sortBy, model);
+        this.sortBy = sortBy;
+        this.model = model;
+    }
+
+    public SortBy getSortBy() {
+        return sortBy;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public List<SearchStat> getSearchStats() {
+        return searchStats;
     }
 
     // TODO improve qid logic
@@ -137,13 +162,35 @@ public class PerformanceChecker {
         return judgementMap;
     }
 
-    public static List<SearchStat> loadSearchStats() {
+    public static List<SearchStat> loadSearchStats(SortBy sortBy) throws JsonProcessingException {
+        return loadSearchStats(sortBy, null);
+    }
+
+    public static List<SearchStat> loadSearchStats(SortBy sortBy, String model) throws JsonProcessingException {
         // For now, load from mongoDB. This can be changed in the future depending on the direction we take.
-        Iterable<SearchStat> it = SearchStat.finder().find();
+
+        String queryString;
+        if (sortBy.equals(SortBy.LTR)) {
+            queryString = sortByQuery(sortBy, model == null ? SearchEngineProperties.LTR.getDefaultModel() : model);
+        } else {
+            queryString = sortByQuery(sortBy, null);
+        }
+        Iterable<SearchStat> it = SearchStat.finder().find(queryString);
+
         List<SearchStat> searchStats = new LinkedList<>();
         it.forEach(searchStats::add);
-
         return searchStats;
+    }
+
+    private static String sortByQuery(SortBy sortBy, String model) throws JsonProcessingException {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("sortby", sortBy.getSortBy());
+            if (model != null) {
+                put("model", model);
+            }
+        }};
+
+        return JsonUtils.toJson(params);
     }
 
     private static Page asClass(String fileString, Class<? extends Page> returnClass) throws IOException {
@@ -261,7 +308,12 @@ public class PerformanceChecker {
 
     public static void main(String[] args) {
 
-        PerformanceChecker performanceChecker = new PerformanceChecker();
+        PerformanceChecker performanceChecker = null;
+        try {
+            performanceChecker = new PerformanceChecker();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         String store = "ons_featurestore";
         String featureSet = "ons_features";
 

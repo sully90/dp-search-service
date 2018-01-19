@@ -1,5 +1,6 @@
 package com.github.onsdigital.search.fanoutcascade.handlertasks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.onsdigital.fanoutcascade.handlertasks.HandlerTask;
 import com.github.onsdigital.mongo.WritableObject;
 import com.github.onsdigital.mongo.util.ObjectFinder;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class TrainingSetTask extends HandlerTask implements WritableObject {
 
     private ObjectId _id;
+    @JsonIgnore
     private Map<String, SearchHitCounter> uniqueHits;
     private String featureStore;
     private String featureSet;
@@ -43,6 +45,7 @@ public class TrainingSetTask extends HandlerTask implements WritableObject {
         return featureSet;
     }
 
+    @JsonIgnore
     public Map<String, SearchHitCounter> getUniqueHits() {
         return uniqueHits;
     }

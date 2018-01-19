@@ -29,6 +29,10 @@ public class SearchHitCounter {
         // For Jackson
     }
 
+    public Set<String> getUrlKeySet() {
+        return this.urlCountMap.keySet();
+    }
+
     public void put(String url, SearchHitCount searchHitCount) {
         this.urlCountMap.put(url, searchHitCount);
     }
@@ -69,7 +73,7 @@ public class SearchHitCounter {
             }
         }
 
-        // Max count scores a 3 (perfect), normalise down to 1 (irrelevant)
+        // Max count scores a 4 (perfect), normalised down to 1 (irrelevant)
         SortedSet<Map.Entry<String, SearchHitCount>> sortedSet = this.sort();
         Iterator<Map.Entry<String, SearchHitCount>> it = sortedSet.iterator();
 

@@ -67,6 +67,14 @@ public class SearchEngineProperties {
         return Thread.currentThread().getContextClassLoader().getResource(filename).getFile();
     }
 
+    public static class LTR {
+        private static final String DEFAULT_MODEL_KEY = "elastic.ltr.default_model";
+
+        public static String getDefaultModel() {
+            return getProperty(DEFAULT_MODEL_KEY);
+        }
+    }
+
     public static class OPENNLP {
         private static final String NER_ENABLED_MODELS_KEY = "opennlp.ner.models";
         private static final String NER_CONFIGURATION_KEY = "opennlp.ner.model.file";

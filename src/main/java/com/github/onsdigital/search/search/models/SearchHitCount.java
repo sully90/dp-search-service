@@ -30,6 +30,10 @@ public class SearchHitCount implements Comparable<SearchHitCount> {
         return rank;
     }
 
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     public int getCount() {
         return count;
     }
