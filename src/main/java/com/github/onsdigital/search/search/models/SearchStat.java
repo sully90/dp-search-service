@@ -31,6 +31,8 @@ public class SearchStat implements FindableObject, Searchable {
     private static final SearchIndicies index = SearchIndicies.SEARCH_STATS;
 
     private ObjectId _id;
+    @JsonProperty("redirurl")
+    private String redirUrl;
     private String url;
     private String term;
     @JsonProperty("listtype")
@@ -49,6 +51,10 @@ public class SearchStat implements FindableObject, Searchable {
 
     private SearchStat() {
         // For Jackson
+    }
+
+    public String getRedirUrl() {
+        return redirUrl;
     }
 
     public String getUrl() {

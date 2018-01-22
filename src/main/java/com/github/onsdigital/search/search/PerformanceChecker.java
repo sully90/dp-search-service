@@ -7,16 +7,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.onsdigital.elasticutils.client.generic.ElasticSearchClient;
 import com.github.onsdigital.elasticutils.client.type.DefaultDocumentTypes;
-import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
-import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrHit;
-import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrResponse;
-import com.github.onsdigital.elasticutils.ml.client.response.sltr.models.Fields;
 import com.github.onsdigital.elasticutils.ml.query.SltrQueryBuilder;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
 import com.github.onsdigital.elasticutils.ml.requests.LogQuerySearchRequest;
 import com.github.onsdigital.elasticutils.ml.util.JsonUtils;
-import com.github.onsdigital.elasticutils.ml.util.LearnToRankHelper;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.search.models.SearchHitCount;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
@@ -53,7 +48,6 @@ import com.github.onsdigitial.elastic.importer.models.page.taxonomy.TaxonomyLand
 import com.github.onsdigitial.elastic.importer.models.page.visualisation.Visualisation;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.search.stats.SearchStats;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,16 +72,19 @@ public class PerformanceChecker {
 
     private List<SearchStat> searchStats;
 
-    public PerformanceChecker() throws JsonProcessingException {
+    public PerformanceChecker() throws IOException {
         this(SortBy.RELEVANCE);
     }
 
-    public PerformanceChecker(SortBy sortBy) throws JsonProcessingException {
+    public PerformanceChecker(SortBy sortBy) throws IOException {
         this(sortBy, null);
     }
 
-    public PerformanceChecker(SortBy sortBy, String model) throws JsonProcessingException {
+    public PerformanceChecker(SortBy sortBy, String model) throws IOException {
         this.searchStats = PerformanceChecker.loadSearchStats(sortBy, model);
+        if (this.searchStats.size() == 0) {
+            throw new IOException(String.format("No search stats found for sortBy/model: %s/%s", sortBy.getSortBy(), model));
+        }
         this.sortBy = sortBy;
         this.model = model;
     }
@@ -115,34 +112,7 @@ public class PerformanceChecker {
                 hitCounts.put(term, new SearchHitCounter(qid));
                 qid++;
             }
-            hitCounts.get(term).add(searchStat.getUrl(), searchStat.getRank());
-        }
-        return hitCounts;
-    }
-
-    // TODO improve qid logic
-    public Map<String, SearchHitCounter> getUniqueHitCountsByQuery(ElasticSearchClient<SearchStat> searchClient) {
-        Map<String, SearchHitCounter> hitCounts = new LinkedHashMap<>();
-
-        int qid = 1;
-        for (SearchStat searchStat : this.searchStats) {
-            String term = searchStat.getTerm();
-            String url = searchStat.getUrl();
-            QueryBuilder qb = QueryBuilders.boolQuery()
-                    .must(QueryBuilders.matchPhraseQuery("term", term))
-                    .must(QueryBuilders.matchPhraseQuery("url", url));
-            try {
-                List<SearchStat> searchStatHits = SearchStat.search(searchClient).search(qb, DefaultDocumentTypes.DOCUMENT);
-                int count = searchStatHits.size();
-
-                SearchHitCount searchHitCount = new SearchHitCount(searchStat.getRank(), count);
-                SearchHitCounter counter = new SearchHitCounter(qid);
-                counter.put(url, searchHitCount);
-
-                hitCounts.put(term, counter);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            hitCounts.get(term).add(searchStat.getRedirUrl(), searchStat.getRank());
         }
         return hitCounts;
     }
@@ -175,6 +145,7 @@ public class PerformanceChecker {
         } else {
             queryString = sortByQuery(sortBy, null);
         }
+        LOGGER.info(String.format("Querying mongoDB with query string: %s", queryString));
         Iterable<SearchStat> it = SearchStat.finder().find(queryString);
 
         List<SearchStat> searchStats = new LinkedList<>();
@@ -306,66 +277,4 @@ public class PerformanceChecker {
         return logQuerySearchRequest;
     }
 
-    public static void main(String[] args) {
-
-        PerformanceChecker performanceChecker = null;
-        try {
-            performanceChecker = new PerformanceChecker();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        String store = "ons_featurestore";
-        String featureSet = "ons_features";
-
-        // Init Learn to rank client
-        try (LearnToRankClient learnToRankClient = LearnToRankHelper.getLTRClient("localhost")) {
-
-            // Count the unique URL hits
-            Map<String, SearchHitCounter> uniqueHits = performanceChecker.getUniqueHitCounts();
-
-            // For each search term, compute judegemts and log features
-            for (String term : uniqueHits.keySet()) {
-                Judgements judgements = uniqueHits.get(term).getJudgements(term);
-
-                // Compute normalised discounted cumulative gain as a measure of current performance
-                float[] ndcg = judgements.normalisedDiscountedCumulativeGain();
-
-                List<Judgement> judgementList = judgements.getJudgementList();
-                // Sort the judgements by the original rank they were displayed to the user as
-                Collections.sort(judgementList);
-
-                System.out.println("Term: " + term);
-                for (int i = 0; i < ndcg.length; i++) {
-                    // Print rank and judgement to the console
-                    System.out.println(String.format("qid:%s\t", judgementList.get(i).getQueryId()) + judgementList.get(i).getRank() + " : " + ndcg[i]);
-                    Object obj = judgementList.get(i).getAttr("url");
-                    if (obj instanceof String) {
-                        // Pages are stored in ES with _id as their uri
-                        // So we perform a sltr query with an _id filter to get the feature scores
-                        String url = String.valueOf(obj);
-
-                        // Construct the LogQuerySearchRequest
-                        LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(store,
-                                featureSet, url, term);
-
-                        // Perform the sltr search request
-                        SltrResponse sltrResponse = learnToRankClient.search("ons_*", logQuerySearchRequest);
-
-                        // Get the sltr hits from the response
-                        List<SltrHit> sltrHits = sltrResponse.getHits().getHits();
-                        if (sltrHits.size() > 0) {
-                            // The page was found, so we have logged feature scores as Fields
-                            Fields fields = sltrHits.get(0).getFields();
-
-                            // Print scores to the console
-                            System.out.println(fields.getValues().toString());
-                        }
-                    }
-                }
-            }
-        // Auto-close LearnToRankClient
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

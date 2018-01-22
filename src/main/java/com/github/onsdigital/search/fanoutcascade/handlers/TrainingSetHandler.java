@@ -1,5 +1,6 @@
 package com.github.onsdigital.search.fanoutcascade.handlers;
 
+import com.auth0.jwt.JWT;
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrHit;
@@ -18,6 +19,7 @@ import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.RankLibTask;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
+import com.github.onsdigital.search.search.models.WritableJudgements;
 import com.github.onsdigital.search.server.LearnToRankService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -62,13 +64,21 @@ public class TrainingSetHandler implements Handler {
                 // Sort the judgements by the original rank they were displayed to the user as
                 Collections.sort(judgementList);
 
+                // Store the judgements
+                WritableJudgements writableJudgements = new WritableJudgements(term, judgements, task.getDate());
+                writableJudgements.writer().save();
+
                 // Loop over judgements and get feature scores
                 for (int i = 0; i < judgementList.size(); i++) {
                     Judgement judgement = judgementList.get(i);
-                    Object obj = judgement.getAttr("url");
+                    Object obj = judgement.getAttr("uri");
                     if (null != obj && obj instanceof String) {
                         // Pages are stored in ES with _id as their uri
                         // So we perform a sltr query with an _id filter to get the feature scores
+
+                        // First, decode the jwt to get the page url
+                        // Note - we store the encoded url to allow us to perform checks on each model without
+                        // needing to hit the website
                         String url = String.valueOf(obj);
 
                         // Construct the LogQuerySearchRequest

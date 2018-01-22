@@ -8,6 +8,7 @@ import com.github.onsdigital.fanoutcascade.pool.FanoutCascadeRegistry;
 import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.fanoutcascade.handlers.*;
 import com.github.onsdigital.search.fanoutcascade.handlertasks.*;
+import com.github.onsdigital.search.search.SortBy;
 import com.github.onsdigital.search.server.SearchEngineService;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -50,7 +51,7 @@ public class App extends ResourceConfig {
             // Submit the initial tasks
             FanoutCascadeMonitoringTask fanoutCascadeMonitoringTask = new FanoutCascadeMonitoringTask(TimeUnit.SECONDS, 10);
             FanoutCascade.getInstance().getLayerForTask(FanoutCascadeMonitoringTask.class).submit(fanoutCascadeMonitoringTask);
-            FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask());
+            FanoutCascade.getInstance().getLayerForTask(PerformanceCheckerTask.class).submit(new PerformanceCheckerTask(SortBy.RELEVANCE));
         }
     }
 }

@@ -206,6 +206,17 @@
     <mapping directory="" vcs="Git" />
   </component>
   <component name="libraryTable">
+    <library name="Maven: com.auth0:java-jwt:3.1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/auth0/java-jwt/3.1.0/java-jwt-3.1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/auth0/java-jwt/3.1.0/java-jwt-3.1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/auth0/java-jwt/3.1.0/java-jwt-3.1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.carrotsearch:hppc:0.7.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.1/hppc-0.7.1.jar!/" />

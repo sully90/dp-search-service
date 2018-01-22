@@ -1,5 +1,6 @@
 package com.github.onsdigital.search.search.models;
 
+import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgement;
 import com.github.onsdigital.elasticutils.ml.ranklib.models.Judgements;
@@ -79,8 +80,13 @@ public class SearchHitCounter {
 
         while (it.hasNext()) {
             Map.Entry<String, SearchHitCount> entry = it.next();
-            String url = entry.getKey();
             SearchHitCount searchHitCount = entry.getValue();
+
+            String jwtUrl = entry.getKey();
+            String jwtToken = jwtUrl.replaceAll("/redir/", "");
+
+            JWT jwt = JWT.decode(jwtToken);
+            String uri = jwt.getClaim("uri").asString();
 
             int rank = searchHitCount.getRank();
             int count = searchHitCount.getCount();
@@ -88,9 +94,10 @@ public class SearchHitCounter {
             float judgementValue = normalise(count, maxCount, MAX_SCORE);
             // Create a new judgement and append to the list
             Judgement judgement = new Judgement(judgementValue, queryId, rank);
-            judgement.setComment(String.format("%s:%s", queryTerm, url));
-            // Store the url for later
-            judgement.addAttr("url", url);
+            judgement.setComment(String.format("%s:%s", queryTerm, uri));
+            // Store the url for later.
+            judgement.addAttr("jwtUrl", jwtUrl);
+            judgement.addAttr("uri", uri);
 
             judgementList.add(judgement);
         }
