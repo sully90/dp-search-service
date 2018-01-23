@@ -11,10 +11,10 @@ _rescoreTemplate = {
                 "params": {
                     "keywords": ""
                 },
-                "boost": 1.0
+                "boost": 0.0
             }
         },
-        "query_weight": 0.5,
+        "query_weight": 0.0,
         "rescore_query_weight": 0.0,
         "score_mode": "total"
     }
@@ -111,13 +111,16 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam):
 
     return baseQuery
 
-def getRescoreQueriesForModels(keywords, models, rescoreWeights):
+def getRescoreQueriesForModels(keywords, models, boosts, queryWeights, rescoreWeights):
     rescoreQueries = []
 
-    for model,weight in zip(models, rescoreWeights):
+    for model,boost,queryWeight,rescoreWeight in zip(models, boosts, queryWeights, rescoreWeights):
         rescoreQuery = copy.deepcopy(_rescoreTemplate)
 
-        rescoreQuery["query"]["rescore_query_weight"] = weight
+        rescoreQuery["query"]["rescore_query"]["sltr"]["boost"] = boost
+        rescoreQuery["query"]["query_weight"] = queryWeight
+        rescoreQuery["query"]["rescore_query_weight"] = rescoreWeight
+
         rescoreQuery["query"]["rescore_query"]["sltr"]["model"] = model
         rescoreQuery["query"]["rescore_query"]["sltr"]["params"]["keywords"] = keywords
         rescoreQueries.append(rescoreQuery)
