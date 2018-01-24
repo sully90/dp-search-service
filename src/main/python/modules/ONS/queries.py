@@ -7,7 +7,7 @@ _rescoreTemplate = {
             "sltr": {
                 "model": "",
                 "featureset": "ons_features_prod",
-                "store": "ons_featurestore_1516614381132",
+                "store": "",
                 "params": {
                     "keywords": ""
                 },
@@ -16,11 +16,19 @@ _rescoreTemplate = {
         },
         "query_weight": 0.0,
         "rescore_query_weight": 0.0,
-        "score_mode": "total"
+        "score_mode": "max"
     }
 }
 
-def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam):
+def sortQuery(field, order):
+    sortBy = {
+        field : {
+            "order" : order
+        }
+    }
+    return sortBy
+
+def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
 
     baseQuery = {
       "from": fromParam,
@@ -109,23 +117,23 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam):
       "rescore": rescoreQueries
     }
 
+    if (sort is not None):
+        baseQuery["sort"] = sort
+
     return baseQuery
 
-def getRescoreQueriesForModels(keywords, models, boosts, queryWeights, rescoreWeights):
-    rescoreQueries = []
+def getRescoreQueryForModel(featureStore, keywords, model, boost, queryWeight, rescoreWeight):
+    rescoreQuery = copy.deepcopy(_rescoreTemplate)
 
-    for model,boost,queryWeight,rescoreWeight in zip(models, boosts, queryWeights, rescoreWeights):
-        rescoreQuery = copy.deepcopy(_rescoreTemplate)
+    rescoreQuery["query"]["rescore_query"]["sltr"]["store"] = featureStore
+    rescoreQuery["query"]["rescore_query"]["sltr"]["boost"] = boost
+    rescoreQuery["query"]["query_weight"] = queryWeight
+    rescoreQuery["query"]["rescore_query_weight"] = rescoreWeight
 
-        rescoreQuery["query"]["rescore_query"]["sltr"]["boost"] = boost
-        rescoreQuery["query"]["query_weight"] = queryWeight
-        rescoreQuery["query"]["rescore_query_weight"] = rescoreWeight
+    rescoreQuery["query"]["rescore_query"]["sltr"]["model"] = model
+    rescoreQuery["query"]["rescore_query"]["sltr"]["params"]["keywords"] = keywords
 
-        rescoreQuery["query"]["rescore_query"]["sltr"]["model"] = model
-        rescoreQuery["query"]["rescore_query"]["sltr"]["params"]["keywords"] = keywords
-        rescoreQueries.append(rescoreQuery)
-
-    return rescoreQueries
+    return rescoreQuery
 
 models = []
 for i in range(9):

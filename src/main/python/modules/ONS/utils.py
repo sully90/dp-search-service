@@ -1,29 +1,48 @@
-import urllib
-_BASE_URL = "http://localhost:20000/"
+searchTerms = ["rpi", "gender pay gap", "cpi", "gdp", "inflation", "crime", "unemployment", 
+              "population", "immigration", "mental health", "london", "london population", 
+              "retail price index", "life expectancy", "obesity", "religion", "migration", 
+              "poverty", "social media", "employment"]
 
-def _buildUrl(baseUrl, searchTerm, size, **kwargs):
-    if (baseUrl.endswith("/")):
-        baseUrl = baseUrl[:-1]
-    searchUrl = "%s/search?q=%s&size=%d" % (baseUrl, urllib.quote_plus(searchTerm), size)
+def getSearchClient(esURL, timeout=1000):
+    from elasticsearch import Elasticsearch
+    return Elasticsearch(esURL, timeout=timeout)
 
-    for key in kwargs:
-        searchUrl += "&%s=%s" % (key, kwargs[key])
-    return searchUrl
+def getMongoDBClient(mongoUrl, port):
+    from pymongo import MongoClient
+    return MongoClient(mongoUrl, port)
 
-def _search(searchUrl):
-    import urllib2
-    from bs4 import BeautifulSoup
+def getMostRecentJudgements(collection):
+    from pymongo import DESCENDING
 
-    page = urllib2.urlopen(searchUrl)
-    soup = BeautifulSoup(page)
+    doc = collection.find().sort([("timeStamp", DESCENDING)]).limit(1).next()
+    return doc
 
-    return soup
+def mergeDicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
 
-def search(searchTerm, baseUrl=_BASE_URL, size=10, verbose=False, **kwargs):
-    # Performs a search on the website
-    searchUrl = _buildUrl(baseUrl, searchTerm, size, **kwargs)
-    if (verbose): print "Getting page ", searchUrl
-    return _search(searchUrl)
+def termQuery(term):
+    return {"term": term}
 
-def sltr(searchTerm, model, baseUrl=_BASE_URL, size=10, **kwargs):
-    return search(searchTerm, baseUrl=baseUrl, size=size, sortBy="ltr", model=model, **kwargs)
+def timeQuery(dateTime):
+    return {"timeStamp": dateTime}
+
+def powerset(s):
+    x = len(s)
+    masks = [1 << i for i in range(x)]
+    for i in range(1 << x):
+        yield [ss for mask, ss in zip(masks, s) if i & mask]
+
+class Model(object):
+    def __init__(self, name, boost=1.0, queryBoost=0.5, rescoreBoost=1.0):
+        self.name = name
+        self.boost = boost
+        self.queryBoost = queryBoost
+        self.rescoreBoost = rescoreBoost
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
