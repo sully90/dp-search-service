@@ -89,7 +89,6 @@ def getSearchQuery(searchTerm, models, fromParam, size):
     return esQuery
 
 def main(store, index="ons*"):
-
     searchTerms = utils.searchTerms
     pages = range(1, 11)  # 10 pages
     size = 10
@@ -128,7 +127,11 @@ def main(store, index="ons*"):
             # print powerset, searchTerm, ndcg
             res = optimise(searchTerm, powerset, judgements, index, elasticClient, size, pages)
             params = res.x
-            print powerset, searchTerm, _process(params, searchTerm, powerset, judgements, index, elasticClient, size, pages)
+            defaultNdcgParams = [1.0, 0.5, 1.0]*len(powerset)
+
+            defaultNdcg = _process(defaultNdcgParams, searchTerm, powerset, judgements, index, elasticClient, size, pages)
+            optimisedNdcg = _process(params, searchTerm, powerset, judgements, index, elasticClient, size, pages)
+            print powerset, searchTerm, defaultNdcg, optimisedNdcg
 
 if __name__ == "__main__":
     import sys
