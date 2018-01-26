@@ -1,5 +1,8 @@
 import copy
 
+true=True
+false=False
+
 _rescoreTemplate = {
     "window_size": 1000,
     "query": {
@@ -28,13 +31,29 @@ def sortQuery(field, order):
     }
     return sortBy
 
-def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
+def getSimpleBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
 
     baseQuery = {
       "from": fromParam,
       "size": sizeParam,
       "query": {
-        "function_score": {
+        "match": {
+          "_all": searchTerm
+        }
+      },
+      "rescore": rescoreQueries
+    }
+
+    if (sort is not None):
+        baseQuery["sort"] = sort
+
+    return baseQuery
+
+def getSltrBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
+
+    baseQuery = {
+          "from": fromParam,
+          "size": sizeParam,
           "query": {
             "dis_max": {
               "tie_breaker": 0.0,
@@ -46,22 +65,8 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
                       "operator": "OR",
                       "prefix_length": 0,
                       "max_expansions": 50,
-                      "fuzzy_transpositions": True,
-                      "lenient": False,
-                      "zero_terms_query": "NONE",
-                      "boost": 1.0
-                    }
-                  }
-                },
-                {
-                  "match": {
-                    "description.title.title_no_stem": {
-                      "query": searchTerm,
-                      "operator": "OR",
-                      "prefix_length": 0,
-                      "max_expansions": 50,
-                      "fuzzy_transpositions": True,
-                      "lenient": False,
+                      "fuzzy_transpositions": true,
+                      "lenient": false,
                       "zero_terms_query": "NONE",
                       "boost": 1.0
                     }
@@ -76,15 +81,14 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
                       "description.edition^1.0",
                       "description.keywords^1.0",
                       "description.metaDescription^1.0",
-                      "description.summary^1.0",
-                      "description.title^1.0"
+                      "description.summary^1.0"
                     ],
                     "type": "best_fields",
                     "operator": "OR",
                     "slop": 0,
                     "prefix_length": 0,
                     "max_expansions": 50,
-                    "lenient": False,
+                    "lenient": false,
                     "zero_terms_query": "NONE",
                     "boost": 1.0
                   }
@@ -103,7 +107,7 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
                     "slop": 0,
                     "prefix_length": 0,
                     "max_expansions": 50,
-                    "lenient": False,
+                    "lenient": false,
                     "zero_terms_query": "NONE",
                     "boost": 1.0
                   }
@@ -111,7 +115,146 @@ def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
               ],
               "boost": 1.0
             }
-          }
+          },
+          "rescore": rescoreQueries
+        }
+
+    if (sort is not None):
+        baseQuery["sort"] = sort
+
+    return baseQuery
+
+def getBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
+
+    baseQuery = {
+      "from": fromParam,
+      "size": sizeParam,
+      "query": {
+        "dis_max": {
+          "tie_breaker": 0.0,
+          "queries": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "match": {
+                      "description.title.title_no_dates": {
+                        "query": searchTerm,
+                        "operator": "OR",
+                        "prefix_length": 0,
+                        "max_expansions": 50,
+                        "minimum_should_match": "1<-2 3<80% 5<60%",
+                        "fuzzy_transpositions": true,
+                        "lenient": false,
+                        "zero_terms_query": "NONE",
+                        "boost": 10.0
+                      }
+                    }
+                  },
+                  {
+                    "match": {
+                      "description.title.title_no_stem": {
+                        "query": searchTerm,
+                        "operator": "OR",
+                        "prefix_length": 0,
+                        "max_expansions": 50,
+                        "minimum_should_match": "1<-2 3<80% 5<60%",
+                        "fuzzy_transpositions": true,
+                        "lenient": false,
+                        "zero_terms_query": "NONE",
+                        "boost": 10.0
+                      }
+                    }
+                  },
+                  {
+                    "multi_match": {
+                      "query": searchTerm,
+                      "fields": [
+                        "description.edition^1.0",
+                        "description.title^10.0"
+                      ],
+                      "type": "cross_fields",
+                      "operator": "OR",
+                      "slop": 0,
+                      "prefix_length": 0,
+                      "max_expansions": 50,
+                      "minimum_should_match": "3<80% 5<60%",
+                      "lenient": false,
+                      "zero_terms_query": "NONE",
+                      "boost": 1.0
+                    }
+                  }
+                ],
+                "disable_coord": false,
+                "adjust_pure_negative": true,
+                "boost": 1.0
+              }
+            },
+            {
+              "multi_match": {
+                "query": searchTerm,
+                "fields": [
+                  "description.metaDescription^1.0",
+                  "description.summary^1.0"
+                ],
+                "type": "best_fields",
+                "operator": "OR",
+                "slop": 0,
+                "prefix_length": 0,
+                "max_expansions": 50,
+                "minimum_should_match": "75%",
+                "lenient": false,
+                "zero_terms_query": "NONE",
+                "boost": 1.0
+              }
+            },
+            {
+              "match": {
+                "description.keywords": {
+                  "query": searchTerm,
+                  "operator": "AND",
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "fuzzy_transpositions": true,
+                  "lenient": false,
+                  "zero_terms_query": "NONE",
+                  "boost": 1.0
+                }
+              }
+            },
+            {
+              "multi_match": {
+                "query": searchTerm,
+                "fields": [
+                  "description.cdid^1.0",
+                  "description.datasetId^1.0"
+                ],
+                "type": "best_fields",
+                "operator": "OR",
+                "slop": 0,
+                "prefix_length": 0,
+                "max_expansions": 50,
+                "lenient": false,
+                "zero_terms_query": "NONE",
+                "boost": 1.0
+              }
+            },
+            {
+              "match": {
+                "searchBoost": {
+                  "query": searchTerm,
+                  "operator": "AND",
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "fuzzy_transpositions": true,
+                  "lenient": false,
+                  "zero_terms_query": "NONE",
+                  "boost": 100.0
+                }
+              }
+            }
+          ],
+          "boost": 1.0
         }
       },
       "rescore": rescoreQueries

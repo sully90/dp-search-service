@@ -7,7 +7,7 @@
     "function_score": {
       "functions": [
         {
-          "linear": {
+          "exp": {
             "description.lastRevised": {
               "origin": "now",
               "scale": "17472h",
@@ -16,6 +16,10 @@
           }
         }
       ],
+      "max_boost": 50,
+      "score_mode": "max",
+      "boost_mode": "multiply",
+      "min_score": 1,
       "query": {
         "bool": {
           "must": [

@@ -10,7 +10,7 @@ _DEFAULT_BOOST = 1.0
 _DEFAULT_QUERY_BOOST = 0.5
 _DEFAULT_RESCORE_BOOST = 1.0
 
-_N_CALLS = 20
+_N_CALLS = 50
 
 _NDCG_COST_FUNC = lambda ndcg: 1.0 - ndcg
 
@@ -64,9 +64,9 @@ def optimise(searchTerm, models, judgementList, index, elasticClient, size, page
     '''
     from skopt import gp_minimize
 
-    print "Optimizing over models/term: %s/%s" % (models, searchTerm)
+    if (kwargs.get("verbose", False)): print "Optimizing over models/term: %s/%s" % (models, searchTerm)
 
-    bounds = [(0.0, 1.0), (0.0, 1.0), (0.0, 10.0)]*len(models)
+    bounds = [(0.0, 10.0), (0.0, 1.0), (0.0, 100.0)]*len(models)
     minFunc = lambda x: _NDCG_COST_FUNC(_process(x, searchTerm, models, judgementList, index, elasticClient, size, pages))
 
     n_calls = kwargs.pop("n_calls", _N_CALLS)
@@ -74,6 +74,7 @@ def optimise(searchTerm, models, judgementList, index, elasticClient, size, page
     return res
 
 def getSearchQuery(searchTerm, models, fromParam, size):
+    # import json
     rescoreQueries = []
     for model in models:
         name = model.name
@@ -85,7 +86,10 @@ def getSearchQuery(searchTerm, models, fromParam, size):
                 boost, queryBoost, rescoreBoost)
         rescoreQueries.append(rescoreQuery)
 
-    esQuery = queries.getBaseQuery(searchTerm, rescoreQueries, fromParam, size)
+    # esQuery = queries.getBaseQuery(searchTerm, rescoreQueries, fromParam, size)
+    # esQuery = queries.getSltrBaseQuery(searchTerm, rescoreQueries, fromParam, size)
+    esQuery = queries.getSimpleBaseQuery(searchTerm, rescoreQueries, fromParam, size)
+    # print json.dumps(esQuery)
     return esQuery
 
 def main(store, index="ons*"):
@@ -118,9 +122,15 @@ def main(store, index="ons*"):
             judgementsDict[searchTerm] = judgements["judgements"]["judgementList"]
 
     # Compute the performance of all combinations
+    # enabledModels = [1,2,3,7,8,9]
+    # modelPowerset = [[Model("ons_model_%d" % i) for i in enabledModels]]
+    results = {}
     for powerset in modelPowerset:
         if len(powerset) == 0:
             continue
+        sumNdcgBefore = 0.0
+        sumNdcgAfter = 0.0
+        count = 0.0
         for searchTerm in judgementsDict:
             judgements = judgementsDict[searchTerm]
             # ndcg = computeNdcg(searchTerm, powerset, judgements, index, elasticClient, size, pages)
@@ -133,16 +143,32 @@ def main(store, index="ons*"):
             optimisedNdcg = _process(params, searchTerm, powerset, judgements, index, elasticClient, size, pages)
             print powerset, searchTerm, defaultNdcg, optimisedNdcg
 
+            sumNdcgBefore += defaultNdcg
+            sumNdcgAfter += optimisedNdcg
+            count += 1.0
+
+            powerSetKey = str(powerset)
+
+            if (searchTerm not in results):
+                results[searchTerm] = {}
+            results[searchTerm][powerSetKey] = params
+        print powerset, "Mean NDCG=", sumNdcgBefore/count, sumNdcgAfter/count
+        print
+
+    return results
+
 if __name__ == "__main__":
     import sys
+
+    results = None
     if (len(sys.argv) == 1):
         usage(sys)
     store = sys.argv[1]
     if (len(sys.argv) == 3):
         index = sys.argv[2]
-        main(store, index)
+        results = main(store)
     else:
-        main(store)
+        results = main(store)
 
 def usage(sys):
     print "Usage: python %s <featureStore> <(optional) ons_index>" % sys.argv[0]

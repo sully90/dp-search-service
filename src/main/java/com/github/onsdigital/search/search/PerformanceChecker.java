@@ -145,7 +145,7 @@ public class PerformanceChecker {
         } else {
             queryString = sortByQuery(sortBy, null);
         }
-        LOGGER.info(String.format("Querying mongoDB with query string: %s", queryString));
+        if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Querying mongoDB with query string: %s", queryString));
         Iterable<SearchStat> it = SearchStat.finder().find(queryString);
 
         List<SearchStat> searchStats = new LinkedList<>();

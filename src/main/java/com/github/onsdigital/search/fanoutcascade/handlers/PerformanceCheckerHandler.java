@@ -101,7 +101,7 @@ public class PerformanceCheckerHandler implements Handler {
                         TrainingSetTask task = new TrainingSetTask(store, featureSet, uniqueHits, now);
                         FanoutCascade.getInstance().getLayerForTask(TrainingSetTask.class).submit(task);
                     } else {
-                        LOGGER.info("Already submitted in this window, skipping");
+//                        LOGGER.info("Already submitted in this window, skipping");
                     }
                 }
 

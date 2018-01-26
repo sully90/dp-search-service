@@ -1,6 +1,5 @@
 package com.github.onsdigital.search.fanoutcascade.handlers;
 
-import com.auth0.jwt.JWT;
 import com.github.onsdigital.elasticutils.ml.client.http.LearnToRankClient;
 import com.github.onsdigital.elasticutils.ml.client.response.features.models.FeatureSet;
 import com.github.onsdigital.elasticutils.ml.client.response.sltr.SltrHit;
@@ -21,6 +20,7 @@ import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.WritableJudgements;
 import com.github.onsdigital.search.server.LearnToRankService;
+import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -81,9 +81,13 @@ public class TrainingSetHandler implements Handler {
                         // needing to hit the website
                         String url = String.valueOf(obj);
 
+                        Map<String, Object> params = new HashMap<String, Object>() {{
+                            put("keywords", term);
+                        }};
+
                         // Construct the LogQuerySearchRequest
                         LogQuerySearchRequest logQuerySearchRequest = getLogQuerySearchRequest(featureStoreName,
-                                task.getFeatureSet(), url, term);
+                                task.getFeatureSet(), url, params);
 
                         if (LOGGER.isDebugEnabled()) LOGGER.debug("Query: " + logQuerySearchRequest.toJson());
 //                        LOGGER.info("Query: " + logQuerySearchRequest.toJson());
@@ -161,7 +165,13 @@ public class TrainingSetHandler implements Handler {
             FeatureSetRequest request = new FeatureSetRequest(featureSet);
 
             if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Creating feature set %s in store %s", request.getName(), featureStoreName));
-            client.createFeatureSet(featureStoreName, request);
+            try {
+                client.createFeatureSet(featureStoreName, request);
+            } catch (ResponseException e) {
+                LOGGER.error("Error while creating featureset", e);
+                // Delete the index
+                client.dropFeatureStore(featureStoreName);
+            }
         }
 
         return featureStoreName;
@@ -177,14 +187,14 @@ public class TrainingSetHandler implements Handler {
     }
 
     private static LogQuerySearchRequest getLogQuerySearchRequest(String store, String featureSet,
-                                                                  String id, String keywords) {
+                                                                  String id, Map<String, Object> params) {
         // Placeholder log_name
         String logName = "logged_featureset";
 
         // Build the sltr query with keyword template injection
         SltrQueryBuilder sltrQueryBuilder = new SltrQueryBuilder(logName, featureSet);
         sltrQueryBuilder.setStore(store);
-        sltrQueryBuilder.setParam("keywords", keywords);
+        sltrQueryBuilder.setParams(params);
 
         // Build the elasticsearch query, which performs a term filter on the _id field
         QueryBuilder qb = QueryBuilders.boolQuery()
