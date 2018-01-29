@@ -31,14 +31,79 @@ def sortQuery(field, order):
     }
     return sortBy
 
-def getSimpleBaseQuery(searchTerm, rescoreQueries, fromParam, sizeParam, sort=None):
+def getSimpleBaseQuery(searchTerm, similarTerms, rescoreQueries, fromParam, sizeParam, sort=None):
 
     baseQuery = {
       "from": fromParam,
       "size": sizeParam,
       "query": {
-        "match": {
-          "_all": searchTerm
+        "function_score": {
+          "query": {
+            "bool": {
+              "should": [
+                {
+                  "match": {
+                    "description.title": {
+                      "query": searchTerm,
+                      "operator": "OR",
+                      "prefix_length": 0,
+                      "max_expansions": 50,
+                      "fuzzy_transpositions": true,
+                      "lenient": false,
+                      "zero_terms_query": "NONE",
+                      "boost": 10.0
+                    }
+                  }
+                },
+                {
+                  "terms": {
+                    "description.title": similarTerms,
+                    "boost": 5.0
+                  }
+                },
+                {
+                  "match": {
+                    "_all": {
+                      "query": searchTerm,
+                      "operator": "OR",
+                      "prefix_length": 0,
+                      "max_expansions": 50,
+                      "fuzzy_transpositions": true,
+                      "lenient": false,
+                      "zero_terms_query": "NONE",
+                      "boost": 1.0
+                    }
+                  }
+                }
+              ],
+              "disable_coord": false,
+              "adjust_pure_negative": true,
+              "boost": 1.0
+            }
+          },
+          "functions": [
+            {
+              "filter": {
+                "match_all": {
+                  "boost": 1.0
+                }
+              },
+              "weight": 0.5,
+              "exp": {
+                "description.releaseDate": {
+                  "origin": "now",
+                  "scale": "17472h",
+                  "decay": 0.5
+                },
+                "multi_value_mode": "AVG"
+              }
+            }
+          ],
+          "score_mode": "multiply",
+          "boost_mode": "avg",
+          "max_boost": 100.0,
+          "min_score": 1.0,
+          "boost": 1.0
         }
       },
       "rescore": rescoreQueries

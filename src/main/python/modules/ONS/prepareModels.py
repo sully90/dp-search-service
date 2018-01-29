@@ -14,6 +14,8 @@ _N_CALLS = 50
 
 _NDCG_COST_FUNC = lambda ndcg: 1.0 - ndcg
 
+_WORD_2_VEC_MODEL = word2vec("../../../resources/vectorModels/GoogleNews-vectors-negative300-SLIM.bin", True)
+
 def computeNdcg(searchTerm, models, judgementList, index, elasticClient, size, pages):
     keep = []
     for page in pages:
@@ -86,11 +88,23 @@ def getSearchQuery(searchTerm, models, fromParam, size):
                 boost, queryBoost, rescoreBoost)
         rescoreQueries.append(rescoreQuery)
 
+    similarTerms = []
+    tokens = searchTerm.split(" ")
+    for token in tokens:
+        results = _WORD_2_VEC_MODEL.
+        similarTerms.extend()
+    similarTerms = _WORD_2_VEC_MODEL.similar_by_word
+
     # esQuery = queries.getBaseQuery(searchTerm, rescoreQueries, fromParam, size)
     # esQuery = queries.getSltrBaseQuery(searchTerm, rescoreQueries, fromParam, size)
     esQuery = queries.getSimpleBaseQuery(searchTerm, rescoreQueries, fromParam, size)
     # print json.dumps(esQuery)
     return esQuery
+
+def word2vec(fileName, binary=True):
+    import gensim
+    model = gensim.models.KeyedVectors.load_word2vec_format(fname, binary=binary)
+    return model
 
 def main(store, index="ons*"):
     searchTerms = utils.searchTerms
@@ -107,7 +121,7 @@ def main(store, index="ons*"):
     timeStamp = doc["timeStamp"]
     timeStampQuery = utils.timeQuery(timeStamp)
 
-    enabledModels = [3,9]
+    enabledModels = [1,3,9]
     models = [Model("ons_model_%d" % i) for i in enabledModels]
     modelPowerset = list(utils.powerset(models))
 
