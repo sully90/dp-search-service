@@ -1,21 +1,12 @@
 {
   "name": "9",
   "params": [
-    "keywords"
+    "word2vec"
   ],
   "template": {
-    "match": {
-      "description.edition": {
-        "query": "{{keywords}}",
-        "operator": "OR",
-        "prefix_length": 0,
-        "max_expansions": 50,
-        "minimum_should_match": "1<-2 3<80% 5<60%",
-        "fuzzy_transpositions": true,
-        "lenient": false,
-        "zero_terms_query": "NONE",
-        "boost": 1.0
-      }
+    "terms": {
+      "description.title.title_raw": ["{{word2vec}}"],
+      "boost": 1.0
     }
   },
   "template_language": "mustache"

@@ -1,180 +1,3 @@
-// {
-//   "name": "1",
-//   "params": [
-//     "keywords"
-//   ],
-//   "template": {
-//     "function_score": {
-//       "query": {
-//         "match": {
-//           "description.title.title_no_dates": "{{keywords}}"
-//         }
-//       },
-//       "script_score": {
-//         "script": {
-//           "source": "( 1/(1 + Math.exp(-1 * _score)) ) / ( Math.exp(-1 * _score)/Math.pow( (1 + Math.exp(-1 * _score)), 2 ) )"
-//         }
-//       }
-//     }
-//   },
-//   "template_language": "mustache"
-// }
-
-POST ons1515656903908/_search
-{
-  "from" : 0,
-  "size" : 10,
-  "query" : {
-    "dis_max" : {
-      "tie_breaker" : 0.0,
-      "queries" : [
-        {
-          "bool" : {
-            "should" : [
-              {
-                "match" : {
-                  "description.title.title_no_dates" : {
-                    "query" : "rpi",
-                    "operator" : "OR",
-                    "prefix_length" : 0,
-                    "max_expansions" : 50,
-                    "minimum_should_match" : "1<-2 3<80% 5<60%",
-                    "fuzzy_transpositions" : true,
-                    "lenient" : false,
-                    "zero_terms_query" : "NONE",
-                    "boost" : 10.0
-                  }
-                }
-              },
-              {
-                "match" : {
-                  "description.title.title_no_stem" : {
-                    "query" : "rpi",
-                    "operator" : "OR",
-                    "prefix_length" : 0,
-                    "max_expansions" : 50,
-                    "minimum_should_match" : "1<-2 3<80% 5<60%",
-                    "fuzzy_transpositions" : true,
-                    "lenient" : false,
-                    "zero_terms_query" : "NONE",
-                    "boost" : 10.0
-                  }
-                }
-              },
-              {
-                "multi_match" : {
-                  "query" : "rpi",
-                  "fields" : [
-                    "description.edition^1.0",
-                    "description.title^10.0"
-                  ],
-                  "type" : "cross_fields",
-                  "operator" : "OR",
-                  "slop" : 0,
-                  "prefix_length" : 0,
-                  "max_expansions" : 50,
-                  "minimum_should_match" : "3<80% 5<60%",
-                  "lenient" : false,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
-              }
-            ],
-            "disable_coord" : false,
-            "adjust_pure_negative" : true,
-            "boost" : 1.0
-          }
-        },
-        {
-          "multi_match" : {
-            "query" : "rpi",
-            "fields" : [
-              "description.metaDescription^1.0",
-              "description.summary^1.0"
-            ],
-            "type" : "best_fields",
-            "operator" : "OR",
-            "slop" : 0,
-            "prefix_length" : 0,
-            "max_expansions" : 50,
-            "minimum_should_match" : "75%",
-            "lenient" : false,
-            "zero_terms_query" : "NONE",
-            "boost" : 1.0
-          }
-        },
-        {
-          "match" : {
-            "description.keywords" : {
-              "query" : "rpi",
-              "operator" : "AND",
-              "prefix_length" : 0,
-              "max_expansions" : 50,
-              "fuzzy_transpositions" : true,
-              "lenient" : false,
-              "zero_terms_query" : "NONE",
-              "boost" : 1.0
-            }
-          }
-        },
-        {
-          "multi_match" : {
-            "query" : "rpi",
-            "fields" : [
-              "description.cdid^1.0",
-              "description.datasetId^1.0"
-            ],
-            "type" : "best_fields",
-            "operator" : "OR",
-            "slop" : 0,
-            "prefix_length" : 0,
-            "max_expansions" : 50,
-            "lenient" : false,
-            "zero_terms_query" : "NONE",
-            "boost" : 1.0
-          }
-        },
-        {
-          "match" : {
-            "searchBoost" : {
-              "query" : "rpi",
-              "operator" : "AND",
-              "prefix_length" : 0,
-              "max_expansions" : 50,
-              "fuzzy_transpositions" : true,
-              "lenient" : false,
-              "zero_terms_query" : "NONE",
-              "boost" : 100.0
-            }
-          }
-        }
-      ],
-      "boost" : 1.0
-    }
-  },
-  "rescore" : [
-    {
-      "window_size" : 1000,
-      "query" : {
-        "rescore_query" : {
-          "sltr" : {
-            "model" : "ons_model_6",
-            "featureset" : "ons_features_prod",
-            "store" : "ons_featurestore_1515742491533",
-            "params" : {
-              "keywords" : "rpi"
-            },
-            "boost" : 1.0
-          }
-        },
-        "query_weight" : 1.0,
-        "rescore_query_weight" : 1.0,
-        "score_mode" : "total"
-      }
-    }
-  ]
-}
-
 POST ons1515656903908/_search
 {
   "from" : 0,
@@ -191,7 +14,7 @@ POST ons1515656903908/_search
                   {
                     "match" : {
                       "description.title.title_no_dates" : {
-                        "query" : "rpi",
+                        "query" : "crime",
                         "operator" : "OR",
                         "prefix_length" : 0,
                         "max_expansions" : 50,
@@ -206,7 +29,7 @@ POST ons1515656903908/_search
                   {
                     "match" : {
                       "description.title.title_no_stem" : {
-                        "query" : "rpi",
+                        "query" : "crime",
                         "operator" : "OR",
                         "prefix_length" : 0,
                         "max_expansions" : 50,
@@ -220,7 +43,7 @@ POST ons1515656903908/_search
                   },
                   {
                     "multi_match" : {
-                      "query" : "rpi",
+                      "query" : "crime",
                       "fields" : [
                         "description.edition^1.0",
                         "description.title^10.0"
@@ -244,7 +67,7 @@ POST ons1515656903908/_search
             },
             {
               "multi_match" : {
-                "query" : "rpi",
+                "query" : "crime",
                 "fields" : [
                   "description.metaDescription^1.0",
                   "description.summary^1.0"
@@ -263,7 +86,7 @@ POST ons1515656903908/_search
             {
               "match" : {
                 "description.keywords" : {
-                  "query" : "rpi",
+                  "query" : "crime",
                   "operator" : "AND",
                   "prefix_length" : 0,
                   "max_expansions" : 50,
@@ -276,7 +99,7 @@ POST ons1515656903908/_search
             },
             {
               "multi_match" : {
-                "query" : "rpi",
+                "query" : "crime",
                 "fields" : [
                   "description.cdid^1.0",
                   "description.datasetId^1.0"
@@ -294,7 +117,7 @@ POST ons1515656903908/_search
             {
               "match" : {
                 "searchBoost" : {
-                  "query" : "rpi",
+                  "query" : "crime",
                   "operator" : "AND",
                   "prefix_length" : 0,
                   "max_expansions" : 50,
@@ -341,167 +164,4 @@ POST ons1515656903908/_search
       }
     }
   }
-}
-
-POST ons1515656903908/_search
-{
-  "from" : 0,
-  "size" : 10,
-  "query" : {
-    "function_score" : {
-      "query" : {
-        "dis_max" : {
-          "tie_breaker" : 0.0,
-          "queries" : [
-            {
-              "bool" : {
-                "should" : [
-                  {
-                    "match" : {
-                      "description.title.title_no_dates" : {
-                        "query" : "rpi",
-                        "operator" : "OR",
-                        "prefix_length" : 0,
-                        "max_expansions" : 50,
-                        "minimum_should_match" : "1<-2 3<80% 5<60%",
-                        "fuzzy_transpositions" : true,
-                        "lenient" : false,
-                        "zero_terms_query" : "NONE",
-                        "boost" : 10.0
-                      }
-                    }
-                  },
-                  {
-                    "match" : {
-                      "description.title.title_no_stem" : {
-                        "query" : "rpi",
-                        "operator" : "OR",
-                        "prefix_length" : 0,
-                        "max_expansions" : 50,
-                        "minimum_should_match" : "1<-2 3<80% 5<60%",
-                        "fuzzy_transpositions" : true,
-                        "lenient" : false,
-                        "zero_terms_query" : "NONE",
-                        "boost" : 10.0
-                      }
-                    }
-                  },
-                  {
-                    "multi_match" : {
-                      "query" : "rpi",
-                      "fields" : [
-                        "description.edition^1.0",
-                        "description.title^10.0"
-                      ],
-                      "type" : "cross_fields",
-                      "operator" : "OR",
-                      "slop" : 0,
-                      "prefix_length" : 0,
-                      "max_expansions" : 50,
-                      "minimum_should_match" : "3<80% 5<60%",
-                      "lenient" : false,
-                      "zero_terms_query" : "NONE",
-                      "boost" : 1.0
-                    }
-                  }
-                ],
-                "disable_coord" : false,
-                "adjust_pure_negative" : true,
-                "boost" : 1.0
-              }
-            },
-            {
-              "multi_match" : {
-                "query" : "rpi",
-                "fields" : [
-                  "description.metaDescription^1.0",
-                  "description.summary^1.0"
-                ],
-                "type" : "best_fields",
-                "operator" : "OR",
-                "slop" : 0,
-                "prefix_length" : 0,
-                "max_expansions" : 50,
-                "minimum_should_match" : "75%",
-                "lenient" : false,
-                "zero_terms_query" : "NONE",
-                "boost" : 1.0
-              }
-            },
-            {
-              "match" : {
-                "description.keywords" : {
-                  "query" : "rpi",
-                  "operator" : "AND",
-                  "prefix_length" : 0,
-                  "max_expansions" : 50,
-                  "fuzzy_transpositions" : true,
-                  "lenient" : false,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
-              }
-            },
-            {
-              "multi_match" : {
-                "query" : "rpi",
-                "fields" : [
-                  "description.cdid^1.0",
-                  "description.datasetId^1.0"
-                ],
-                "type" : "best_fields",
-                "operator" : "OR",
-                "slop" : 0,
-                "prefix_length" : 0,
-                "max_expansions" : 50,
-                "lenient" : false,
-                "zero_terms_query" : "NONE",
-                "boost" : 1.0
-              }
-            },
-            {
-              "match" : {
-                "searchBoost" : {
-                  "query" : "rpi",
-                  "operator" : "AND",
-                  "prefix_length" : 0,
-                  "max_expansions" : 50,
-                  "fuzzy_transpositions" : true,
-                  "lenient" : false,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 100.0
-                }
-              }
-            }
-          ],
-          "boost" : 1.0
-        }
-      },
-      "functions" : [ ],
-      "score_mode" : "multiply",
-      "max_boost" : 3.4028235E38,
-      "boost" : 1.0
-    }
-  },
-  "rescore" : [
-    {
-      "window_size" : 1000,
-      "query" : {
-        "rescore_query" : {
-          "sltr" : {
-            "model" : "ons_model_6",
-            "featureset" : "ons_features_prod",
-            "store" : "ons_featurestore_1515742491533",
-            "params" : {
-              "keywords" : "rpi"
-            },
-            "boost" : 1.0
-          }
-        },
-        "query_weight" : 1.0,
-        "rescore_query_weight" : 1.0,
-        "score_mode" : "total"
-      }
-    }
-  ]
 }

@@ -1,5 +1,11 @@
 package com.github.onsdigital.search.configuration;
 
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
+import org.deeplearning4j.models.word2vec.Word2Vec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -109,6 +115,45 @@ public class SearchEngineProperties {
 
         public static long getSubmitValue() {
             return Long.valueOf(getProperty(SUBMIT_VALUE_KEY));
+        }
+    }
+
+    public static class WORD2VEC {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(WORD2VEC.class);
+
+        private static final Word2Vec word2vec;
+
+        static {
+            LOGGER.info("Loading word2vec dict...");
+            File gModel = getVectorsFile(Models.GOOGLE_SLIM);
+            word2vec = WordVectorSerializer.readWord2VecModel(gModel);
+            LOGGER.info("Word2vec dict loaded.");
+        }
+
+        private static File getVectorsFile(Models model) {
+            ClassLoader classLoader = WORD2VEC.class.getClassLoader();
+            File file = new File(classLoader.getResource(String.format("vectorModels/%s", model.getFileName())).getFile());
+            return file;
+        }
+
+        public static Word2Vec getWord2vec() {
+            return word2vec;
+        }
+
+        enum Models {
+            GOOGLE("GoogleNews-vectors-negative300.bin.gz"),
+            GOOGLE_SLIM("GoogleNews-vectors-negative300-SLIM.bin.gz");
+
+            private String fileName;
+
+            Models(String fileName) {
+                this.fileName = fileName;
+            }
+
+            public String getFileName() {
+                return fileName;
+            }
         }
     }
 

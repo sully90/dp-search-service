@@ -1,3 +1,7 @@
 target/
 src/main/resources/opennlp.models/*.bin
 src/main/resources/elastic.ltr/models
+src/main/python/.ipynb_checkpoints/
+
+src/main/resources/vectorModels/
+src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_test/
