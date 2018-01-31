@@ -56,11 +56,20 @@ public class KMeansHandler implements Handler {
         List<INDArray> vectors = new ArrayList<>();
         // Populate vectors list
         for (String word : words) {
-            double[] vec = word2Vec.getWordVector(word);
-            INDArray vector = Nd4j.create(vec);
+            INDArray vector;
+            if (word.contains("\\s")) {
+                // Construct new vector which is a linear sum of each part vector
+                vector = Nd4j.zeros(300);
+                for (String part : word.split("\\s")) {
+                    INDArray partVec = Nd4j.create(word2Vec.getWordVector(part));
+                    vector.add(partVec);
+                }
+            } else {
+                double[] vec = word2Vec.getWordVector(word);
+                vector = Nd4j.create(vec);
+            }
             vectors.add(vector);
         }
-
 
         List<Point> points = Point.toPoints(vectors);
         ClusterSet clusterSet = kMeansClustering.applyTo(points);
@@ -71,6 +80,15 @@ public class KMeansHandler implements Handler {
         System.out.println("Human-Readable format : "+ millisToShortDHMS( duration ) );
 
         return clusterSet;
+    }
+
+    private static void pca(List<INDArray> vectors) {
+        int nDims = vectors.get(0).length();
+        int shape[] = {vectors.size(), nDims};
+        INDArray dataset = Nd4j.create(vectors, shape);
+
+        boolean normalize = true;
+//        PCA pca = PCA.pca(dataset, nDims, normalize);
     }
 
     public static String millisToShortDHMS(long duration) {
