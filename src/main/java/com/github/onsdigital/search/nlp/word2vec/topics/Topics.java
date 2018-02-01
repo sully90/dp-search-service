@@ -4,7 +4,7 @@ import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.nlp.word2vec.Word2VecClusterable;
 import com.github.onsdigital.search.util.MapUtils;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
-import org.apache.commons.math3.ml.clustering.FuzzyKMeansClusterer;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.random.JDKRandomGenerator;
@@ -29,14 +29,11 @@ public class Topics {
     private static final Word2Vec WORD_2_VEC = SearchEngineProperties.WORD2VEC.getWord2vec();
 
     private static final int SEED = 12345;
-    private static final double EPSILON = 1e-3;
 
-    private static final double DEFAULT_FUZZINESS = 1.1d;
     private static final int DEFAULT_MAX_ITERATIONS = 1000;
     private static final DistanceMeasure DEFAULT_DISTANCE_MEASURE = new EuclideanDistance();
 
     private final int k;
-    private final double fuzziness;
     private final int maxIterations;
     private final DistanceMeasure distanceMeasure;
     private final List<String> words;
@@ -44,12 +41,11 @@ public class Topics {
     private List<Topic> topics;
 
     public Topics(int k, List<String> words) {
-        this(k, DEFAULT_FUZZINESS, DEFAULT_MAX_ITERATIONS, DEFAULT_DISTANCE_MEASURE, words, 10);
+        this(k, DEFAULT_MAX_ITERATIONS, DEFAULT_DISTANCE_MEASURE, words, 10);
     }
 
-    public Topics(int k, double fuzziness, int maxIterations, DistanceMeasure distanceMeasure, List<String> words, int numberOfNeighbours) {
+    public Topics(int k, int maxIterations, DistanceMeasure distanceMeasure, List<String> words, int numberOfNeighbours) {
         this.k = k;
-        this.fuzziness = fuzziness;
         this.maxIterations = maxIterations;
         this.distanceMeasure = distanceMeasure;
         this.words = words;
@@ -93,8 +89,8 @@ public class Topics {
         RandomGenerator randomGenerator = new JDKRandomGenerator();
         randomGenerator.setSeed(SEED);
 
-        FuzzyKMeansClusterer<Word2VecClusterable> kMeans = new FuzzyKMeansClusterer<>(this.k, this.fuzziness,
-                this.maxIterations, this.distanceMeasure, EPSILON, randomGenerator);
+        KMeansPlusPlusClusterer<Word2VecClusterable> kMeans = new KMeansPlusPlusClusterer<Word2VecClusterable>(this.k,
+                this.maxIterations, this.distanceMeasure, randomGenerator);
         return kMeans.cluster(clusterables);
     }
 
@@ -131,7 +127,7 @@ public class Topics {
             System.out.println(String.format("Topic %d : %s", i, topic.getTopWord()));
         }
 
-        System.out.println(topics.similarTopics(topicList.get(0)));
+        System.out.println(topics.similarTopics(topicList.get(4)));
     }
 
 }
