@@ -46,4 +46,9 @@ public class Topic {
     public boolean equals(Object obj) {
         return this.centroidCluster.equals(obj);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Topic: %s", this.getTopWord());
+    }
 }

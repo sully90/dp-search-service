@@ -12,10 +12,10 @@ import java.util.TreeSet;
 public class MapUtils {
 
     public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(Map<K, V> map) {
-        SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<>(
+        TreeSet<Map.Entry<K, V>> sortedEntries = new TreeSet<>(
                 Comparator.comparing(Map.Entry::getValue));
         sortedEntries.addAll(map.entrySet());
-        return sortedEntries;
+        return sortedEntries.descendingSet();
     }
 
 }
