@@ -11,7 +11,7 @@ public enum CollectionNames implements MongoCollectionNames {
     SEARCH_STATS("searchstats"),
     JUDGEMENTS("judgements"),
     MODEL_TRAINING_TASKS("model_training_tasks"),
-    MOVIES("movies");
+    TOPICS("topics");
 
     private String name;
 

@@ -7,6 +7,8 @@ import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,10 +19,20 @@ public class Topic {
 
     private static final Word2Vec WORD_2_VEC = SearchEngineProperties.WORD2VEC.getWord2vec();
 
-    private final CentroidCluster<Word2VecClusterable> centroidCluster;
+    private int k;
+    private CentroidCluster<Word2VecClusterable> centroidCluster;
 
-    public Topic(CentroidCluster<Word2VecClusterable> centroidCluster) {
+    public Topic(int k, CentroidCluster<Word2VecClusterable> centroidCluster) {
+        this.k = k;
         this.centroidCluster = centroidCluster;
+    }
+
+    private Topic() {
+        // For Jenkins
+    }
+
+    public int getTopicNumber() {
+        return this.k;
     }
 
     public double[] getTopicVector() {
@@ -35,6 +47,22 @@ public class Topic {
     public Collection<String> getTopTopics(int N) {
         // Returns the top N topics for this centroid
         return WORD_2_VEC.wordsNearest(Nd4j.create(this.getTopicVector()), N);
+    }
+
+    public int size() {
+        return this.centroidCluster.getPoints().size();
+    }
+
+    /**
+     *
+     * @return List of words belonging to this topic
+     */
+    public List<String> getWords() {
+        List<String> words = new LinkedList<>();
+        for (Word2VecClusterable clusterable : this.centroidCluster.getPoints()) {
+            words.add(clusterable.getWord());
+        }
+        return words;
     }
 
     @Override
