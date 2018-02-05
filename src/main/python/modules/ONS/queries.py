@@ -23,6 +23,10 @@ _rescoreTemplate = {
     }
 }
 
+matchAll = {"query" : {
+  "match_all": {}
+}}
+
 def sortQuery(field, order):
     sortBy = {
         field : {
