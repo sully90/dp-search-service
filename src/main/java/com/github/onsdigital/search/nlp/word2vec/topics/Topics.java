@@ -1,9 +1,7 @@
 package com.github.onsdigital.search.nlp.word2vec.topics;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.onsdigital.elasticutils.client.generic.ElasticSearchClient;
 import com.github.onsdigital.mongo.WritableObject;
@@ -15,24 +13,10 @@ import com.github.onsdigital.search.util.ClientType;
 import com.github.onsdigital.search.util.MapUtils;
 import com.github.onsdigital.search.util.SearchClientUtils;
 import com.github.onsdigitial.elastic.importer.models.page.base.Page;
-import com.github.onsdigitial.elastic.importer.models.page.base.PageType;
-import com.github.onsdigitial.elastic.importer.models.page.census.HomePageCensus;
-import com.github.onsdigitial.elastic.importer.models.page.compendium.CompendiumChapter;
-import com.github.onsdigitial.elastic.importer.models.page.compendium.CompendiumData;
-import com.github.onsdigitial.elastic.importer.models.page.compendium.CompendiumLandingPage;
-import com.github.onsdigitial.elastic.importer.models.page.home.HomePage;
-import com.github.onsdigitial.elastic.importer.models.page.statistics.data.timeseries.TimeSeries;
-import com.github.onsdigitial.elastic.importer.models.page.statistics.dataset.TimeSeriesDataset;
-import com.github.onsdigitial.elastic.importer.models.page.statistics.document.article.Article;
-import com.github.onsdigitial.elastic.importer.models.page.statistics.document.bulletin.Bulletin;
-import com.github.onsdigitial.elastic.importer.models.page.taxonomy.ProductPage;
-import com.github.onsdigitial.elastic.importer.models.page.taxonomy.TaxonomyLandingPage;
-import opennlp.tools.tokenize.WhitespaceTokenizer;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.FuzzyKMeansClusterer;
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
-import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.bson.types.ObjectId;
@@ -70,7 +54,16 @@ public class Topics implements WritableObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Topics.class);
 
-    private static final Word2Vec WORD_2_VEC = SearchEngineProperties.WORD2VEC.getWord2vec();
+    private static final Word2Vec WORD_2_VEC;
+
+    static {
+        try {
+            WORD_2_VEC = SearchEngineProperties.WORD2VEC.loadGensimModel();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 
     private static final int SEED = 12345;
     private static final double EPSILON = 1e-6;
@@ -215,10 +208,12 @@ public class Topics implements WritableObject {
                     .setQuery(QueryBuilders.matchAllQuery())
                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                     .setScroll(new TimeValue(60000))
-                    .setSize(100)
+                    .setSize(1000)
+                    .setTypes("bulletin", "article")
                     .request();
 
             SearchResponse searchResponse = searchClient.search(searchRequest);
+            System.out.println(String.format("Got %d hits", searchResponse.getHits().totalHits));
             final String scrollId = searchResponse.getScrollId();
 
             ObjectMapper mapper = new ObjectMapper();
@@ -226,43 +221,25 @@ public class Topics implements WritableObject {
 
             Set<String> keywords = new HashSet<>();
 
-            for (String searchTerm : searchTerms) {
-                keywords.add(searchTerm);
+//            for (String searchTerm : searchTerms) {
+//                keywords.add(searchTerm);
 //                keywords.addAll(WORD_2_VEC.similarWordsInVocabTo(searchTerm, 10));
-            }
+//            }
 
             do {
                 SearchHits searchHits = searchResponse.getHits();
 
                 for (SearchHit searchHit : searchHits.getHits()) {
-                    Page page = fromHit(searchHit);
-                    if (page != null && page.getDescription() != null) {
-                        if (page.getDescription().getKeywords() != null) {
-                            for (String keyword : page.getDescription().getKeywords()) {
-                                keywords.add(keyword.toLowerCase().trim());
+                    Map<String, Object> fields = mapper.readValue(searchHit.getSourceAsString(), new TypeReference<Map<String, Object>>(){});
+                    if (fields.containsKey("description")) {
+                        Object description = fields.get("description");
+                        if (description instanceof Map) {
+                            Map<String, Object> descriptionMap = (Map<String, Object>) description;
+                            if (descriptionMap.containsKey("keywords")) {
+                                List<String> pageKeywords = (List<String>) descriptionMap.get("keywords");
+                                keywords.addAll(pageKeywords);
                             }
                         }
-
-                        if (page.getDescription().getTitle() != null && page.getDescription().getSummary() != null) {
-                            StringBuilder sb = new StringBuilder(page.getDescription().getTitle())
-                                    .append(page.getDescription().getSummary());
-
-                            String text = sb.toString();
-                            String[] tokens = WhitespaceTokenizer.INSTANCE.tokenize(text);
-                            for (String token : tokens) {
-                                keywords.add(token);
-                            }
-                        }
-
-//                        if (page.getEntities() != null) {
-//                            for (String key : page.getEntities().keySet()) {
-//                                for (String entity : page.getEntities().get(key)) {
-//                                    if (!WORD_2_VEC.getStopWords().contains(entity)) {
-//                                        keywords.add(entity);
-//                                    }
-//                                }
-//                            }
-//                        }
                     }
                 }
 
@@ -275,17 +252,27 @@ public class Topics implements WritableObject {
 
             System.out.println(keywords.size());
 
+            String[] keywordsArray = keywords.toArray(new String[keywords.size()]);
+            for (String keyword : keywordsArray) {
+                keywords.addAll(WORD_2_VEC.wordsNearest(keyword, 5));
+            }
+
+            System.out.println(keywords.size());
+
+//            MongoHelper.getDatabase(DatabaseType.LOCAL).getJongo().getCollection("ons_keywords").insert(keywords);
+
             long start = System.currentTimeMillis();
-            Topics topics = new Topics(20, keywords);
+            Topics topics = new Topics(50, keywords);
             for (Topic topic : topics.getTopics()) {
                 System.out.println(String.format("Topic %d: %s : %s", topic.getTopicNumber(), topic.getTopWord(), topic.getTopTopics(10)));
                 System.out.println(topic.getWords());
+                System.out.println();
             }
             long stop = System.currentTimeMillis();
             long duration = stop - start;
 
             System.out.format("Milli = %s, ( S_Start : %s, S_End : %s ) \n", duration, start, stop );
-            System.out.println("Human-Readable format : "+ millisToShortDHMS( duration ) );
+            System.out.println("Human-Readabl e format : "+ millisToShortDHMS( duration ) );
 
             Topic topicForWord = topics.forWord("crime");
             System.out.println(String.format("Topic for word 'crime': %s", topicForWord.getTopTopics(10)));
@@ -310,92 +297,6 @@ public class Topics implements WritableObject {
         if (days == 0)      res = String.format("%02d:%02d:%02d.%04d", hours, minutes, seconds, millis);
         else                res = String.format("%dd %02d:%02d:%02d.%04d", days, hours, minutes, seconds, millis);
         return res;
-    }
-
-    private static Page asClass(String fileString, Class<? extends Page> returnClass) throws IOException {
-        return MAPPER.readValue(fileString, returnClass);
-    }
-
-    public static Page fromHit(SearchHit searchHit) throws IOException {
-        String type = searchHit.getType();
-        String fileString = searchHit.getSourceAsString();
-        Object obj;
-        try {
-            obj = MAPPER.readValue(fileString, Object.class);
-        } catch (JsonParseException | JsonMappingException e) {
-            LOGGER.warn("Error constructing object", e);
-            return null;
-        }
-
-        if (obj instanceof Map) {
-            Map<String, Object> objectMap;
-            try {
-                objectMap = MAPPER.readValue(fileString, new TypeReference<Map<String, Object>>() {
-                });
-            } catch (JsonMappingException e) {
-                LOGGER.warn("Error constructing object", e);
-                return null;
-            }
-
-            if (objectMap.containsKey("type") && objectMap.get("type") instanceof String) {
-                type = type.toLowerCase().replaceAll("\\s", "_");
-
-                PageType identifiedPage = PageType.forType(type);
-                if (identifiedPage == null) {
-                    identifiedPage = PageType.forType(String.format("%s_page", type));
-                    if (identifiedPage == null) {
-                        LOGGER.info(String.format("Failed to identify page %s, exiting.", type));
-                    } else {
-                        switch (identifiedPage) {
-                            case home_page:
-                                return asClass(fileString, HomePage.class);
-                            case home_page_census:
-                                return asClass(fileString, HomePageCensus.class);
-                            case taxonomy_landing_page:
-                                return asClass(fileString, TaxonomyLandingPage.class);
-                            case product_page:
-                                return asClass(fileString, ProductPage.class);
-                            case bulletin:
-                                return asClass(fileString, Bulletin.class);
-                            case article:
-                                return asClass(fileString, Article.class);
-                            case timeseries:
-                                return asClass(fileString, TimeSeries.class);
-                            case compendium_landing_page:
-                                return asClass(fileString, CompendiumLandingPage.class);
-                            case compendium_chapter:
-                                return asClass(fileString, CompendiumChapter.class);
-                            case compendium_data:
-                                return asClass(fileString, CompendiumData.class);
-                            case timeseries_dataset:
-                                return asClass(fileString, TimeSeriesDataset.class);
-                            case reference_tables:
-                            case chart:
-                            case table:
-                            case image:
-                            case visualisation:
-                            case equation:
-                                return null;
-//                        case reference_tables:
-//                            return asClass(fileString, ReferenceTables.class);
-//                        case chart:
-//                            return asClass(fileString, Chart.class);
-//                        case table:
-//                            return asClass(fileString, Table.class);
-//                        case image:
-//                            return asClass(fileString, Image.class);
-//                        case visualisation:
-//                            return asClass(fileString, Visualisation.class);
-//                        case equation:
-//                            return asClass(fileString, Equation.class);
-                            default:
-                                LOGGER.warn("Unknown type: " + type);
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @Override

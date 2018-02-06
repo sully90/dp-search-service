@@ -1,16 +1,24 @@
 package com.github.onsdigital.search.configuration;
 
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
+import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
+import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.Word2Vec;
+import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
+import org.deeplearning4j.models.word2vec.wordstore.inmemory.AbstractCache;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.ops.transforms.Transforms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author sullid (David Sullivan) on 22/11/2017
@@ -122,14 +130,7 @@ public class SearchEngineProperties {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(WORD2VEC.class);
 
-        private static final Word2Vec word2vec;
-
-        static {
-            LOGGER.info("Loading word2vec dict...");
-            File gModel = getVectorsFile(Models.GOOGLE_SLIM);
-            word2vec = WordVectorSerializer.readWord2VecModel(gModel);
-            LOGGER.info("Word2vec dict loaded.");
-        }
+        private static Word2Vec word2vec;
 
         private static File getVectorsFile(Models model) {
             ClassLoader classLoader = WORD2VEC.class.getClassLoader();
@@ -138,12 +139,103 @@ public class SearchEngineProperties {
         }
 
         public static Word2Vec getWord2vec() {
+            if (word2vec == null) {
+                File gModel = getVectorsFile(Models.GOOGLE_SLIM);
+                word2vec = WordVectorSerializer.readWord2VecModel(gModel);
+            }
             return word2vec;
         }
 
-        enum Models {
+        public static Word2Vec loadGensimModel() throws IOException {
+            File gModel = getVectorsFile(Models.ONS);
+            return loadGoogleBinaryModel(gModel, false);
+        }
+
+        public static Word2Vec loadGoogleBinaryModel(File modelFile, boolean lineBreaks) throws IOException {
+            return readBinaryModel(modelFile, lineBreaks, true);
+        }
+
+        private static Word2Vec readBinaryModel(File modelFile, boolean linebreaks, boolean normalize)
+                throws NumberFormatException, IOException {
+            InMemoryLookupTable<VocabWord> lookupTable;
+            VocabCache<VocabWord> cache;
+            INDArray syn0;
+            int words, size;
+
+            int originalFreq = Nd4j.getMemoryManager().getOccasionalGcFrequency();
+            boolean originalPeriodic = Nd4j.getMemoryManager().isPeriodicGcActive();
+
+            if (originalPeriodic)
+                Nd4j.getMemoryManager().togglePeriodicGc(false);
+
+            Nd4j.getMemoryManager().setOccasionalGcFrequency(50000);
+
+            try (BufferedInputStream bis = new BufferedInputStream(GzipUtils.isCompressedFilename(modelFile.getName())
+                    ? new GZIPInputStream(new FileInputStream(modelFile)) : new FileInputStream(modelFile));
+                 DataInputStream dis = new DataInputStream(bis)) {
+                words = Integer.parseInt(WordVectorSerializer.readString(dis));
+                size = Integer.parseInt(WordVectorSerializer.readString(dis));
+                syn0 = Nd4j.create(words, size);
+                cache = new AbstractCache<>();
+
+                WordVectorSerializer.printOutProjectedMemoryUse(words, size, 1);
+
+                lookupTable = (InMemoryLookupTable<VocabWord>) new InMemoryLookupTable.Builder<VocabWord>().cache(cache)
+                        .useHierarchicSoftmax(false).vectorLength(size).build();
+
+                String word;
+                float[] vector = new float[size];
+                for (int i = 0; i < words; i++) {
+
+                    word = WordVectorSerializer.readString(dis);
+                    LOGGER.trace("Loading " + word + " with word " + i);
+
+                    for (int j = 0; j < size; j++) {
+                        vector[j] = WordVectorSerializer.readFloat(dis);
+                    }
+
+                    syn0.putRow(i, normalize ? Transforms.unitVec(Nd4j.create(vector)) : Nd4j.create(vector));
+
+                    // FIXME There was an empty string in my test model ......
+                    if (StringUtils.isNotEmpty(word)) {
+                        VocabWord vw = new VocabWord(1.0, word);
+                        vw.setIndex(cache.numWords());
+
+                        cache.addToken(vw);
+                        cache.addWordToIndex(vw.getIndex(), vw.getLabel());
+
+                        cache.putVocabWord(word);
+                    }
+
+                    if (linebreaks) {
+                        dis.readByte(); // line break
+                    }
+
+                    Nd4j.getMemoryManager().invokeGcOccasionally();
+                }
+            } finally {
+                if (originalPeriodic)
+                    Nd4j.getMemoryManager().togglePeriodicGc(true);
+
+                Nd4j.getMemoryManager().setOccasionalGcFrequency(originalFreq);
+            }
+
+            lookupTable.setSyn0(syn0);
+
+            Word2Vec ret = new Word2Vec.Builder().useHierarchicSoftmax(false).resetModel(false).layerSize(syn0.columns())
+                    .allowParallelTokenization(true).elementsLearningAlgorithm(new SkipGram<VocabWord>())
+                    .learningRate(0.025).windowSize(5).workers(1).build();
+
+            ret.setVocab(cache);
+            ret.setLookupTable(lookupTable);
+
+            return ret;
+        }
+
+        public enum Models {
             GOOGLE("GoogleNews-vectors-negative300.bin.gz"),
-            GOOGLE_SLIM("GoogleNews-vectors-negative300-SLIM.bin.gz");
+            GOOGLE_SLIM("GoogleNews-vectors-negative300-SLIM.bin.gz"),
+            ONS("ons_w2v_model.bin.gz");
 
             private String fileName;
 
