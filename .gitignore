@@ -5,3 +5,6 @@ src/main/python/.ipynb_checkpoints/
 
 src/main/resources/vectorModels/
 src/main/resources/elastic.ltr/featureSets/ons_featurestore/ons_features_test/
+
+src/main/python/modules/*.pyc
+src/main/python/modules/ONS/*pyc

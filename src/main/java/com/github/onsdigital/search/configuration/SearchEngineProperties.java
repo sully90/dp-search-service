@@ -138,13 +138,7 @@ public class SearchEngineProperties {
 
         private static Word2Vec word2vec;
 
-        public static File getVectorsFile(Models model) {
-            ClassLoader classLoader = WORD2VEC.class.getClassLoader();
-            File file = new File(classLoader.getResource(String.format("vectorModels/%s", model.getFileName())).getFile());
-            return file;
-        }
-
-        public static List<String> getStopWords() throws IOException {
+        public static List<String> getStopWords() {
             ClassLoader classLoader = WORD2VEC.class.getClassLoader();
             File stopFile = new File(classLoader.getResource(String.format("vectorModels/%s", "stop.txt")).getFile());
             List<String> stopWords = new ArrayList<>();
@@ -155,8 +149,16 @@ public class SearchEngineProperties {
                 while ((currentLine = br.readLine()) != null) {
                     stopWords.add(currentLine);
                 }
+            } catch (IOException e) {
+                LOGGER.warn("Unable to locate stop words file, returning empty list");
             }
             return stopWords;
+        }
+
+        private static File getVectorsFile(Models model) {
+            ClassLoader classLoader = WORD2VEC.class.getClassLoader();
+            File file = new File(classLoader.getResource(String.format("vectorModels/%s", model.getFileName())).getFile());
+            return file;
         }
 
         public static Word2Vec getWord2vec() {
@@ -171,16 +173,12 @@ public class SearchEngineProperties {
             return word2vec;
         }
 
-        public static Word2Vec loadGensimModel() throws IOException {
-            File gModel = getVectorsFile(Models.ONS);
-            return loadGensimModel(gModel, false);
+        public static Word2Vec readBinaryModel(Models model) throws IOException {
+            File gModel = getVectorsFile(model);
+            return readBinaryModel(gModel, false, false);
         }
 
-        public static Word2Vec loadGensimModel(File modelFile, boolean lineBreaks) throws IOException {
-            return readBinaryModel(modelFile, lineBreaks, true);
-        }
-
-        public static Word2Vec readBinaryModel(File modelFile, boolean linebreaks, boolean normalize)
+        private static Word2Vec readBinaryModel(File modelFile, boolean linebreaks, boolean normalize)
                 throws NumberFormatException, IOException {
             InMemoryLookupTable<VocabWord> lookupTable;
             VocabCache<VocabWord> cache;
@@ -203,8 +201,6 @@ public class SearchEngineProperties {
                 syn0 = Nd4j.create(words, size);
                 cache = new AbstractCache<>();
 
-                System.out.println("Words/size: " + words + "/" + size);
-
                 WordVectorSerializer.printOutProjectedMemoryUse(words, size, 1);
 
                 lookupTable = (InMemoryLookupTable<VocabWord>) new InMemoryLookupTable.Builder<VocabWord>().cache(cache)
@@ -223,19 +219,14 @@ public class SearchEngineProperties {
 
                     syn0.putRow(i, normalize ? Transforms.unitVec(Nd4j.create(vector)) : Nd4j.create(vector));
 
-                    // FIXME There was an empty string in my test model ......
-                    if (StringUtils.isNotEmpty(word)) {
-                        VocabWord vw = new VocabWord(1.0, word);
-                        vw.setIndex(cache.numWords());
 
-                        cache.addToken(vw);
-                        cache.addWordToIndex(vw.getIndex(), vw.getLabel());
+                    VocabWord vw = new VocabWord(1.0, word);
+                    vw.setIndex(cache.numWords());
 
-                        cache.putVocabWord(word);
-                    } else {
-                        System.out.println("Got empty word:" + word);
-                        System.out.println(word.isEmpty() + " : " + word.length());
-                    }
+                    cache.addToken(vw);
+                    cache.addWordToIndex(vw.getIndex(), vw.getLabel());
+
+                    cache.putVocabWord(word);
 
                     if (linebreaks) {
                         dis.readByte(); // line break
@@ -278,8 +269,7 @@ public class SearchEngineProperties {
         public enum Models {
             GOOGLE("GoogleNews-vectors-negative300.bin.gz"),
             GOOGLE_SLIM("GoogleNews-vectors-negative300-SLIM.bin.gz"),
-            ONS_GZIP("ons_w2v_model.bin.gz"),
-            ONS("ons_w2v_model.bin");
+            ONS_GZIP("ons_w2v_model.bin.gz");
 
             private String fileName;
 
