@@ -1,6 +1,7 @@
 package com.github.onsdigital.search.configuration;
 
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
 import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
@@ -9,13 +10,18 @@ import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.AbstractCache;
+import org.deeplearning4j.text.sentenceiterator.BasicLineIterator;
+import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.nio.ch.IOUtil;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
@@ -132,15 +138,34 @@ public class SearchEngineProperties {
 
         private static Word2Vec word2vec;
 
-        private static File getVectorsFile(Models model) {
+        public static File getVectorsFile(Models model) {
             ClassLoader classLoader = WORD2VEC.class.getClassLoader();
             File file = new File(classLoader.getResource(String.format("vectorModels/%s", model.getFileName())).getFile());
             return file;
         }
 
+        public static List<String> getStopWords() throws IOException {
+            ClassLoader classLoader = WORD2VEC.class.getClassLoader();
+            File stopFile = new File(classLoader.getResource(String.format("vectorModels/%s", "stop.txt")).getFile());
+            List<String> stopWords = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(stopFile))) {
+                String currentLine;
+
+                while ((currentLine = br.readLine()) != null) {
+                    stopWords.add(currentLine);
+                }
+            }
+            return stopWords;
+        }
+
         public static Word2Vec getWord2vec() {
+            return getWord2vec(Models.GOOGLE_SLIM);
+        }
+
+        public static Word2Vec getWord2vec(Models model) {
             if (word2vec == null) {
-                File gModel = getVectorsFile(Models.GOOGLE_SLIM);
+                File gModel = getVectorsFile(model);
                 word2vec = WordVectorSerializer.readWord2VecModel(gModel);
             }
             return word2vec;
@@ -148,14 +173,14 @@ public class SearchEngineProperties {
 
         public static Word2Vec loadGensimModel() throws IOException {
             File gModel = getVectorsFile(Models.ONS);
-            return loadGoogleBinaryModel(gModel, false);
+            return loadGensimModel(gModel, false);
         }
 
-        public static Word2Vec loadGoogleBinaryModel(File modelFile, boolean lineBreaks) throws IOException {
+        public static Word2Vec loadGensimModel(File modelFile, boolean lineBreaks) throws IOException {
             return readBinaryModel(modelFile, lineBreaks, true);
         }
 
-        private static Word2Vec readBinaryModel(File modelFile, boolean linebreaks, boolean normalize)
+        public static Word2Vec readBinaryModel(File modelFile, boolean linebreaks, boolean normalize)
                 throws NumberFormatException, IOException {
             InMemoryLookupTable<VocabWord> lookupTable;
             VocabCache<VocabWord> cache;
@@ -178,10 +203,12 @@ public class SearchEngineProperties {
                 syn0 = Nd4j.create(words, size);
                 cache = new AbstractCache<>();
 
+                System.out.println("Words/size: " + words + "/" + size);
+
                 WordVectorSerializer.printOutProjectedMemoryUse(words, size, 1);
 
                 lookupTable = (InMemoryLookupTable<VocabWord>) new InMemoryLookupTable.Builder<VocabWord>().cache(cache)
-                        .useHierarchicSoftmax(false).vectorLength(size).build();
+                        .useHierarchicSoftmax(false).vectorLength(size).seed(1).negative(5).build();
 
                 String word;
                 float[] vector = new float[size];
@@ -205,6 +232,9 @@ public class SearchEngineProperties {
                         cache.addWordToIndex(vw.getIndex(), vw.getLabel());
 
                         cache.putVocabWord(word);
+                    } else {
+                        System.out.println("Got empty word:" + word);
+                        System.out.println(word.isEmpty() + " : " + word.length());
                     }
 
                     if (linebreaks) {
@@ -222,12 +252,25 @@ public class SearchEngineProperties {
 
             lookupTable.setSyn0(syn0);
 
-            Word2Vec ret = new Word2Vec.Builder().useHierarchicSoftmax(false).resetModel(false).layerSize(syn0.columns())
-                    .allowParallelTokenization(true).elementsLearningAlgorithm(new SkipGram<VocabWord>())
-                    .learningRate(0.025).windowSize(5).workers(1).build();
-
-            ret.setVocab(cache);
-            ret.setLookupTable(lookupTable);
+            Word2Vec ret = new Word2Vec.Builder()
+                    .useHierarchicSoftmax(true)
+                    .resetModel(true)
+                    .layerSize(syn0.columns())
+                    .allowParallelTokenization(true)
+                    .learningRate(0.025)
+                    .seed(12345)
+                    .minLearningRate(1e-4)
+                    .elementsLearningAlgorithm(new SkipGram<>())
+                    .iterations(5)
+                    .workers(4)
+                    .stopWords(getStopWords())
+                    .windowSize(10)
+                    .workers(4)
+                    .minWordFrequency(10)
+                    .sampling(1e-3)
+                    .vocabCache(cache)
+                    .lookupTable(lookupTable)
+                    .build();
 
             return ret;
         }
@@ -235,7 +278,8 @@ public class SearchEngineProperties {
         public enum Models {
             GOOGLE("GoogleNews-vectors-negative300.bin.gz"),
             GOOGLE_SLIM("GoogleNews-vectors-negative300-SLIM.bin.gz"),
-            ONS("ons_w2v_model.bin.gz");
+            ONS_GZIP("ons_w2v_model.bin.gz"),
+            ONS("ons_w2v_model.bin");
 
             private String fileName;
 

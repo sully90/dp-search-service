@@ -15,11 +15,15 @@ import com.github.onsdigital.search.util.SearchClientUtils;
 import com.github.onsdigitial.elastic.importer.models.page.base.Page;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.FuzzyKMeansClusterer;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.bson.types.ObjectId;
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -32,6 +36,7 @@ import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -58,11 +63,14 @@ public class Topics implements WritableObject {
 
     static {
         try {
-            WORD_2_VEC = SearchEngineProperties.WORD2VEC.loadGensimModel();
+            File gModel = SearchEngineProperties.WORD2VEC.getVectorsFile(SearchEngineProperties.WORD2VEC.Models.ONS_GZIP);
+//            WORD_2_VEC = WordVectorSerializer.loadGoogleModel(gModel, true, false);
+            WORD_2_VEC = SearchEngineProperties.WORD2VEC.readBinaryModel(gModel, false, false);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+//        WORD_2_VEC = SearchEngineProperties.WORD2VEC.getWord2vec(SearchEngineProperties.WORD2VEC.Models.ONS_GZIP);
     }
 
     private static final int SEED = 12345;
@@ -71,6 +79,7 @@ public class Topics implements WritableObject {
     private static final double DEFAULT_FUZZINESS = 1.01d;
     private static final int DEFAULT_MAX_ITERATIONS = 1000;
     private static final DistanceMeasure DEFAULT_DISTANCE_MEASURE = new CosineDistance();
+//    private static final DistanceMeasure DEFAULT_DISTANCE_MEASURE = new EuclideanDistance();
 
     private ObjectId _id;
     private int k;
@@ -81,7 +90,8 @@ public class Topics implements WritableObject {
     private int numberOfNeighbours;
     private List<Topic> topics;
 
-    private FuzzyKMeansClusterer<Word2VecClusterable> kMeans;
+//    private FuzzyKMeansClusterer<Word2VecClusterable> kMeans;
+    private KMeansPlusPlusClusterer<Word2VecClusterable> kMeans;
 
     public Topics(int k, Set<String> words) {
         this(k, DEFAULT_FUZZINESS, DEFAULT_MAX_ITERATIONS, DEFAULT_DISTANCE_MEASURE, words, 10);
@@ -122,9 +132,16 @@ public class Topics implements WritableObject {
 
     public List<Topic> getTopics() {
         if (null == this.topics || this.topics.isEmpty()) {
+            List<Word2VecClusterable> clusterables = new ArrayList<>();
+            for (String word : this.words) {
+                clusterables.add(new Word2VecClusterable(word));
+            }
+
+            LOGGER.info(String.format("Clustering %d words", clusterables.size()));
+
             this.topics = new LinkedList<>();
 
-            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.getClusters();
+            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.cluster(clusterables);
             for (int i = 0; i < clusters.size(); i++) {
                 CentroidCluster<Word2VecClusterable> cluster = clusters.get(i);
                 if (!cluster.getPoints().isEmpty()) {
@@ -138,13 +155,13 @@ public class Topics implements WritableObject {
         return this.topics;
     }
 
-    public RealMatrix getMembershipMatrix() {
-        return this.kMeans.getMembershipMatrix();
-    }
+//    public RealMatrix getMembershipMatrix() {
+//        return this.kMeans.getMembershipMatrix();
+//    }
 
-    public double[] getMembershipVectorForTopic(Topic topic) {
-        return this.getMembershipMatrix().getColumn(topic.getTopicNumber());
-    }
+//    public double[] getMembershipVectorForTopic(Topic topic) {
+//        return this.getMembershipMatrix().getColumn(topic.getTopicNumber());
+//    }
 
     public SortedSet<Map.Entry<Topic, Double>> similarTopics(Topic otherTopic) {
         String otherTopicTopWord = otherTopic.getTopWord();
@@ -160,21 +177,23 @@ public class Topics implements WritableObject {
         return MapUtils.entriesSortedByValues(topicMap);
     }
 
-    private FuzzyKMeansClusterer<Word2VecClusterable> cluster() {
+    private KMeansPlusPlusClusterer<Word2VecClusterable> cluster() {
 //        List<Word2VecClusterable> clusterables = Word2VecClusterable.fromWords(this.words, this.numberOfNeighbours);
-        List<Word2VecClusterable> clusterables = new ArrayList<>();
-        for (String word : this.words) {
-            clusterables.add(new Word2VecClusterable(word));
-        }
-
-        LOGGER.info(String.format("Clustering %d words", clusterables.size()));
+//        List<Word2VecClusterable> clusterables = new ArrayList<>();
+//        for (String word : this.words) {
+//            clusterables.add(new Word2VecClusterable(word));
+//        }
+//
+//        LOGGER.info(String.format("Clustering %d words", clusterables.size()));
 
         RandomGenerator randomGenerator = new JDKRandomGenerator();
         randomGenerator.setSeed(SEED);
 
-        FuzzyKMeansClusterer<Word2VecClusterable> kMeans = new FuzzyKMeansClusterer<>(this.k, this.fuzziness,
-                this.maxIterations, this.distanceMeasure, EPSILON, randomGenerator);
-        kMeans.cluster(clusterables);
+//        FuzzyKMeansClusterer<Word2VecClusterable> kMeans = new FuzzyKMeansClusterer<>(this.k, this.fuzziness,
+//                this.maxIterations, this.distanceMeasure, EPSILON, randomGenerator);
+//        kMeans.cluster(clusterables);
+
+        KMeansPlusPlusClusterer<Word2VecClusterable> kMeans = new KMeansPlusPlusClusterer<>(this.k, this.maxIterations, this.distanceMeasure, randomGenerator);
         return kMeans;
     }
 
@@ -203,83 +222,84 @@ public class Topics implements WritableObject {
             add("employment");
         }};
 
-        try (ElasticSearchClient<Page> searchClient = SearchClientUtils.getSearchClient(ClientType.TCP)) {
-            SearchRequest searchRequest = searchClient.prepareSearch("ons*")
-                    .setQuery(QueryBuilders.matchAllQuery())
-                    .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setScroll(new TimeValue(60000))
-                    .setSize(1000)
-                    .setTypes("bulletin", "article")
-                    .request();
-
-            SearchResponse searchResponse = searchClient.search(searchRequest);
-            System.out.println(String.format("Got %d hits", searchResponse.getHits().totalHits));
-            final String scrollId = searchResponse.getScrollId();
-
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            Set<String> keywords = new HashSet<>();
-
-//            for (String searchTerm : searchTerms) {
-//                keywords.add(searchTerm);
-//                keywords.addAll(WORD_2_VEC.similarWordsInVocabTo(searchTerm, 10));
+//        try (ElasticSearchClient<Page> searchClient = SearchClientUtils.getSearchClient(ClientType.TCP)) {
+//            SearchRequest searchRequest = searchClient.prepareSearch("ons*")
+//                    .setQuery(QueryBuilders.matchAllQuery())
+//                    .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+//                    .setScroll(new TimeValue(60000))
+//                    .setSize(1000)
+//                    .request();
+//
+//            SearchResponse searchResponse = searchClient.search(searchRequest);
+//            System.out.println(String.format("Got %d hits", searchResponse.getHits().totalHits));
+//            final String scrollId = searchResponse.getScrollId();
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//
+//            Set<String> keywords = new HashSet<>();
+//
+////            for (String searchTerm : searchTerms) {
+////                keywords.add(searchTerm);
+////                keywords.addAll(WORD_2_VEC.similarWordsInVocabTo(searchTerm, 10));
+////            }
+//
+//            do {
+//                SearchHits searchHits = searchResponse.getHits();
+//
+//                for (SearchHit searchHit : searchHits.getHits()) {
+//                    Map<String, Object> fields = mapper.readValue(searchHit.getSourceAsString(), new TypeReference<Map<String, Object>>(){});
+//                    if (fields.containsKey("description")) {
+//                        Object description = fields.get("description");
+//                        if (description instanceof Map) {
+//                            Map<String, Object> descriptionMap = (Map<String, Object>) description;
+//                            if (descriptionMap.containsKey("keywords")) {
+//                                List<String> pageKeywords = (List<String>) descriptionMap.get("keywords");
+//                                keywords.addAll(pageKeywords);
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                SearchScrollRequest searchScrollRequest = new SearchScrollRequest()
+//                        .scrollId(scrollId)
+//                        .scroll(new TimeValue(60000));
+//                searchResponse = searchClient.searchScroll(searchScrollRequest);
+//
+//            } while (searchResponse.getHits().getHits().length != 0);
+//
+//            System.out.println(keywords.size());
+//
+//            String[] keywordsArray = keywords.toArray(new String[keywords.size()]);
+//            for (String keyword : keywordsArray) {
+//                keywords.addAll(WORD_2_VEC.wordsNearest(keyword, 5));
 //            }
+//
+//            System.out.println(keywords.size());
+//
+//            long start = System.currentTimeMillis();
+//            Topics topics = new Topics(30, keywords);
+//            for (Topic topic : topics.getTopics()) {
+//                System.out.println(String.format("Topic %d: %s : %s", topic.getTopicNumber(), topic.getTopWord(), topic.getTopTopics(10)));
+//                System.out.println(topic.getWords());
+//                System.out.println();
+//            }
+//            long stop = System.currentTimeMillis();
+//            long duration = stop - start;
+//
+//            System.out.format("Milli = %s, ( S_Start : %s, S_End : %s ) \n", duration, start, stop );
+//            System.out.println("Human-Readable format : "+ millisToShortDHMS( duration ) );
 
-            do {
-                SearchHits searchHits = searchResponse.getHits();
 
-                for (SearchHit searchHit : searchHits.getHits()) {
-                    Map<String, Object> fields = mapper.readValue(searchHit.getSourceAsString(), new TypeReference<Map<String, Object>>(){});
-                    if (fields.containsKey("description")) {
-                        Object description = fields.get("description");
-                        if (description instanceof Map) {
-                            Map<String, Object> descriptionMap = (Map<String, Object>) description;
-                            if (descriptionMap.containsKey("keywords")) {
-                                List<String> pageKeywords = (List<String>) descriptionMap.get("keywords");
-                                keywords.addAll(pageKeywords);
-                            }
-                        }
-                    }
-                }
+//            Topic topicForWord = topics.forWord(testWord);
+//            System.out.println(String.format("Topic for word '%s': %s", testWord, topicForWord.getTopTopics(10)));
 
-                SearchScrollRequest searchScrollRequest = new SearchScrollRequest()
-                        .scrollId(scrollId)
-                        .scroll(new TimeValue(60000));
-                searchResponse = searchClient.searchScroll(searchScrollRequest);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-            } while (searchResponse.getHits().getHits().length != 0);
-
-            System.out.println(keywords.size());
-
-            String[] keywordsArray = keywords.toArray(new String[keywords.size()]);
-            for (String keyword : keywordsArray) {
-                keywords.addAll(WORD_2_VEC.wordsNearest(keyword, 5));
-            }
-
-            System.out.println(keywords.size());
-
-//            MongoHelper.getDatabase(DatabaseType.LOCAL).getJongo().getCollection("ons_keywords").insert(keywords);
-
-            long start = System.currentTimeMillis();
-            Topics topics = new Topics(50, keywords);
-            for (Topic topic : topics.getTopics()) {
-                System.out.println(String.format("Topic %d: %s : %s", topic.getTopicNumber(), topic.getTopWord(), topic.getTopTopics(10)));
-                System.out.println(topic.getWords());
-                System.out.println();
-            }
-            long stop = System.currentTimeMillis();
-            long duration = stop - start;
-
-            System.out.format("Milli = %s, ( S_Start : %s, S_End : %s ) \n", duration, start, stop );
-            System.out.println("Human-Readabl e format : "+ millisToShortDHMS( duration ) );
-
-            Topic topicForWord = topics.forWord("crime");
-            System.out.println(String.format("Topic for word 'crime': %s", topicForWord.getTopTopics(10)));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String testWord = "statistics";
+        System.out.println(WORD_2_VEC.wordsNearest(testWord, 10).toString());
     }
 
     public static String millisToShortDHMS(long duration) {
