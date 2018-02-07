@@ -16,6 +16,7 @@ import com.github.onsdigitial.elastic.importer.models.page.base.Page;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.FuzzyKMeansClusterer;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -29,6 +30,9 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.ops.transforms.Transforms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +78,8 @@ public class Topics implements WritableObject {
     private int numberOfNeighbours;
     private List<Topic> topics;
 
-    private FuzzyKMeansClusterer<Word2VecClusterable> kMeans;
-//    private KMeansPlusPlusClusterer<Word2VecClusterable> kMeans;
+//    private FuzzyKMeansClusterer<Word2VecClusterable> kMeans;
+    private KMeansPlusPlusClusterer<Word2VecClusterable> kMeans;
 
     public Topics(int k, Set<String> words) {
         this(k, DEFAULT_FUZZINESS, DEFAULT_MAX_ITERATIONS, DEFAULT_DISTANCE_MEASURE, words, 10);
@@ -96,37 +100,32 @@ public class Topics implements WritableObject {
         // For Jackson
     }
 
-    public Topic forVector(double[] vector) {
-        double distance = Double.MAX_VALUE;
+    public Topic forWord(String word) {
+        double similarity = Double.MIN_VALUE;
         Topic nearestTopic = null;
         for (Topic topic : this.getTopics()) {
-            double d = this.distanceMeasure.compute(topic.getTopicVector(), vector);
-            if (d < distance) {
-                distance = d;
+            double sim = WORD_2_VEC.similarity(word, topic.getTopWord());
+            if (sim > similarity) {
+                similarity = sim;
                 nearestTopic = topic;
             }
         }
         return nearestTopic;
     }
 
-    public Topic forWord(String word) {
-        double[] vector = WORD_2_VEC.getWordVector(word);
-        return this.forVector(vector);
-    }
-
     public List<Topic> getTopics() {
         if (null == this.topics || this.topics.isEmpty()) {
-//            List<Word2VecClusterable> clusterables = new ArrayList<>();
-//            for (String word : this.words) {
-//                clusterables.add(new Word2VecClusterable(word));
-//            }
-//
-//            LOGGER.info(String.format("Clustering %d words", clusterables.size()));
+            List<Word2VecClusterable> clusterables = new ArrayList<>();
+            for (String word : this.words) {
+                clusterables.add(new Word2VecClusterable(word));
+            }
+
+            LOGGER.info(String.format("Clustering %d words", clusterables.size()));
 
             this.topics = new LinkedList<>();
 
-//            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.cluster(clusterables);
-            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.getClusters();
+            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.cluster(clusterables);
+//            List<CentroidCluster<Word2VecClusterable>> clusters = this.kMeans.getClusters();
             for (int i = 0; i < clusters.size(); i++) {
                 CentroidCluster<Word2VecClusterable> cluster = clusters.get(i);
                 if (!cluster.getPoints().isEmpty()) {
@@ -140,13 +139,13 @@ public class Topics implements WritableObject {
         return this.topics;
     }
 
-    public RealMatrix getMembershipMatrix() {
-        return this.kMeans.getMembershipMatrix();
-    }
-
-    public double[] getMembershipVectorForTopic(Topic topic) {
-        return this.getMembershipMatrix().getColumn(topic.getTopicNumber());
-    }
+//    public RealMatrix getMembershipMatrix() {
+//        return this.kMeans.getMembershipMatrix();
+//    }
+//
+//    public double[] getMembershipVectorForTopic(Topic topic) {
+//        return this.getMembershipMatrix().getColumn(topic.getTopicNumber());
+//    }
 
     public SortedSet<Map.Entry<Topic, Double>> similarTopics(Topic otherTopic) {
         String otherTopicTopWord = otherTopic.getTopWord();
@@ -162,22 +161,22 @@ public class Topics implements WritableObject {
         return MapUtils.entriesSortedByValues(topicMap);
     }
 
-    private FuzzyKMeansClusterer<Word2VecClusterable> cluster() {
-        List<Word2VecClusterable> clusterables = new ArrayList<>();
-        for (String word : this.words) {
-            clusterables.add(new Word2VecClusterable(word));
-        }
-
-        LOGGER.info(String.format("Clustering %d words", clusterables.size()));
+    private KMeansPlusPlusClusterer<Word2VecClusterable> cluster() {
+//        List<Word2VecClusterable> clusterables = new ArrayList<>();
+//        for (String word : this.words) {
+//            clusterables.add(new Word2VecClusterable(word));
+//        }
+//
+//        LOGGER.info(String.format("Clustering %d words", clusterables.size()));
 
         RandomGenerator randomGenerator = new JDKRandomGenerator();
         randomGenerator.setSeed(SEED);
 
-        FuzzyKMeansClusterer<Word2VecClusterable> kMeans = new FuzzyKMeansClusterer<>(this.k, this.fuzziness,
-                this.maxIterations, this.distanceMeasure, EPSILON, randomGenerator);
-        kMeans.cluster(clusterables);
+//        FuzzyKMeansClusterer<Word2VecClusterable> kMeans = new FuzzyKMeansClusterer<>(this.k, this.fuzziness,
+//                this.maxIterations, this.distanceMeasure, EPSILON, randomGenerator);
+//        kMeans.cluster(clusterables);
 
-//        KMeansPlusPlusClusterer<Word2VecClusterable> kMeans = new KMeansPlusPlusClusterer<>(this.k, this.maxIterations, this.distanceMeasure, randomGenerator);
+        KMeansPlusPlusClusterer<Word2VecClusterable> kMeans = new KMeansPlusPlusClusterer<>(this.k, this.maxIterations, this.distanceMeasure, randomGenerator);
         return kMeans;
     }
 
@@ -206,7 +205,7 @@ public class Topics implements WritableObject {
 //            add("employment");
 //        }};
 
-        System.out.println(WORD_2_VEC.wordsNearest("statistics", 10).toString());
+        System.out.println(WORD_2_VEC.wordsNearest("rpi", 10).toString());
 
         try (ElasticSearchClient<Page> searchClient = SearchClientUtils.getSearchClient(ClientType.TCP)) {
             SearchRequest searchRequest = searchClient.prepareSearch("ons*")
@@ -225,6 +224,9 @@ public class Topics implements WritableObject {
 
             Set<String> keywords = new HashSet<>();
 
+            Collection<String> vocab = WORD_2_VEC.vocab().words();
+            System.out.println(String.format("%d words in vocab", vocab.size()));
+
             do {
                 SearchHits searchHits = searchResponse.getHits();
 
@@ -236,7 +238,12 @@ public class Topics implements WritableObject {
                             Map<String, Object> descriptionMap = (Map<String, Object>) description;
                             if (descriptionMap.containsKey("keywords")) {
                                 List<String> pageKeywords = (List<String>) descriptionMap.get("keywords");
-                                keywords.addAll(pageKeywords);
+                                for (String keyword : pageKeywords) {
+                                    keyword = keyword.toLowerCase();
+                                    if (null != keyword && !keyword.isEmpty() && vocab.contains(keyword)) {
+                                        keywords.add(keyword);
+                                    }
+                                }
                             }
                         }
                     }
@@ -251,14 +258,18 @@ public class Topics implements WritableObject {
 
             String[] keywordsArray = keywords.toArray(new String[keywords.size()]);
             for (String keyword : keywordsArray) {
-                keywords.addAll(WORD_2_VEC.wordsNearest(keyword, 5));
+                for (String similar : WORD_2_VEC.wordsNearest(keyword, 5)) {
+                    if (!similar.isEmpty()) {
+                        keywords.add(similar);
+                    }
+                }
             }
 
             long start = System.currentTimeMillis();
             Topics topics = new Topics(30, keywords);
             for (Topic topic : topics.getTopics()) {
                 System.out.println(String.format("Topic %d: %s : %s", topic.getTopicNumber(), topic.getTopWord(), topic.getTopTopics(10)));
-                System.out.println(topic.getWords());
+                topic.getWords().stream().forEach(System.out::println);
                 System.out.println();
             }
             long stop = System.currentTimeMillis();
@@ -267,9 +278,13 @@ public class Topics implements WritableObject {
             System.out.format("Milli = %s, ( S_Start : %s, S_End : %s ) \n", duration, start, stop );
             System.out.println("Human-Readable format : "+ millisToShortDHMS( duration ) );
 
-            String testWord = "statistics";
+            String testWord = "rpi";
             Topic topicForWord = topics.forWord(testWord);
-            System.out.println(String.format("Topic for word '%s': %s", testWord, topicForWord.getTopTopics(10)));
+            if (topicForWord != null) {
+                System.out.println(String.format("Topic for word '%s': %s", testWord, topicForWord.getTopTopics(10)));
+            } else {
+                System.out.println(String.format("No topic for word '%s'", testWord));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
