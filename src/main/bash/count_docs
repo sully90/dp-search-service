@@ -1,0 +1,17 @@
+#!/bin/bash
+
+display_usage() { 
+	echo -e "Usage:\ncount_docs [index/regex pattern] \n" 
+} 
+
+# if less than two arguments supplied, display usage 
+if [ $# -eq 0 ] 
+then 
+	display_usage
+	exit 1
+fi 
+
+index=$1
+
+curl -XGET http://localhost:9200/${index}/_count
+echo -e "\n"
