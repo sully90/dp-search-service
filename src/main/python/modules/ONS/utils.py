@@ -34,6 +34,14 @@ def powerset(s):
     for i in range(1 << x):
         yield [ss for mask, ss in zip(masks, s) if i & mask]
 
+def which(file):
+    import os
+    for path in os.environ["PATH"].split(os.pathsep):
+        if os.path.exists(os.path.join(path, file)):
+                return os.path.join(path, file)
+
+    return None
+
 class Model(object):
     def __init__(self, name, boost=1.0, queryBoost=0.5, rescoreBoost=1.0):
         self.name = name
