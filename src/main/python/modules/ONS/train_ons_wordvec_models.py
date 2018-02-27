@@ -72,7 +72,7 @@ def write_corpus(corpus, output_fname):
     with open(output_fname, "w") as f:
         for item in corpus:
             if (len(item) > 0):
-                line = " ".join(i for i in item) + "."
+                line = " ".join(i for i in item)
                 # Replace multiple whitespace with single and encode to ascii
                 s = re.sub( '\s+', ' ', line.encode("ascii", "ignore") ).strip()
                 f.write("%s\n" % s)
@@ -117,36 +117,27 @@ def train_models(corpus_file, output_name, models_dir):
 
     # fastText with ngrams
     output_file = '{:s}_ft'.format(output_name)
-    if not os.path.isfile(os.path.join(models_dir, '{:s}.vec'.format(output_file))):
-        print('Training fasttext on {:s} corpus..'.format(corpus_file))
-        exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t}"
-        exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
-        os.system(exe)
-    else:
-        print('\nUsing existing model file {:s}.vec'.format(output_file))
+    print('Training fasttext on {:s} corpus..'.format(corpus_file))
+    exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t}"
+    exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
+    os.system(exe)
         
     # fastText with NO ngrams
     output_file = '{:s}_ft_no_ng'.format(output_name)
-    if not os.path.isfile(os.path.join(models_dir, '{:s}.vec'.format(output_file))):
-        print('\nTraining fasttext on {:s} corpus (without char n-grams)..'.format(corpus_file))
-        exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t} -maxn 0"
-        exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
-        os.system(exe)
-    else:
-        print('\nUsing existing model file {:s}.vec'.format(output_file))
+    print('\nTraining fasttext on {:s} corpus (without char n-grams)..'.format(corpus_file))
+    exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t} -maxn 0"
+    exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
+    os.system(exe)
         
     # Word2Vec
     output_file = '{:s}_gs'.format(output_name)
-    if not os.path.isfile(os.path.join(models_dir, '{:s}.vec'.format(output_file))):
-        print('\nTraining word2vec on {:s} corpus..'.format(corpus_file))
-        
-        # Text8Corpus class for reading space-separated words file
-        gs_model = Word2Vec(Text8Corpus(corpus_file), **params)
-        # Direct local variable lookup doesn't work properly with magic statements (%time)
-        gs_model.wv.save_word2vec_format(os.path.join(models_dir, '{:s}.vec'.format(output_file)))
-        print('\nSaved gensim model as {:s}.vec'.format(output_file))
-    else:
-        print('\nUsing existing model file {:s}.vec'.format(output_file))
+    print('\nTraining word2vec on {:s} corpus..'.format(corpus_file))
+    
+    # Text8Corpus class for reading space-separated words file
+    gs_model = Word2Vec(Text8Corpus(corpus_file), **params)
+    # Direct local variable lookup doesn't work properly with magic statements (%time)
+    gs_model.wv.save_word2vec_format(os.path.join(models_dir, '{:s}.vec'.format(output_file)))
+    print('\nSaved gensim model as {:s}.vec'.format(output_file))
 
 
 def load_pages(use_mongo=True):
