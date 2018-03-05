@@ -10,6 +10,7 @@ import com.github.onsdigital.search.fanoutcascade.handlertasks.TrainingSetTask;
 import com.github.onsdigital.search.search.PerformanceChecker;
 import com.github.onsdigital.search.search.SortBy;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
+import com.github.onsdigital.search.searchstats.MongoSearchStatsLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,6 @@ public class PerformanceCheckerHandler implements Handler {
     @Override
     public Object handleTask(HandlerTask handlerTask) {
         PerformanceCheckerTask performanceCheckerTask = (PerformanceCheckerTask) handlerTask;
-        SortBy sortBy = performanceCheckerTask.getSortBy();
 
         // First, read thread sleep params from config file
         TimeUnit sleepTimeUnit = SearchEngineProperties.FANOUTCASCADE.getPerformanceCheckerSleepTimeUnit();
@@ -48,7 +48,7 @@ public class PerformanceCheckerHandler implements Handler {
 
         while (!FanoutCascade.getInstance().isShutdown()) {
             try {
-                PerformanceChecker performanceChecker = new PerformanceChecker(sortBy);
+                PerformanceChecker performanceChecker = new PerformanceChecker(new MongoSearchStatsLoader());
 
                 double sumNdcg = 0.0f;
                 int count = 0;

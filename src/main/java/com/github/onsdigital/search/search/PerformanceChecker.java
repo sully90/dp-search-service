@@ -16,6 +16,7 @@ import com.github.onsdigital.search.configuration.SearchEngineProperties;
 import com.github.onsdigital.search.search.models.SearchHitCount;
 import com.github.onsdigital.search.search.models.SearchHitCounter;
 import com.github.onsdigital.search.search.models.SearchStat;
+import com.github.onsdigital.search.searchstats.SearchStatsLoader;
 import com.github.onsdigitial.elastic.importer.models.page.adhoc.AdHoc;
 import com.github.onsdigitial.elastic.importer.models.page.base.Page;
 import com.github.onsdigitial.elastic.importer.models.page.base.PageType;
@@ -67,34 +68,14 @@ public class PerformanceChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceChecker.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private SortBy sortBy;
-    private String model;
-
     private List<SearchStat> searchStats;
 
-    public PerformanceChecker() throws IOException {
-        this(SortBy.RELEVANCE);
+    public PerformanceChecker(SearchStatsLoader loader) throws IOException {
+        this(loader.getSearchStats());
     }
 
-    public PerformanceChecker(SortBy sortBy) throws IOException {
-        this(sortBy, null);
-    }
-
-    public PerformanceChecker(SortBy sortBy, String model) throws IOException {
-        this.searchStats = PerformanceChecker.loadSearchStats(sortBy, model);
-        if (this.searchStats.size() == 0) {
-            throw new IOException(String.format("No search stats found for sortBy/model: %s/%s", sortBy.getSortBy(), model));
-        }
-        this.sortBy = sortBy;
-        this.model = model;
-    }
-
-    public SortBy getSortBy() {
-        return sortBy;
-    }
-
-    public String getModel() {
-        return model;
+    public PerformanceChecker(List<SearchStat> searchStats) {
+        this.searchStats = searchStats;
     }
 
     public List<SearchStat> getSearchStats() {
@@ -112,7 +93,7 @@ public class PerformanceChecker {
                 hitCounts.put(term, new SearchHitCounter(qid));
                 qid++;
             }
-            hitCounts.get(term).add(searchStat.getRedirUrl(), searchStat.getRank());
+            hitCounts.get(term).add(searchStat.getUrl(), searchStat.getRank());
         }
         return hitCounts;
     }
@@ -130,38 +111,6 @@ public class PerformanceChecker {
         }
 
         return judgementMap;
-    }
-
-    public static List<SearchStat> loadSearchStats(SortBy sortBy) throws JsonProcessingException {
-        return loadSearchStats(sortBy, null);
-    }
-
-    public static List<SearchStat> loadSearchStats(SortBy sortBy, String model) throws JsonProcessingException {
-        // For now, load from mongoDB. This can be changed in the future depending on the direction we take.
-
-        String queryString;
-        if (sortBy.equals(SortBy.LTR)) {
-            queryString = sortByQuery(sortBy, model == null ? SearchEngineProperties.LTR.getDefaultModel() : model);
-        } else {
-            queryString = sortByQuery(sortBy, null);
-        }
-        if (LOGGER.isDebugEnabled()) LOGGER.debug(String.format("Querying mongoDB with query string: %s", queryString));
-        Iterable<SearchStat> it = SearchStat.finder().find(queryString);
-
-        List<SearchStat> searchStats = new LinkedList<>();
-        it.forEach(searchStats::add);
-        return searchStats;
-    }
-
-    private static String sortByQuery(SortBy sortBy, String model) throws JsonProcessingException {
-        Map<String, Object> params = new HashMap<String, Object>() {{
-            put("sortby", sortBy.getSortBy());
-            if (model != null) {
-                put("model", model);
-            }
-        }};
-
-        return JsonUtils.toJson(params);
     }
 
     private static Page asClass(String fileString, Class<? extends Page> returnClass) throws IOException {
