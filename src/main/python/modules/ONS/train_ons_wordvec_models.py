@@ -79,7 +79,7 @@ def write_corpus(corpus, output_fname):
     print "Done"
 
 
-def train_models(corpus_file, output_name, models_dir):
+def train_models(fastText_mode, corpus_file, output_name, models_dir):
     from utils import which
 
     # fastText training params
@@ -117,16 +117,16 @@ def train_models(corpus_file, output_name, models_dir):
 
     # fastText with ngrams
     output_file = '{:s}_ft'.format(output_name)
-    print('Training fasttext on {:s} corpus..'.format(corpus_file))
-    exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t}"
-    exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
+    print('Training fasttext (mode={:s}) on {:s} corpus..'.format(fastText_mode, corpus_file))
+    exe = "{fasttext} {mode} -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t}"
+    exe = exe.format(fasttext=fasttext, mode=fastText_mode, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
     os.system(exe)
         
     # fastText with NO ngrams
     output_file = '{:s}_ft_no_ng'.format(output_name)
-    print('\nTraining fasttext on {:s} corpus (without char n-grams)..'.format(corpus_file))
-    exe = "{fasttext} skipgram -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t} -maxn 0"
-    exe = exe.format(fasttext=fasttext, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
+    print('\nTraining fasttext (mode={:s}) on {:s} corpus (without char n-grams)..'.format(fastText_mode, corpus_file))
+    exe = "{fasttext} {mode} -input {corpus_file} -output {output}  -lr {lr} -dim {dim} -ws {ws} -epoch {epoch} -minCount {minCount} -neg {neg} -loss {loss} -t {t} -maxn 0"
+    exe = exe.format(fasttext=fasttext, mode=fastText_mode, corpus_file=corpus_file, output=models_dir+output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, loss=loss, t=t)
     os.system(exe)
         
     # Word2Vec
@@ -183,7 +183,8 @@ def main(output_fname, models_dir, use_mongo=True):
     write_corpus(texts, output_fname)
 
     # Train the models
-    train_models(output_fname, 'ons', models_dir)
+    fastText_mode = "skipgram"
+    train_models(fastText_mode, output_fname, 'ons', models_dir)
 
 
 if __name__ == "__main__":
