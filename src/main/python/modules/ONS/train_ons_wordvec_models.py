@@ -79,6 +79,37 @@ def write_corpus(corpus, output_fname):
     print "Done"
 
 
+def train_lexvec_model(matrix, model, corpus_file, output_name, models_dir):
+    '''
+    Trains a model using lexvec, and combines the computed word vectors with their context vectors
+    '''
+    from utils import which
+    import merge_context_vectors
+
+    lexvec = which("lexvec")
+
+    if (lexvec is None):
+        raise Exception("Unable to locate lexvec binary in $PATH")
+
+    # training params
+    lr = 0.05
+    dim = 300
+    ws = 5
+    epoch = 5
+    minCount = 15
+    neg = 5
+    t = 1e-5
+
+    output_file = models_dir + '/{:s}_lv.vec'.format(output_name)
+
+    print "Running lexvec"
+    exe = "{lexvec} -corpus {corpus_file} -output {output} -alpha {lr} -dim {dim} -window {ws} -iterations {epoch} -minfreq {minCount} -negative {neg} -subsample {t} -matrix {matrix} -model {model}"
+    exe = exe.format(lexvec=lexvec, corpus_file=corpus_file, output=output_file, lr=lr, dim=dim, ws=ws, epoch=epoch, minCount=minCount, neg=neg, t=t, matrix=matrix, model=model)
+    os.system(exe)
+
+    merge_context_vectors.main(output_file)
+
+
 def train_models(fastText_mode, corpus_file, output_name, models_dir):
     from utils import which
 
